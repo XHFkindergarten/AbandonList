@@ -1,0 +1,64 @@
+{
+  "name": "AbandonList",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-community/async-storage": "^1.8.1",
+    "@react-native-community/blur": "^3.4.1",
+    "@react-native-community/datetimepicker": "^2.2.3",
+    "@react-native-community/masked-view": "^0.1.6",
+    "@react-native-community/push-notification-ios": "^1.0.7",
+    "@react-navigation/bottom-tabs": "^5.0.5",
+    "@react-navigation/drawer": "^5.0.5",
+    "@react-navigation/native": "5.0.2",
+    "@react-navigation/stack": "^5.0.0",
+    "add": "^2.0.6",
+    "mobx": "^5.15.4",
+    "mobx-react": "^6.1.7",
+    "moment": "^2.24.0",
+    "prop-types": "^15.7.2",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
+    "react-native-calendar-events": "https://github.com/i3po/react-native-calendar-events",
+    "react-native-gesture-handler": "^1.5.6",
+    "react-native-mo-vibrate": "^0.1.4",
+    "react-native-reanimated": "^1.7.0",
+    "react-native-safe-area-context": "^0.7.2",
+    "react-native-screens": "^2.0.0-beta.2",
+    "react-native-webview": "6.0.2",
+    "react-navigation": "^4.1.1",
+    "react-navigation-animated-switch": "^0.4.1",
+    "react-navigation-tabs": "^2.7.0",
+    "yarn": "^1.22.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/runtime": "^7.8.4",
+    "@react-native-community/eslint-config": "^0.0.7",
+    "babel-eslint": "8",
+    "babel-jest": "^25.1.0",
+    "eslint": "4.x",
+    "jest": "^25.1.0",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "react-test-renderer": "16.9.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ]
+  ]
+}
