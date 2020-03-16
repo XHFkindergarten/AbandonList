@@ -1,7 +1,7 @@
 /**
  * 待办项卡片item
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import CardExpandModal from './cardExpandModal'
 import { correctGreen, wrongRed, setting } from 'src/assets/image'
 import { StyleSheet, TouchableOpacity, View, Animated, PanResponder, Image, Text } from 'react-native';
@@ -11,6 +11,7 @@ import { fromNow, elipsis, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import dailyStore from 'src/pages/daily/dailyStore';
 import themeContext from 'src/themeContext'
+import { Transition, Transitioning } from 'react-native-reanimated';
 
 
 
@@ -30,6 +31,13 @@ function TodoCard({ info, navigation }) {
   })
   const [ expand, setExpand ] = useState(false)
   const [ isHold, setIsHold ] = useState(false)
+
+  const [ AnimatedScaleX ] = useState(new Animated.Value(1))
+  const disappearX = Animated.spring(AnimatedScaleX, { toValue: 0 })
+  const [ AnimatedHeightY ] = useState(new Animated.Value(300))
+  const disappearY = Animated.spring(AnimatedHeightY, { toValue: 0 })
+
+
   // 因为useState的异步性,需要额外使用一个控制变量
   const handlePressIn = () => {
     setIsHold(true)
@@ -60,7 +68,8 @@ function TodoCard({ info, navigation }) {
       })
     ]).then(() => {
       setTimeout(() => {
-        srcStore.refreshTodoList(srcStore.startDay)
+        disappearX.start()
+        disappearY.start()
       }, 1000)
     })
   }
@@ -79,7 +88,8 @@ function TodoCard({ info, navigation }) {
       })
     ]).then(() => {
       setTimeout(() => {
-        srcStore.refreshTodoList(srcStore.startDay)
+        disappearX.start()
+        disappearY.start()
       }, 1000)
     })
   }
@@ -115,7 +125,8 @@ function TodoCard({ info, navigation }) {
         })
       ]).then(() => {
         setTimeout(() => {
-          srcStore.refreshTodoList(srcStore.startDay)
+          disappearX.start()
+          disappearY.start()
         }, 1000)
       })
     })
@@ -138,7 +149,8 @@ function TodoCard({ info, navigation }) {
         })
       ]).then(() => {
         setTimeout(() => {
-          srcStore.refreshTodoList(srcStore.startDay)
+          disappearX.start()
+          disappearY.start()
         }, 1000)
       })
     })
@@ -219,13 +231,14 @@ function TodoCard({ info, navigation }) {
   const fromNowTime = fromNow(info)
 
   const theme = useContext(themeContext)
-
   return (
     <View>
       <Animated.View style={ {
         transform: [
-          { translateX: AnimatedTranslateX }
-        ]
+          { translateX: AnimatedTranslateX },
+          { scaleY: AnimatedScaleX }
+        ],
+        maxHeight: AnimatedHeightY
       } }
       >
         <Animated.View
@@ -318,7 +331,6 @@ export default observer(TodoCard)
 const styles = StyleSheet.create({
   // 待办卡片
   card: {
-    // backgroundColor: '#111',
     borderRadius: 6,
     paddingLeft: 5,
     paddingRight: 5,

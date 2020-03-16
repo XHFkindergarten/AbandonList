@@ -6,6 +6,13 @@ import { observer } from 'mobx-react';
 import { Transitioning, Transition } from 'react-native-reanimated'
 export default observer(function TodoList({ expandCard, navigation }) {
   const todoList = store.todoList
+  todoList.filter((a, b) => {
+    if (a.allDay) {
+      return -1
+    } else {
+      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    }
+  })
   const listRef = useRef()
   const transition = (
     <Transition.Together>

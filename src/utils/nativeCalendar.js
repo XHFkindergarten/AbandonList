@@ -103,7 +103,7 @@ class NativeCalendar {
         // 清除这个事件的所有通知
         Notification.removeTarget(res)
         // 添加全天通知通知
-        if (allDay) {
+        if (allDay && RAB) {
           const fireDate = new Date(start)
           fireDate.setHours(8,0,0,0)
           Notification.setScheduleNotification({

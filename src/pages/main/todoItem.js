@@ -1,10 +1,10 @@
-import React, { useState, Fragment, useRef, useContext } from 'react';
+import React, { useState, Fragment, useRef, useContext, useMemo } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, PanResponder } from 'react-native';
 import store from 'src/store'
 import TodoCard from './todoCard'
-import { Transition, Transitioning } from 'react-native-reanimated';
 import { vibrate } from 'src/utils'
 import themeContext from 'src/themeContext'
+import AllDayCard from './allDayCard'
 
 
 const weekdayMap = [
@@ -33,7 +33,7 @@ const ItemHeader = ({ date }) => {
   const theme = useContext(themeContext)
   return (
     <TouchableOpacity onPress={ pressHandler }>
-      <View>
+      <View style={ { marginBottom: 10 } }>
         <Text style={ [ styles.title, { color: theme.mainText } ] }>{ isToday ? '今天' : weekdayMap[date.getDay()] }</Text>
         <Text style={ [ styles.subtitle, { color: theme.subText } ] }>{ `${date.getMonth() + 1}月${date.getDate()}日` }</Text>
       </View>
@@ -60,17 +60,6 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
       date
     })
   }
-  // 控制出现消失动画
-  const ref = useRef()
-  const transition = (
-    <Transition.Sequence>
-      <Transition.Out type="slide-top"/>
-      <Transition.Change interpolation="linear"/>
-      <Transition.In
-        type="scale"
-      />
-    </Transition.Sequence>
-  )
   const EmptyItem = () => (
     <TouchableWithoutFeedback onPress={ addItem }>
       <View style={ {
@@ -85,19 +74,27 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
     )
   } else {
     return (
-      <Transitioning.View
-        ref={ ref }
-        style={ styles.cardContainer }
-        transition={ transition }
-      >
-        { todoList.map((item) => (
-          <TodoCard
-            info={ item }
-            key={ item.id }
-            navigation={ navigation }
-          />
-        )) }
-      </Transitioning.View>
+      <View>
+        { todoList.map((item) => {
+          if (item.allDay) {
+            return (
+              <AllDayCard
+                info={ item }
+                key={ item.id }
+                navigation={ navigation }
+              />
+            )
+          } else {
+            return (
+              <TodoCard
+                info={ item }
+                key={ item.id }
+                navigation={ navigation }
+              />
+            )
+          }
+        }) }
+      </View>
     )
   }
 }
@@ -105,14 +102,17 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
 const TodoItem = ({ item, navigation }) => {
   const [ todo, setTodo ] = useState([ {} ])
   return (
-    <Fragment>
+    <View style={ {
+      marginTop: 10
+    } }
+    >
       <ItemHeader date={ item.date } />
       <ItemContent
         date={ item.date }
         navigation={ navigation }
         todo={ item.data }
       />
-    </Fragment>
+    </View>
   )
 }
 

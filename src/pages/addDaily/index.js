@@ -10,6 +10,7 @@ import { flatColorList } from 'src/common'
 import moment from 'moment'
 import { TimePickModal } from 'src/components'
 import dailyStore from 'src/pages/daily/dailyStore'
+import { toJS } from 'mobx';
 const pickDay = [
   '星期日',
   '星期一',
@@ -21,12 +22,17 @@ const pickDay = [
 ]
 
 
-const DayItem = ({ name, index, handlePress }) => {
+const DayItem = ({ name, index, handlePress, notiDay }) => {
   const onPress = () => {
     handlePress(index)
     setIsSelect(!isSelect)
   }
   const [ isSelect, setIsSelect ] = useState(false)
+  useEffect(() => {
+    if (notiDay.has(index)) {
+      setIsSelect(true)
+    }
+  }, [ notiDay ])
   return (
     <TouchableOpacity onPress={ onPress }>
       <View style={ [ styles.dayItem, isSelect && {
@@ -59,13 +65,12 @@ function AddDaily ({ navigation, route }) {
     // component did mount
     const info = route.params && route.params.info
     if (info) {
-      console.log(info)
       setTitle(info.name)
       setDes(info.des)
       setColor(info.color)
       setNoti(info.noti)
       setNotiTime(new Date(info.notiTime))
-      setNotiDay(new Set(info.notiDay))
+      setNotiDay(new Set(toJS(info.notiDay)))
       dailyStore.addDailyFormItem(info)
     } else {
       // 重置表单数据
@@ -250,6 +255,7 @@ function AddDaily ({ navigation, route }) {
                 index={ index }
                 key={ item }
                 name={ item }
+                notiDay={ notiDay }
               />
             ))
           }

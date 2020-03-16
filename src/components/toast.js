@@ -63,7 +63,7 @@ const { width } = Dimensions.get('window')
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 200,
     width,
     height: 50,
     alignItems: 'center'

@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect, useContext } from 'react';
+import React, { useState, useCallback, useEffect, useContext, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, Dimensions, Image, SafeAreaView, Platform, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, Image, SafeAreaView, Platform, ImageBackground, TouchableOpacity } from 'react-native';
 import srcStore from 'src/store'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { wallpaper, smallArrow } from 'src/assets/image'
+import { wallpaper, smallArrow, cards, chart } from 'src/assets/image'
 import { observer } from 'mobx-react';
 import Board from './board'
 import finishStore from './store'
@@ -12,7 +12,10 @@ import SetModal from './setModal'
 import { elipsis, isNewIPhone } from 'src/utils'
 import Chart from './chart'
 import themeContext from 'src/themeContext'
-
+import HistoryList from './historyList'
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
+import { Transitioning, Transition } from 'react-native-reanimated'
+const Stack = createStackNavigator()
 
 
 
@@ -104,6 +107,23 @@ function Finish({ navigation }) {
 
   const newIPhone = isNewIPhone()
 
+  // 是否显示卡片数据
+  const [ toggleCards, setToggle ] = useState(false)
+
+  const handlePressMonthName = () => {
+    ref.current.animateNextTransition()
+    setToggle(!toggleCards)
+  }
+
+  const ref = useRef()
+  const transition = (
+    <Transition.Sequence>
+      <Transition.Out type="fade" />
+      <Transition.Change interpolation="easeInOut" />
+      <Transition.In type="fade" />
+    </Transition.Sequence>
+  )
+
   return (
     <View style={ { flex: 1, backgroundColor: theme.themeColor } }>
       <ImageBackground source={ wallpaper }
@@ -136,17 +156,19 @@ function Finish({ navigation }) {
           }
         </ScrollView>
       </ImageBackground>
-
-      { /* </View> */ }
       <ScrollView
+        contentContainerStyle={ {
+          paddingTop: 30
+        } }
+        scrollEventThrottle={ 200 }
         showsHorizontalScrollIndicator={ false }
         showsVerticalScrollIndicator={ false }
-        style={ [ styles.container, {
+        style={ {
+          flex: 1,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          paddingTop: 40,
           backgroundColor: theme.mainColor
-        } ] }
+        } }
       >
         <View style={ {
           paddingBottom: 120
@@ -174,9 +196,18 @@ function Finish({ navigation }) {
                   } ] }
                 />
               </TouchableWithoutFeedback>
-              <View style={ [ styles.month, { backgroundColor: theme.themeColor } ] }>
-                <Text style={ [ styles.monthLabel, { color: theme.mainText } ] }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
-              </View>
+
+
+              <TouchableOpacity onPress={ handlePressMonthName }>
+                <View style={ [ styles.month, { backgroundColor: theme.themeColor } ] }>
+                  <Text style={ [ styles.monthLabel, { color: theme.mainText } ] }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
+
+                  <Image source={ !toggleCards ? chart : cards }
+                    style={ styles.toggleIcon }
+                  />
+                </View>
+              </TouchableOpacity>
+
               <TouchableWithoutFeedback
                 onPress={ handleNextMonth }
                 style={ {
@@ -191,15 +222,21 @@ function Finish({ navigation }) {
             <Board item={ curItem }
               monthTime={ curMonthTime }
             />
+            <Transitioning.View
+              ref={ ref }
+              transition={ transition }
+            >
+              {
+                toggleCards ? <HistoryList monthTime={ curMonthTime } /> : <Chart monthTime={ curMonthTime } />
+              }
+            </Transitioning.View>
 
 
-            <Chart monthTime={ curMonthTime } />
           </View>
-
-
           <SetModal visible={ showSetting } />
         </View>
       </ScrollView>
+
     </View>
 
 
@@ -208,13 +245,13 @@ function Finish({ navigation }) {
 export default observer(Finish)
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // paddingTop: 20,
-    // paddingLeft: 20,
-    // paddingRight: 20,
-    paddingBottom: 40
-  },
+  // container: {
+  //   flex: 1,
+  //   // paddingTop: 20,
+  //   // paddingLeft: 20,
+  //   // paddingRight: 20,
+  //   paddingBottom: 40
+  // },
   scrollItem: {
     width: width,
     alignItems: 'center',
@@ -235,8 +272,12 @@ const styles = StyleSheet.create({
   },
   month: {
     height: 50,
-    width: 140,
-    borderRadius: 14
+    // width: 140,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   monthLabel: {
     fontSize: 20,
@@ -248,5 +289,10 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     resizeMode: 'contain'
+  },
+  toggleIcon: {
+    height: 22,
+    width: 22,
+    marginLeft: 5
   }
 })

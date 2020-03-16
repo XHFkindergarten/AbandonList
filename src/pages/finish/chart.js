@@ -49,6 +49,8 @@ const RenderItem = ({ item, max }) => {
   )
 }
 
+let timeoutId
+
 function Chart({ monthTime }) {
   const dailyLog = dailyStore.dailyLog
   const data = []
@@ -76,11 +78,14 @@ function Chart({ monthTime }) {
   useEffect(() => {
     const beforeDays = new Date().getDate() - 1
     if ( beforeDays > 4 && ref.current) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         ref.current.scrollTo({
           x: 62 * (beforeDays - 3)
         })
       }, 1000)
+    }
+    return () => {
+      clearTimeout(timeoutId)
     }
   }, [])
 

@@ -6,7 +6,7 @@ import { vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import { correct } from 'src/assets/image'
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
-import { useFocusEffect } from '@react-navigation/native'
+// import { useFocusEffect } from '@react-navigation/native'
 import { observer } from 'mobx-react';
 import AddCalendar from './addCalendar'
 

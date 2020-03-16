@@ -84,7 +84,7 @@ function Add({ route }) {
       handleGroupIdChange(info.calendar.id)
       handleStartChange(new Date(info.startDate))
       handleEndChange(new Date(info.endDate))
-      handleAllDayChange(info.allDay)
+      handleAllDayChange(info.allDay, false)
       handleRepeatChange(info.recurrence)
       Notification.getScheduleList().then(res => {
         const scheduleList = res.filter(item => item.userInfo.id === info.id)
@@ -167,30 +167,33 @@ function Add({ route }) {
     updateFormData({ repeat: value })
   }
   // 处理【选中/取消】全天
-  const handleAllDayChange = newValue => {
+  const handleAllDayChange = (newValue, flag = true) => {
     contentRef.current.animateNextTransition()
     setAllDay(newValue)
     updateFormData({ allDay: newValue })
-    if (newValue && isMounted) {
-      toast('提醒时间被设置在当天早晨8:00')
+    if (flag) {
+      if (newValue && RAB) {
+        toast('提醒时间被设置在当天早晨8:00')
+      }
     }
   }
   const handleRAEChange = newValue => {
     setRAE(newValue)
     updateFormData({ RAE: newValue })
-    if (isMounted) {
-      if (newValue && RAB) {
-        toast('将会在事件开始和结束时设置提醒')
-      } else if (newValue) {
-        toast('将会在事件结束时设置提醒')
-      }
+    if (newValue && RAB) {
+      toast('将会在事件开始和结束时设置提醒')
+    } else if (newValue) {
+      toast('将会在事件结束时设置提醒')
     }
   }
   const handleRABChange = newValue => {
+    contentRef.current.animateNextTransition()
     setRAB(newValue)
     updateFormData({ RAB: newValue })
     if (isMounted) {
-      if (newValue && RAE ) {
+      if (allDay && newValue) {
+        toast('将会在当天早晨8:00提醒')
+      } else if (newValue && RAE ) {
         toast('将会在事件开始和结束时设置提醒')
       } else if (newValue) {
         toast('将会在事件开始时提醒')
@@ -335,17 +338,31 @@ function Add({ route }) {
             </View>
 
             <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>Groups</Text>
+              <Text style={ styles.itemLabel }>分组</Text>
               <TouchableOpacity onPress={ groupModalOpen }>
                 <Text style={ styles.itemValue }>{ selectGroup.title }</Text>
               </TouchableOpacity>
             </View>
             <View style={ styles.itemRow } >
-              <Text style={ styles.itemLabel }>Reminds</Text>
+              <Text style={ styles.itemLabel }>提醒</Text>
               <Switch
                 onValueChange={ handleRABChange }
                 trackColor={ { false: '', true: '#4192D9' } }
                 value={ RAB }
+              />
+            </View>
+            <View style={ styles.itemRow }>
+              <Text style={ styles.itemLabel }>重复</Text>
+              <TouchableOpacity onPress={ repeatModalOpen }>
+                <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={ styles.itemRow }>
+              <Text style={ styles.itemLabel }>全天</Text>
+              <Switch
+                onValueChange={ handleAllDayChange }
+                trackColor={ { false: '', true: '#4192D9' } }
+                value={ allDay }
               />
             </View>
             <View style={ {
@@ -355,30 +372,22 @@ function Add({ route }) {
               backgroundColor: '#2F2F2F'
             } }
             />
-            <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>All day</Text>
-              <Switch
-                onValueChange={ handleAllDayChange }
-                trackColor={ { false: '', true: '#4192D9' } }
-                value={ allDay }
-              />
-            </View>
-            { !allDay && (
+            { (RAB && !allDay) && (
               <Fragment>
                 <View style={ styles.itemRow }>
-                  <Text style={ styles.itemLabel }>Starts</Text>
+                  <Text style={ styles.itemLabel }>开始时间</Text>
                   <TouchableOpacity onPress={ startModalOpen }>
                     <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={ styles.itemRow }>
-                  <Text style={ styles.itemLabel }>Ends</Text>
+                  <Text style={ styles.itemLabel }>结束时间</Text>
                   <TouchableOpacity onPress={ endModalOpen }>
                     <Text style={ styles.itemValue }>{ moment(end).format('lll') }</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={ styles.itemRow }>
-                  <Text style={ styles.itemLabel }>Reminds at end</Text>
+                  <Text style={ styles.itemLabel }>结束时提醒</Text>
                   <Switch
                     onValueChange={ handleRAEChange }
                     trackColor={ { false: '', true: '#4192D9' } }
@@ -387,12 +396,6 @@ function Add({ route }) {
                 </View>
               </Fragment>
             ) }
-            <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>Repeats</Text>
-              <TouchableOpacity onPress={ repeatModalOpen }>
-                <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
-              </TouchableOpacity>
-            </View>
           </Transitioning.View>
           <GroupModal
             groups={ groups }
