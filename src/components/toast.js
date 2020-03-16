@@ -20,23 +20,24 @@ export default function Toast({ visible, setVisible, message }) {
   const [ show, setShow ] = useState(false)
   const ref = useRef()
   useEffect(() => {
-    if (ref.current) {
-      // setTimeout(() => {
+    // 清除所有定时器
+    clearTimeout(timeoutId1)
+    clearTimeout(timeoutId2)
+    if (visible) {
       if (ref.current) {
         ref.current.animateNextTransition()
+        setShow(true)
       }
-      setShow(true)
-      // })
+      timeoutId1 = setTimeout(() => {
+        if (ref.current) {
+          ref.current.animateNextTransition()
+        }
+        setShow(false)
+        timeoutId2 = setTimeout(() => {
+          setVisible(false)
+        }, 300)
+      }, 2000)
     }
-    timeoutId1 = setTimeout(() => {
-      if (ref.current) {
-        ref.current.animateNextTransition()
-      }
-      setShow(false)
-      timeoutId2 = setTimeout(() => {
-        setVisible(false)
-      }, 300)
-    }, 1200)
     return () => {
       clearTimeout(timeoutId1)
       clearTimeout(timeoutId2)

@@ -40,11 +40,13 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>请求获取日历权限</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/CenturyGothic.ttf</string>
 		<string>fonts/ADAM.ttf</string>
+		<string>ADAM.ttf</string>
+		<string>CenturyGothic.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

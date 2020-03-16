@@ -1,9 +1,10 @@
-import React, { useState, Fragment, useRef } from 'react';
+import React, { useState, Fragment, useRef, useContext } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, PanResponder } from 'react-native';
 import store from 'src/store'
 import TodoCard from './todoCard'
 import { Transition, Transitioning } from 'react-native-reanimated';
 import { vibrate } from 'src/utils'
+import themeContext from 'src/themeContext'
 
 
 const weekdayMap = [
@@ -29,11 +30,12 @@ const ItemHeader = ({ date }) => {
   const today = new Date()
   // 是否是今天
   const isToday = today.setHours(0,0,0,0) === date.setHours(0,0,0,0)
+  const theme = useContext(themeContext)
   return (
     <TouchableOpacity onPress={ pressHandler }>
       <View>
-        <Text style={ styles.title }>{ isToday ? '今天' : weekdayMap[date.getDay()] }</Text>
-        <Text style={ styles.subtitle }>{ `${date.getMonth() + 1}月${date.getDate()}日` }</Text>
+        <Text style={ [ styles.title, { color: theme.mainText } ] }>{ isToday ? '今天' : weekdayMap[date.getDay()] }</Text>
+        <Text style={ [ styles.subtitle, { color: theme.subText } ] }>{ `${date.getMonth() + 1}月${date.getDate()}日` }</Text>
       </View>
     </TouchableOpacity>
   )
@@ -119,20 +121,14 @@ export default TodoItem
 const styles = StyleSheet.create({
   // 主标题
   title: {
-    color: '#DBDBDB',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700'
   },
   // 副标题
   subtitle: {
-    color: '#616161',
     fontSize: 12,
     marginTop: 6
   },
-  // 没有待办时的占位
-  // gapItem: {
-  //   height: 80
-  // },
   // 卡片容器
   cardContainer: {
     paddingBottom: 40,

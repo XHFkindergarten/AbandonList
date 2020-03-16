@@ -132,8 +132,8 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
     { ..._panResponder.panHandlers }
     >
       <View style={ styles.leftContent }>
-        <Text style={ styles.title }>{ elipsis(info.name, 17) }</Text>
-        <Text style={ styles.subTitle }>{ elipsis(info.des, 32) }</Text>
+        <Text style={ styles.title }>{ elipsis(info.name, 50) }</Text>
+        { /* <Text style={ styles.subTitle }>{ elipsis(info.des, 32) }</Text> */ }
       </View>
       <View style={ styles.rightContent }>
         {
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: 14,
     marginBottom: 5
   },
   subTitle: {

@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
-import { info_, time, list, correctGreen, wrongRed } from 'src/assets/image'
+import { info_, ring, correctGreen, wrongRed, shalou } from 'src/assets/image'
+import moment from 'moment/min/moment-with-locales'
 import srcStore from 'src/store'
-import { fromNow } from 'src/utils'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Notification from 'src/utils/Notification'
+import ThemeContext from 'src/themeContext'
 
+moment.locale('zh-cn');
 const { width, height } = Dimensions.get('window')
 const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
-  console.log('card expanded', info)
   const handleClose = () => {
     setVisible(false)
     srcStore.preventOtherHandler = false
@@ -20,8 +22,28 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
       toValue: 1
     }).start()
   }, [])
+  const [ ringText, setRingText ] = useState('')
+  Notification.getScheduleList().then(res => {
+    if (info.allDay) {
+      setRingText('将会在当日早晨8:00AM提醒')
+      return
+    }
+    const scheduleList = res.filter(item => item.userInfo.id === info.id)
+    if (scheduleList.length === 2) {
+      setRingText('将会在事件开始和结束时时提醒')
+    } else if (scheduleList.length === 1) {
+      if (scheduleList[0].alertBody.endsWith('开始')) {
+        setRingText('将会在事件开始时提醒')
+      } else if (scheduleList[0].alertBody.endsWith('结束')) {
+        setRingText('将会在事件结束时提醒')
+      }
+    } else {
+      setRingText('未设置提醒')
+    }
+  })
 
-  const outputTime = fromNow(info)
+  const theme = useContext(ThemeContext)
+
   return (
     <Modal
       animationType="fade"
@@ -38,6 +60,7 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
         />
       </TouchableWithoutFeedback>
       <Animated.View style={ [ styles.card, {
+        backgroundColor: theme.subColor,
         transform: [ { scaleY: AnimatedScale } ]
       } ] }
       >
@@ -54,7 +77,7 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
             } ] }
             />
             <Text style={ {
-              color: '#FFF',
+              color: theme.subText,
               fontSize: 16,
               fontWeight: '500'
             } }
@@ -64,13 +87,38 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
             <Image source={ info_ }
               style={ styles.icon }
             ></Image>
-            <Text style={ styles.content }>{ info.notes ? info.notes : 'No Description' }</Text>
+            <Text style={ styles.content }>{ info.notes ? info.notes : '暂无备注' }</Text>
           </View>
+          {
+            info.allDay ? (
+              <View style={ styles.row }>
+                <Image source={ shalou }
+                  style={ [ styles.icon, { transform: [ { rotate: '180deg' } ] } ] }
+                ></Image>
+                <Text style={ styles.content }>{ moment(info.startDate).format('LL') + '全天' }</Text>
+              </View>
+            ) : (
+              <Fragment>
+                <View style={ styles.row }>
+                  <Image source={ shalou }
+                    style={ [ styles.icon, { transform: [ { rotate: '180deg' } ] } ] }
+                  ></Image>
+                  <Text style={ styles.content }>{ moment(info.startDate).format('LLL') }</Text>
+                </View>
+                <View style={ styles.row }>
+                  <Image source={ shalou }
+                    style={ styles.icon }
+                  ></Image>
+                  <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
+                </View>
+              </Fragment>
+            )
+          }
           <View style={ styles.row }>
-            <Image source={ time }
+            <Image source={ ring }
               style={ styles.icon }
             ></Image>
-            <Text style={ styles.content }>{ outputTime }</Text>
+            <Text style={ styles.content }>{ ringText }</Text>
           </View>
         </View>
         <View style={ {
@@ -120,12 +168,13 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingTop: 30,
     paddingBottom: 30,
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: 30,
+    paddingRight: 30
   },
   cardName: {
-    fontSize: 24,
+    fontSize: 18,
     lineHeight: 30,
+    fontWeight: '600',
     color: '#FFF',
     marginBottom: 10,
     // fontWeight: '900',

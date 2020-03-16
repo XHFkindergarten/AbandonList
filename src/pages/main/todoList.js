@@ -13,10 +13,6 @@ export default observer(function TodoList({ expandCard, navigation }) {
         durationMs={ 300 }
         type="fade"
       />
-      { /* <Transition.Change
-        interpolation="easeInOut"
-        type="fade"
-      /> */ }
       <Transition.Out
         durationMs={ 300 }
         type="fade"
@@ -37,6 +33,7 @@ export default observer(function TodoList({ expandCard, navigation }) {
     >
       <ScrollView
         contentContainerStyle={ {
+          paddingTop: 20,
           paddingBottom: 100
         } }
         keyboardDismissMode="on-drag"

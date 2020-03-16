@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, Fragment, useCallback } from 'react';
-import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Text, Switch, TouchableOpacity, Animated, Keyboard } from 'react-native';
+import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
 import { Transitioning, Transition } from 'react-native-reanimated';
 import moment from 'moment'
 import nativeCalendar from 'src/utils/nativeCalendar'
@@ -10,6 +10,11 @@ import { Toast } from 'src/components'
 import RepeatModal from './repeatModal'
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
+import Notification from 'src/utils/Notification'
+
+
+
+
 const { width } = Dimensions.get('window')
 function Add({ route }) {
   // 路由活跃和不活跃时控制底部栏状态
@@ -46,10 +51,8 @@ function Add({ route }) {
   }, [])
 
   // 获取路由参数
-  // let { params: { date = new Date() } } = route
   let { date, info } = route.params || {}
-  // console.log('date', date)
-  // console.log('info', info)
+
   const textInputRef = useRef()
 
   // 更新表单数据方法
@@ -71,6 +74,7 @@ function Add({ route }) {
   const [ isMounted, setIsMounted ] = useState(false)
   // component did mount
   useEffect(() => {
+    console.log(info)
     if (info) {
       // 上传ID,同时也是编辑页面的标识信息
       handleIdInit(info.id)
@@ -82,6 +86,17 @@ function Add({ route }) {
       handleEndChange(new Date(info.endDate))
       handleAllDayChange(info.allDay)
       handleRepeatChange(info.recurrence)
+      Notification.getScheduleList().then(res => {
+        const scheduleList = res.filter(item => item.userInfo.id === info.id)
+        if (scheduleList.length === 2) {
+          setRAE(true)
+          setRAB(true)
+          updateFormData({ RAE: true, RAB: true })
+        } else {
+          setRAB(true)
+          updateFormData({ RAB: true })
+        }
+      })
     } else {
       updateFormData({
         start: defaultStartTime,
@@ -322,10 +337,10 @@ function Add({ route }) {
             <View style={ styles.itemRow }>
               <Text style={ styles.itemLabel }>Groups</Text>
               <TouchableOpacity onPress={ groupModalOpen }>
-                <Text style={ styles.itemLabel }>{ selectGroup.title }</Text>
+                <Text style={ styles.itemValue }>{ selectGroup.title }</Text>
               </TouchableOpacity>
             </View>
-            <View style={ styles.itemRow }>
+            <View style={ styles.itemRow } >
               <Text style={ styles.itemLabel }>Reminds</Text>
               <Switch
                 onValueChange={ handleRABChange }
@@ -333,10 +348,14 @@ function Add({ route }) {
                 value={ RAB }
               />
             </View>
-            <View style={ [ styles.itemRow, {
-              marginTop: 40
-            } ] }
-            >
+            <View style={ {
+              marginTop: 20,
+              marginBottom: 20,
+              height: 2 / PixelRatio.get(),
+              backgroundColor: '#2F2F2F'
+            } }
+            />
+            <View style={ styles.itemRow }>
               <Text style={ styles.itemLabel }>All day</Text>
               <Switch
                 onValueChange={ handleAllDayChange }
@@ -349,13 +368,13 @@ function Add({ route }) {
                 <View style={ styles.itemRow }>
                   <Text style={ styles.itemLabel }>Starts</Text>
                   <TouchableOpacity onPress={ startModalOpen }>
-                    <Text style={ styles.itemLabel }>{ moment(start).format('lll') }</Text>
+                    <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={ styles.itemRow }>
                   <Text style={ styles.itemLabel }>Ends</Text>
                   <TouchableOpacity onPress={ endModalOpen }>
-                    <Text style={ styles.itemLabel }>{ moment(end).format('lll') }</Text>
+                    <Text style={ styles.itemValue }>{ moment(end).format('lll') }</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={ styles.itemRow }>
@@ -371,7 +390,7 @@ function Add({ route }) {
             <View style={ styles.itemRow }>
               <Text style={ styles.itemLabel }>Repeats</Text>
               <TouchableOpacity onPress={ repeatModalOpen }>
-                <Text style={ styles.itemLabel }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
+                <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
               </TouchableOpacity>
             </View>
           </Transitioning.View>
@@ -429,18 +448,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#2F2F2F',
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.6,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 }
   },
   textInput: {
     height: 30,
-    // minWidth: 120,
     width: width - 80,
     fontSize: 16,
     color: '#FFF',
     textAlign: 'center'
   },
-  itemLabel: {
+  itemValue: {
     color: '#dbdbdb',
+    fontSize: 16,
+    lineHeight: 20,
+    paddingTop: 20,
+    paddingBottom: 20
+    // fontWeight: '300'
+  },
+  itemLabel: {
+    fontWeight: '500',
+    color: '#FFF',
     fontSize: 16,
     lineHeight: 20,
     paddingTop: 20,

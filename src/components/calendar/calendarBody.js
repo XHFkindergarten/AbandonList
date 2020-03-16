@@ -2,22 +2,24 @@
  * 日历组件
  */
 import React, { useState, useRef, Fragment, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, Dimensions, Image } from 'react-native'
+import { View, StyleSheet, ScrollView, Dimensions, Image, Animated } from 'react-native'
 import WeekTitle from './weekTitle'
 import WeekList from './weekList'
 import store from './store'
 import srcStore from 'src/store'
 import { observer } from 'mobx-react';
 import { down1 } from 'src/assets/image'
-import { Transitioning, Transition } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { vibrate } from 'src/utils'
 // 获取当前手机视窗宽度
 const { width } = Dimensions.get('window')
 
+const itemHeight = (width - 180) / 7 + 16
+const maxHeight = itemHeight * 6
+let isExpanded = false
+
 function CalendarBody (){
-  const [ isExpanded, setIsExpanded ] = useState(false)
-  // const [ isScrolling, setIsScrolling ] = useState(false)
-  const TransitionRef = useRef()
+  // const [ isExpanded, setIsExpanded ] = useState(false)
   // 控制切换动画ref
   const scrollViewRef = useRef()
   const rePosition = () => {
@@ -25,16 +27,26 @@ function CalendarBody (){
   }
 
   const toggleExpand = useCallback(() => {
+    // 展开状态时点击无效
+    if (store.shift) {
+      return
+    }
+    vibrate(0)
+    store.shift = true
     if (isExpanded) {
-      // 展开时上划收起
-      TransitionRef.current.animateNextTransition()
-      setIsExpanded(false)
-      store.updateIsExpand(false)
+      miniAnimation.start(() => {
+        isExpanded = false
+        // 展开时上划收起
+        store.updateIsExpand(false)
+        store.shift = false
+      })
     } else {
+      expandAnimation.start(() => {
+        isExpanded = true
+        store.updateIsExpand(true)
+        store.shift = false
+      })
       store.clearMonthHeader()
-      TransitionRef.current.animateNextTransition()
-      setIsExpanded(true)
-      store.updateIsExpand(true)
     }
   })
   const scrollEndHandler = (event) => {
@@ -48,17 +60,28 @@ function CalendarBody (){
       rePosition()
     }
   }
-  const transition = (
-    <Transition.Sequence>
-      <Transition.Out durationMs={ 300 }
-        type="scale"
-      />
-      <Transition.Change interpolation="linear" />
-      <Transition.In durationMs={ 300 }
-        type="fade"
-      />
-    </Transition.Sequence>
-  );
+
+  // 控制高度展开动画
+  const [ AnimatedExpand ] = useState(new Animated.Value(0))
+  const expandAnimation = Animated.timing(AnimatedExpand, {
+    toValue: 1,
+    durationMs: 1000
+  })
+  const miniAnimation = Animated.timing(AnimatedExpand, {
+    toValue: 0,
+    durationMs: 1000
+  })
+
+  const animatedHeight = AnimatedExpand.interpolate({
+    inputRange: [ 0, 1 ],
+    outputRange: [ itemHeight, maxHeight ]
+  })
+
+  const animatedScaleY = AnimatedExpand.interpolate({
+    inputRange: [ 0, 1 ],
+    outputRange: [ 1, -1 ]
+  })
+
   return (
     <View style={ styles.container }>
       <WeekTitle width={ width } />
@@ -74,87 +97,70 @@ function CalendarBody (){
         showsVerticalScrollIndicator={ false }
       >
         { store.flatWeekList.map((item, index) => {
-          const needGap = store.beginMonthListData[index].length + store.endMonthListData[index].length < 5
-          // const _blackItem = 5 - store.beginMonthListData[index].length - store.endMonthListData[index].length
+          const prevRows = store.beginMonthListData[index].length
+          const needGap = prevRows + store.endMonthListData[index].length < 5
+          const translateAnimation = AnimatedExpand.interpolate({
+            inputRange: [ 0, 1 ],
+            outputRange: [ -itemHeight * prevRows, 0 ]
+          })
           return (
-            <View
+            <Animated.View
               key={ item[0] ? item[0].getTime() : item[6].getTime() }
-              style={ { width: width - 60 } }
+              style={ {
+                width: width - 60,
+                height: animatedHeight,
+                transform: [ { translateY: translateAnimation } ]
+              } }
             >
-              {
-                index === 1 ? (
-                  <Transitioning.View
-                    ref={ TransitionRef }
-                    transition={ transition }
-                  >
-                    {
-                      isExpanded && store.beginMonthListData[index].map(list => (
-                        <WeekList
-                          index={ index }
-                          key={ list[6] }
-                          weekArray={ list }
-                        ></WeekList>
-                      ))
-                    }
+              <Animated.View
+                style={ {
+                  opacity: AnimatedExpand
+                } }
+              >
+                {
+                  store.beginMonthListData[index].map(list => (
                     <WeekList
                       index={ index }
-                      weekArray={ item }
+                      key={ list[6] }
+                      weekArray={ list }
                     ></WeekList>
-                    { isExpanded && (
-                      <Fragment>
-                        {
-                          store.endMonthListData[index].map(list => (
-                            <WeekList
-                              index={ index }
-                              key={ list[6] }
-                              weekArray={ list }
-                            ></WeekList>
-                          )) }
-                        {
-                          needGap && (
-                            <View style={ { height: 49 } } />
-                          )
-                        }
-                      </Fragment>
-                    ) }
-                  </Transitioning.View>
-                ) : (
-                  <View>
-                    {
-                      isExpanded && store.beginMonthListData[index].map(list => (
-                        <WeekList
-                          index={ index }
-                          key={ list[6] + Math.random() }
-                          weekArray={ list }
-                        ></WeekList>
-                      ))
-                    }
+                  ))
+                }
+              </Animated.View>
+              <WeekList
+                index={ index }
+                weekArray={ item }
+              ></WeekList>
+              <Animated.View
+                style={ {
+                  opacity: AnimatedExpand
+                } }
+              >
+                {
+                  store.endMonthListData[index].map(list => (
                     <WeekList
                       index={ index }
-                      weekArray={ item }
+                      key={ list[6] }
+                      weekArray={ list }
                     ></WeekList>
-                    { isExpanded && store.endMonthListData[index].map(list => (
-                      <WeekList
-                        index={ index }
-                        key={ list[6] }
-                        weekArray={ list }
-                      ></WeekList>
-                    )) }
-                  </View>
-                )
-              }
-
-            </View>
+                  )) }
+                {
+                  needGap && (
+                    <View style={ { height: itemHeight } } />
+                  )
+                }
+              </Animated.View>
+            </Animated.View>
           )
         }) }
       </ScrollView>
       <TouchableOpacity onPress={ toggleExpand }>
         <View style={ styles.touchBarContainer }>
-          <Image source={ down1 }
+          <Animated.Image source={ down1 }
             style={ {
               height: 20,
               resizeMode: 'contain',
-              transform: [ { scaleX: 2 },{ rotate: isExpanded ? '180deg' : '0deg' } ]
+              transform: [ { scaleX: 2 },{ scaleY: animatedScaleY } ]
             } }
           />
         </View>

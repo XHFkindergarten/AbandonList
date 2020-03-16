@@ -1,13 +1,16 @@
 /**
  * 图表组件
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { View, StyleSheet, Text, Animated } from 'react-native'
 import { observer } from 'mobx-react';
 import dailyStore from '../daily/dailyStore';
 import { getMonthDay } from 'src/utils'
 import moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
+import themeContext from 'src/themeContext'
+
+
 // 生成柱状数据
 const RenderItem = ({ item, max }) => {
   const [ _isMount, _setIsMount ] = useState(false)
@@ -16,7 +19,7 @@ const RenderItem = ({ item, max }) => {
     return () => {
       _setIsMount(false)
     }
-  })
+  }, [])
   const [ showHeight ] = useState(new Animated.Value(0))
   useEffect(() => {
     Animated.spring(showHeight, {
@@ -29,16 +32,19 @@ const RenderItem = ({ item, max }) => {
   } else {
     height = item.number * 180 / max
   }
+
+  const theme = useContext(themeContext)
   return (
     <View style={ styles.itemContainer }>
 
-      <Text style={ styles.chartTopLabel }>{ item.number ? item.number : '' }</Text>
+      <Text style={ [ styles.chartTopLabel, { color: theme.mainText } ] }>{ item.number ? item.number : '' }</Text>
 
       <Animated.View style={ [ styles.chartItem, {
+        backgroundColor: theme.themeColor,
         height: showHeight
       } ] }
       />
-      <Text style={ styles.chartLabel }>{ item.date.slice(5, 10) }</Text>
+      <Text style={ [ styles.chartLabel, { color: theme.mainText } ] }>{ item.date.slice(5, 10) }</Text>
     </View>
   )
 }
@@ -65,10 +71,23 @@ function Chart({ monthTime }) {
       number
     })
   }
+  const ref = useRef()
+
+  useEffect(() => {
+    const beforeDays = new Date().getDate() - 1
+    if ( beforeDays > 4 && ref.current) {
+      setTimeout(() => {
+        ref.current.scrollTo({
+          x: 62 * (beforeDays - 3)
+        })
+      }, 1000)
+    }
+  }, [])
 
   return (
     <ScrollView
       horizontal
+      ref={ ref }
       scrollEnabled
       showsHorizontalScrollIndicator={ false }
       showsVerticalScrollIndicator={ false }
@@ -100,7 +119,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   chartItem: {
-    backgroundColor: '#4192D9',
     width: 30,
     marginLeft: 16,
     marginRight: 16,
@@ -109,11 +127,9 @@ const styles = StyleSheet.create({
   },
   chartLabel: {
     marginTop: 5,
-    color: '#FFF',
     fontSize: 12
   },
   chartTopLabel: {
-    color: '#FFF',
     fontSize: 16,
     marginBottom: 5
   }

@@ -1,9 +1,14 @@
 /**
  * Finish页面 -> 数据面板
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, PixelRatio, View, Text } from 'react-native';
 import moment from 'moment';
+import themeContext from 'src/themeContext'
+
+
+
+
 let timer1, timer2, timer3
 export default function Board({ item, monthTime }) {
   useEffect(() => {
@@ -65,19 +70,26 @@ export default function Board({ item, monthTime }) {
       }
     }, gapTime)
   }
+
+  const theme = useContext(themeContext)
+
   return (
-    <View style={ styles.dataSummary }>
+    <View style={ [ styles.dataSummary, {
+      borderTopColor: theme.gapLine,
+      borderBottomColor: theme.gapLine
+    } ] }
+    >
       <View style={ styles.dataItem }>
-        <Text style={ styles.dataNum }>{ showMonth }</Text>
-        <Text style={ styles.dataExplain }>{ '本月完成次数' }</Text>
+        <Text style={ [ styles.dataNum, { color: theme.mainText } ] }>{ showMonth }</Text>
+        <Text style={ [ styles.dataExplain, { color: theme.mainText } ] }>{ '本月完成次数' }</Text>
       </View>
       <View style={ styles.dataItem }>
-        <Text style={ styles.dataNum }>{ showContinue }</Text>
-        <Text style={ styles.dataExplain }>{ isOverView ? '本月处理天数' : '连续完成天数' }</Text>
+        <Text style={ [ styles.dataNum, { color: theme.mainText } ] }>{ showContinue }</Text>
+        <Text style={ [ styles.dataExplain, { color: theme.mainText } ] }>{ isOverView ? '本月处理天数' : '连续完成天数' }</Text>
       </View>
       <View style={ styles.dataItem }>
-        <Text style={ styles.dataNum }>{ showAll }</Text>
-        <Text style={ styles.dataExplain }>累计完成次数</Text>
+        <Text style={ [ styles.dataNum, { color: theme.mainText } ] }>{ showAll }</Text>
+        <Text style={ [ styles.dataExplain, { color: theme.mainText } ] }>累计完成次数</Text>
       </View>
     </View>
   )
@@ -90,9 +102,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     minHeight: 80,
-    borderTopColor: '#999',
     borderTopWidth: 1 / PixelRatio.get(),
-    borderBottomColor: '#999',
     borderBottomWidth: 1 / PixelRatio.get(),
     paddingTop: 30,
     paddingBottom: 30
@@ -101,15 +111,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   dataNum: {
-    color: '#DBDBDB',
     fontSize: 40,
     fontFamily: 'ADAM.CG PRO',
-    // fontFamily: 'Century Gothic',
     fontWeight: '900'
   },
   dataExplain: {
     marginTop: 6,
-    fontSize: 12,
-    color: '#FFF'
+    fontSize: 12
   }
 })

@@ -385,6 +385,9 @@ class DailyStore {
     await this.initialDailyLog()
     this.initialDailyList()
   }
+
+
+
 }
 
 export default new DailyStore()

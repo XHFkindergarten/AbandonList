@@ -1,4 +1,4 @@
-import React, { createRef, Component, useState, useRef } from 'react';
+import React, { createRef, Component, useState, useRef, useContext } from 'react';
 import CalendarBody from './calendarBody'
 import MonthName from './monthName'
 import { View, StyleSheet, Animated } from 'react-native';
@@ -6,6 +6,9 @@ import store from './store'
 import srcStore from 'src/store'
 import { observer } from 'mobx-react';
 import { Transitioning, Transition } from 'react-native-reanimated';
+import themeContext from 'src/themeContext'
+
+
 function Calendar() {
   const [ showCanlendar, setShowCalendar ] = useState(false)
   const ref = useRef()
@@ -15,10 +18,6 @@ function Calendar() {
     // 清空选中日期
     srcStore.updateTargetDate(null)
     ref.current.animateNextTransition()
-    // if (showCanlendar) {
-    // } else {
-
-    // }
     setShowCalendar(!showCanlendar)
   }
 
@@ -32,8 +31,13 @@ function Calendar() {
     </Transition.Sequence>
   )
 
+  const theme = useContext(themeContext)
+
   return (
-    <View style={ styles.container }>
+    <View style={ [ styles.container, {
+      backgroundColor: theme.mainColor
+    } ] }
+    >
       <MonthName
         currentMonth={ store.currentMonth }
         onPress={ handlePressMonthName }
@@ -55,8 +59,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingLeft: 30,
     paddingRight: 30,
-    backgroundColor: '#111',
-    // paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     justifyContent: 'flex-start'

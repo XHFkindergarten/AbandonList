@@ -1,6 +1,10 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 import RNCalendarEvents from 'react-native-calendar-events'
 import nativeCalendar from 'src/utils/nativeCalendar'
+import AsyncStorage from '@react-native-community/async-storage'
+import moment from 'moment'
+
+const historyKey = '@h1story_list_key'
 class Store {
   // 设置弹框是否活跃
   @observable
@@ -79,6 +83,54 @@ class Store {
         // TODO: 提示这是无法删除的日历
         reject(err)
       })
+    })
+  }
+
+  /* 历史已完成(删除)数据 */
+  @observable
+  historyList = {}
+  @action
+  updateHistoryList = value => this.historyList = value
+  @action
+  updateHistoryItem = (monthKey, info) => {
+    // 同一个月同一个事件只允许完成一次
+    if (this.historyList[monthKey] && !this.historyList[monthKey][info.id]) {
+      this.historyList = {
+        ...this.historyList,
+        [monthKey]: {
+          ...this.historyList[monthKey],
+          [info.id]: info
+        }
+      }
+    }
+  }
+  saveHistory = () => {
+    console.log('save history', this.historyList)
+    AsyncStorage.setItem(historyKey, JSON.stringify(toJS(this.historyList)))
+  }
+  /**
+   * 初始化历史记录列表
+   */
+  initialHistoryList = async () => {
+    const hisStr = await AsyncStorage.getItem(historyKey)
+    const hisData = JSON.parse(hisStr) || {}
+    const monthKey = moment(new Date()).format('YYYY-MM')
+    if (!(monthKey in hisData)) {
+      hisData[monthKey] = {}
+    }
+    this.updateHistoryList(hisData)
+  }
+  // 将完成/删除事件添加到数据中
+  addHistoryItem = (item, isDelete) => {
+    return new Promise((resolve) => {
+      // JS化数据
+      const JSItem = toJS(item)
+      JSItem.isDelete = isDelete
+      const monthKey = moment(new Date()).format('YYYY-MM')
+      this.updateHistoryItem(monthKey, JSItem)
+      // 保存到本地存储
+      this.saveHistory()
+      resolve()
     })
   }
 

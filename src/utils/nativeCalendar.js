@@ -4,6 +4,7 @@ import { observable, action, toJS } from 'mobx'
 import AsyncStorage from '@react-native-community/async-storage'
 import finishStore from 'src/pages/finish/store'
 import Notification from './Notification'
+import dailyStore from 'src/pages/daily/dailyStore'
 /**
  * 原生日历模块
  */
@@ -90,8 +91,8 @@ class NativeCalendar {
     return new Promise((resolve, reject) => {
       const details = Object.assign({}, {
         calendarId: groupId,
-        startDate: start,
-        endDate: end,
+        startDate: convertDateIOS(new Date(start)),
+        endDate: convertDateIOS(new Date(end)),
         allDay,
         notes: description
       }, repeatOption, idOption)
@@ -154,7 +155,7 @@ class NativeCalendar {
         event.id,
         {
           futureEvents,
-          exceptionDate: new Date(event.startDate)
+          exceptionDate: convertDateIOS(new Date(event.startDate))
         }
       )
         .then(async res =>{
@@ -194,9 +195,11 @@ class NativeCalendar {
               }
             }
           }
-          resolve(res)})
+          // 将该事件保存到历史记录中
+          finishStore.addHistoryItem(event, futureEvents)
+          resolve(res)
+        })
         .catch(err => {
-          // throw new Error('标记事件失败', err)
           reject(err)
         })
     })
@@ -330,6 +333,7 @@ class NativeCalendar {
       console.log('end', new Date(monthEnd))
       RNCalendarEvents.fetchAllEvents(convertDateIOS(new Date(monthStart)), convertDateIOS(new Date(monthEnd)), this.visibleGroupIds)
         .then(res => {
+          // Alert.alert(res.length.toString())
           const tempObj = {}
           res.forEach(item => {
             const key = moment(item.startDate).format('YYYY-MM-DD')

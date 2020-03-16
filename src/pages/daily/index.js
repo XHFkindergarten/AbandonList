@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useContext } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, PixelRatio, SafeAreaView } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { observer } from 'mobx-react';
 import dailyStore from './dailyStore'
 import DeleteModal from './deleteModal'
 import DailyItem from './dailyItem'
 import srcStore from 'src/store'
+import themeContext from 'src/themeContext'
 
 function Daily({ navigation }) {
   useFocusEffect(
@@ -111,10 +112,18 @@ function Daily({ navigation }) {
     navigation.navigate('AddDaily')
   }
 
+  const theme = useContext(themeContext)
+
   return (
-    <View style={ styles.container }>
-      <View style={ styles.header }>
-        <Text style={ styles.pageTitle }>Daily</Text>
+    <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
+      <View style={ [ styles.header , {
+        backgroundColor: theme.mainColor
+      } ] }
+      >
+        <Text style={ [ styles.pageTitle, {
+          color: theme.mainText
+        } ] }
+        >Daily</Text>
         {
           showDelete ? (
             <TouchableOpacity onPress={ handleConfirmDelete }>
@@ -129,6 +138,7 @@ function Daily({ navigation }) {
           ) : (
             <TouchableOpacity onPress={ handleClickAdd }>
               <Animated.View style={ [ styles.addBtn, {
+                backgroundColor: theme.themeColor,
                 transform: [ { scale: AnimatedAddScale } ]
               } ] }
               >
@@ -140,8 +150,10 @@ function Daily({ navigation }) {
       </View>
       <ScrollView style={ {
         flex: 1,
-        backgroundColor: '#111',
-        marginTop: 40
+        backgroundColor: theme.mainColor,
+        marginTop: 40,
+        paddingLeft: 20,
+        paddingRight: 20
       } }
       >
         <View style={ {
@@ -150,7 +162,8 @@ function Daily({ navigation }) {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          backgroundColor: theme.mainColor
         } }
         >
           {
@@ -175,25 +188,26 @@ function Daily({ navigation }) {
         targets={ selectItemList }
         visible={ showDeleteModal }
       />
-    </View>
-
+    </SafeAreaView>
   )
 }
 export default observer(Daily)
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 80
-  },
+  // container: {
+  //   flex: 1
+  // },
   header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomColor: '#444',
+    borderBottomWidth: 1 / PixelRatio.get(),
+    // borderBottomEndRadius: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginLeft: 20,
+    paddingRight: 20
   },
   addBtn: {
     height: 40,
@@ -201,7 +215,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4192D9',
+    // backgroundColor: '#4192D9',
     borderRadius: 20
   },
   btnLabel: {
@@ -210,7 +224,6 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     lineHeight: 40,
-    color: '#DBDBDB',
     fontSize: 32,
     fontWeight: '900',
     textAlign: 'left',

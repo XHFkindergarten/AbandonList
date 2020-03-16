@@ -1,7 +1,7 @@
 /**
  * 待办项卡片item
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CardExpandModal from './cardExpandModal'
 import { correctGreen, wrongRed, setting } from 'src/assets/image'
 import { StyleSheet, TouchableOpacity, View, Animated, PanResponder, Image, Text } from 'react-native';
@@ -10,6 +10,7 @@ import srcStore from 'src/store'
 import { fromNow, elipsis, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import dailyStore from 'src/pages/daily/dailyStore';
+import themeContext from 'src/themeContext'
 
 
 
@@ -168,18 +169,32 @@ function TodoCard({ info, navigation }) {
   const _handleMoveEnd = (eve, gesture) => {
     handlePressOut()
     if ((isLeft === 'left' && gesture.dx > 50) || (isLeft === 'right' && gesture.dx < -50)) {
+      srcStore.updateFocusCardId('')
       TranslateXAnimationCenter.start()
       setIsLeft('center')
     } else if (isLeft === 'center') {
       if (gesture.dx > 50) {
+        srcStore.updateFocusCardId(info.id)
         TranslateXAnimationRight.start()
         setIsLeft('right')
       } else if (gesture.dx < -50) {
+        srcStore.updateFocusCardId(info.id)
         TranslateXAnimationLeft.start()
         setIsLeft('left')
       }
     }
   }
+
+  // 检测是否有其他卡片被操作了,恢复当前卡片为center状态
+  const focusCardId = srcStore.focusCardId
+
+  useEffect(() => {
+    if (srcStore.focusCardId !== info.id && isLeft !== 'center') {
+      TranslateXAnimationCenter.start()
+      setIsLeft('center')
+    }
+  }, [ focusCardId ])
+
   const _panHandlers = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: () => {
@@ -202,6 +217,9 @@ function TodoCard({ info, navigation }) {
     outputRange: [ 70, 70, 0, -70, -70 ]
   })
   const fromNowTime = fromNow(info)
+
+  const theme = useContext(themeContext)
+
   return (
     <View>
       <Animated.View style={ {
@@ -213,6 +231,7 @@ function TodoCard({ info, navigation }) {
         <Animated.View
           { ..._panHandlers.panHandlers }
           style={ [ styles.card,{
+            backgroundColor: theme.mainColor,
             opacity: isHold ? 0.6 : 1,
             transform: [
               { scale: ScaleValue }
@@ -228,13 +247,16 @@ function TodoCard({ info, navigation }) {
             />
             <Animated.Text style={ [
               styles.cardTitle, {
+                maxWidth: 200,
+                color: theme.pureText,
                 transform: [ { translateX: AnimatedTextTranslateX } ],
                 opacity: AnimatedIconOpacityReverse
               }
             ] }
-            >{ elipsis(info.title) }</Animated.Text>
+            >{ elipsis(info.title, 50) }</Animated.Text>
           </View>
           <Animated.Text style={ [ styles.timeLeft, {
+            color: theme.subText,
             transform: [ { translateX: AnimatedTextTranslateX } ],
             opacity: AnimatedIconOpacityReverse
           } ] }
@@ -296,8 +318,7 @@ export default observer(TodoCard)
 const styles = StyleSheet.create({
   // 待办卡片
   card: {
-    // backgroundColor: '#2F2F2F',
-    backgroundColor: '#111',
+    // backgroundColor: '#111',
     borderRadius: 6,
     paddingLeft: 5,
     paddingRight: 5,
@@ -311,15 +332,18 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   // 卡片标题
   cardTitle: {
-    color: '#FFF',
+    // color: '#FFF',
     textAlign: 'center',
-    fontSize: 16
+    fontSize: 16,
+    lineHeight: 18
   },
   cardCircle: {
+    // paddingTop: 6,
+    marginTop: 3,
     height: 12,
     width: 12,
     borderRadius: 6,
@@ -369,7 +393,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   timeLeft: {
-    color: '#999',
+    // color: '#999',
     fontSize: 14,
     marginTop: 6
   }

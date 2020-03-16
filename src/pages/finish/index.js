@@ -1,17 +1,21 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, SafeAreaView, Platform, ImageBackground } from 'react-native';
 import srcStore from 'src/store'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { star, typeBg, smallArrow } from 'src/assets/image'
+import { wallpaper, smallArrow } from 'src/assets/image'
 import { observer } from 'mobx-react';
 import Board from './board'
 import finishStore from './store'
 import SetModal from './setModal'
-import { elipsis } from 'src/utils'
-// import moment from 'moment';
+import { elipsis, isNewIPhone } from 'src/utils'
 import Chart from './chart'
+import themeContext from 'src/themeContext'
+
+
+
+
 const { width } = Dimensions.get('window')
 
 
@@ -96,77 +100,109 @@ function Finish({ navigation }) {
     setShowSetting(isSet)
   }, [ isSet ])
 
-  return (
-    <ScrollView
-      showsHorizontalScrollIndicator={ false }
-      showsVerticalScrollIndicator={ false }
-      style={ styles.container }
-    >
-      <View style={ {
-        paddingBottom: 120
-      } }
-      >
-        <View>
-          <ScrollView
-            horizontal
-            onScrollEndDrag={ handleScrollEnd }
-            pagingEnabled
-            scrollEnabled
-            showsHorizontalScrollIndicator={ false }
-            showsVerticalScrollIndicator={ false }
-          >
-            {
-              dailyList.map((item, index) => (
-                <View key={ item.id }
-                  style={ styles.scrollItem }
-                >
-                  <View style={ styles.circle }>
-                    <Image source={ index === 0 ? typeBg : star }
-                      style={ styles.bigStar }
-                    />
-                  </View>
-                  <Text style={ styles.scrollItemName }>{ elipsis(item.name) }</Text>
-                </View>
-              ))
-            }
-          </ScrollView>
-        </View>
-        <Board item={ curItem }
-          monthTime={ curMonthTime }
-        />
+  const theme = useContext(themeContext)
 
-        { /* 月份选择器 */ }
-        <View style={ styles.monthContainer }>
-          <TouchableWithoutFeedback
-            onPress={ handlePrevMonth }
-            style={ {
-              padding: 20
-            } }
+  const newIPhone = isNewIPhone()
+
+  return (
+    <View style={ { flex: 1, backgroundColor: theme.themeColor } }>
+      <ImageBackground source={ wallpaper }
+        style={ {
+          width: width,
+          height: 160,
+          paddingTop: newIPhone ? 44 : 0
+        } }
+      >
+        <ScrollView
+          horizontal
+          onScrollEndDrag={ handleScrollEnd }
+          pagingEnabled
+          scrollEnabled
+          showsHorizontalScrollIndicator={ false }
+          showsVerticalScrollIndicator={ false }
+        >
+          {
+            dailyList.map((item, index) => (
+              <View key={ item.id }
+                style={ styles.scrollItem }
+              >
+                <Text style={ [ styles.scrollItemName, {
+                  backgroundColor: theme.themeColor,
+                  color: theme.mainText
+                } ] }
+                >{ elipsis(item.name) }</Text>
+              </View>
+            ))
+          }
+        </ScrollView>
+      </ImageBackground>
+
+      { /* </View> */ }
+      <ScrollView
+        showsHorizontalScrollIndicator={ false }
+        showsVerticalScrollIndicator={ false }
+        style={ [ styles.container, {
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          paddingTop: 40,
+          backgroundColor: theme.mainColor
+        } ] }
+      >
+        <View style={ {
+          paddingBottom: 120
+        } }
+        >
+
+          <View style={ {
+            paddingTop: 20,
+            paddingLeft: 20,
+            paddingRight: 20,
+            flex: 1
+          } }
           >
-            <Image source={ smallArrow }
-              style={ [ styles.smallArrow, {
-                transform: [ { rotate: '180deg' } ]
-              } ] }
+            { /* 月份选择器 */ }
+            <View style={ styles.monthContainer }>
+              <TouchableWithoutFeedback
+                onPress={ handlePrevMonth }
+                style={ {
+                  padding: 20
+                } }
+              >
+                <Image source={ smallArrow }
+                  style={ [ styles.smallArrow, {
+                    transform: [ { rotate: '180deg' } ]
+                  } ] }
+                />
+              </TouchableWithoutFeedback>
+              <View style={ [ styles.month, { backgroundColor: theme.themeColor } ] }>
+                <Text style={ [ styles.monthLabel, { color: theme.mainText } ] }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
+              </View>
+              <TouchableWithoutFeedback
+                onPress={ handleNextMonth }
+                style={ {
+                  padding: 20
+                } }
+              >
+                <Image source={ smallArrow }
+                  style={ styles.smallArrow }
+                />
+              </TouchableWithoutFeedback>
+            </View>
+            <Board item={ curItem }
+              monthTime={ curMonthTime }
             />
-          </TouchableWithoutFeedback>
-          <View style={ styles.month }>
-            <Text style={ styles.monthLabel }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
+
+
+            <Chart monthTime={ curMonthTime } />
           </View>
-          <TouchableWithoutFeedback
-            onPress={ handleNextMonth }
-            style={ {
-              padding: 20
-            } }
-          >
-            <Image source={ smallArrow }
-              style={ styles.smallArrow }
-            />
-          </TouchableWithoutFeedback>
+
+
+          <SetModal visible={ showSetting } />
         </View>
-        <Chart monthTime={ curMonthTime } />
-        <SetModal visible={ showSetting } />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
+
+
   )
 }
 export default observer(Finish)
@@ -174,55 +210,35 @@ export default observer(Finish)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
+    // paddingTop: 20,
+    // paddingLeft: 20,
+    // paddingRight: 20,
     paddingBottom: 40
   },
   scrollItem: {
-    width: width - 40,
+    width: width,
     alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 30
+    justifyContent: 'center'
   },
   scrollItemName: {
-    color: '#4192D9',
-    fontSize: 24,
-    marginTop: 20,
+    fontSize: 28,
+    // marginTop: 20,
     fontWeight: '900',
     textAlign: 'center'
   },
 
-  bigStar: {
-    height: 60,
-    width: 60,
-    resizeMode: 'contain'
-  },
-
-  circle: {
-    height: 140,
-    width: 140,
-    borderRadius: 70,
-    borderWidth: 10,
-    borderColor: '#4192D9',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   monthContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20
+    marginBottom: 40
   },
   month: {
-    backgroundColor: '#4192D9',
     height: 50,
     width: 140,
     borderRadius: 14
   },
   monthLabel: {
-    color: '#FFF',
     fontSize: 20,
     textAlign: 'center',
     lineHeight: 50,

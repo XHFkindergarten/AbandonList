@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useState, Fragment, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, View, Image, Animated } from 'react-native';
 import { finish, type, center, correct, wrong, settingDaily } from 'src/assets/image'
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -8,6 +8,9 @@ import nativeCalendar from 'src/utils/nativeCalendar'
 import { isNewIPhone, vibrate } from 'src/utils'
 import dailyStore from 'src/pages/daily/dailyStore'
 import finishStore from 'src/pages/finish/store'
+import themeContext from 'src/themeContext'
+
+let isConfirmAvailable = true
 
 function BottomNavigation() {
   const [ AnimatedScale1 ] = useState(new Animated.Value(1))
@@ -106,6 +109,10 @@ function BottomNavigation() {
   const isAddPage = store.isAddPage
   const isAddDaily = store.isAddDaily
   const showHandler = isAddPage || isAddDaily
+  useEffect(() => {
+    // 每次点击√之后取消防误触
+    isConfirmAvailable = true
+  }, [ showHandler ])
   const keyboardHeight = store.keyboardHeight
   const handelCancelClick = useCallback(() => {
     // 重置页面的表单数据
@@ -113,6 +120,11 @@ function BottomNavigation() {
     store.nav.navigate( isAddPage ? 'Main' : 'Daily')
   }, [ isAddPage, isAddDaily ])
   const handleConfirmClick = useCallback(() => {
+    if (!isConfirmAvailable) {
+      return
+    }
+    // 禁止重复点击
+    isConfirmAvailable = false
     if (isAddPage) {
       // 存储事件
       nativeCalendar.saveEvent(store.addFormData)
@@ -148,13 +160,15 @@ function BottomNavigation() {
   }, [ isFinish ])
   // 是否是刘海屏iPhone,底部安全距离处理
   const newIPhone = isNewIPhone()
+
+  const theme = useContext(themeContext)
   return (
     <View
       style={ [ styles.container, {
+        backgroundColor: theme.mainColor,
         paddingBottom: newIPhone && !(showHandler && keyboardHeight) ? 34 : 0,
-        bottom: (showHandler && keyboardHeight) ? keyboardHeight : 0
-      }, keyboardHeight && {
-        height: 70
+        bottom: (showHandler && keyboardHeight) ? keyboardHeight : 0,
+        height: (keyboardHeight || !newIPhone) ? 60 : 94
       } ] }
     >
       { !showHandler ?
@@ -257,18 +271,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    // height: 60,
     justifyContent: 'space-around',
-    backgroundColor: '#111',
-    // backgroundColor: 'transparent',
     position: 'absolute',
     left: 0,
     right: 0,
     zIndex: 100,
     paddingTop: 10,
-    paddingBottom: 10,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8
+    paddingBottom: 10
   },
   iconContainer: {
     width: 40,

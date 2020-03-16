@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Animated, PanResponder, Dimensions, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useCallback, useContext } from 'react';
+import { View, StyleSheet, Animated, PanResponder, Dimensions, SafeAreaView, StatusBar } from 'react-native';
 import TodoList from './todoList'
 import store from 'src/store'
 import { useFocusEffect } from '@react-navigation/native';
 import { Calendar } from 'src/components'
-import Notification from 'src/utils/Notification'
-import dailyStore from '../daily/dailyStore';
+import themeContext from 'src/themeContext'
+import TestModule from './testModule'
 
 const { width } = Dimensions.get('window')
 
@@ -23,6 +23,7 @@ const Main = ({ navigation }) => {
   // 将路由存储到mobx store中方便外部调用
   store.setNav(navigation)
   const [ moveX ] = useState(new Animated.Value(0))
+  // 页面左右边缘滑动时切换页面
   const _panResponder = PanResponder.create({
     onMoveShouldSetPanResponderCapture: (event, gesture) => {
       if (store.preventOtherHandler) return false
@@ -46,57 +47,47 @@ const Main = ({ navigation }) => {
     inputRange: [ -41, -40, 0, 40, 41 ],
     outputRange: [ -60, -60, 0, 60, 60 ]
   })
-  /* <TouchableOpacity onPress={ () => {
-    Notification.getScheduleList()
-  } }
-  >
-    <Text style={ { color: '#FFF', height: 60 } }>所有schedule</Text>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={ () => {
-    Notification.removeAllSchedule()
-  } }
-  >
-    <Text style={ { color: '#FFF', height: 60 } }>清除所有schedule</Text>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={ () => {
-    dailyStore.deleteDailyListItems(Object.keys(dailyStore.dailyList))
-  } }
-  >
-    <Text style={ { color: '#FFF', height: 60 } }>清除所有dailyItem</Text>
-  </TouchableOpacity> */
+
+  const theme = useContext(themeContext)
   return (
-    <View style={ {
-      flex: 1,
-      backgroundColor: '#19191b'
-    } }
-    >
-      <Animated.View
-        style={  {
-          flex: 1,
-          backgroundColor: '#19191b',
-          transform: [ { translateX: AnimatedTranslateX } ]
-        } }
+    <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
+      <View style={ {
+        flex: 1,
+        backgroundColor: theme.subColor
+      } }
       >
-        <Calendar />
-        <View
-          { ..._panResponder.panHandlers }
-          style={ styles.container }
+        { /* <TestModule /> */ }
+        <Animated.View
+          style={  {
+            flex: 1,
+            backgroundColor: theme.subColor,
+            transform: [ { translateX: AnimatedTranslateX } ]
+          } }
         >
-          <TodoList navigation={ navigation }/>
-        </View>
-      </Animated.View>
-    </View>
+          <Calendar />
+          <View
+            { ..._panResponder.panHandlers }
+            style={ [ styles.container, {
+              backgroundColor: theme.subColor
+            } ] }
+          >
+            <TodoList navigation={ navigation }/>
+          </View>
+        </Animated.View>
+      </View>
+      <StatusBar hidden></StatusBar>
+    </SafeAreaView>
+
   )
 }
 export default (Main)
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#19191b',
     paddingLeft: 30,
     paddingRight: 30,
     paddingBottom: 40,
-    paddingTop: 20,
+    // paddingTop: 20,
     flex: 1
   },
   title: {

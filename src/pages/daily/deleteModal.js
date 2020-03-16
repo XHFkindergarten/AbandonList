@@ -18,9 +18,6 @@ export default function DeleteModal ({ visible, setVisible, targets }) {
     dailyStore.deleteDailyListItems(targets.map(item => item.id))
     setVisible(false)
     dailyStore.setIsSet(false)
-    // dailyStore.deleteDailyListItem(target.id)
-    // setVisible(false)
-    // dailyStore.setIsSet(false)
   }
   return (
     <Modal
@@ -33,20 +30,19 @@ export default function DeleteModal ({ visible, setVisible, targets }) {
       </TouchableWithoutFeedback>
       <View
         style={ [ styles.modal, {
-          top: 200
+          top: height / 2 - 80
         } ] }
       >
-        <Text style={ styles.title }>提示</Text>
+        { /* <Text style={ styles.title }>提示</Text> */ }
         <Text style={ styles.content }>是否确定删除事件</Text>
         <Text
           style={ [ styles.content, {
-            fontWeight: '700',
-            marginTop: 10,
-            marginBottom: 10
+            fontWeight: '500',
+            lineHeight: 24
           } ] }
         >{ targets.map(item => item.name).join('、') }</Text>
 
-        <Text style={ styles.content }>删除事项后无法恢复，但过去的完成数据仍然有效</Text>
+        <Text style={ [ styles.content, { fontSize: 12 } ] }>删除事项后无法恢复，但过去的完成数据仍然有效</Text>
         <View style={ styles.footer }>
           <TouchableOpacity
             onPress={ handleCancel }
@@ -59,7 +55,6 @@ export default function DeleteModal ({ visible, setVisible, targets }) {
             </View>
           </TouchableOpacity>
           <View style={ {
-            height: 50,
             width: 1,
             backgroundColor: '#444'
           } }
@@ -85,7 +80,7 @@ export default function DeleteModal ({ visible, setVisible, targets }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -102,36 +97,28 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingTop: 30
   },
-  title: {
-    color: '#999',
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 20
-  },
   content: {
-    color: '#888',
+    color: '#FFF',
     fontSize: 16,
     textAlign: 'center',
     paddingLeft: 20,
-    paddingRight: 20,
-    lineHeight: 20
+    paddingRight: 20
+    // lineHeight: 20
   },
   footer: {
     flexDirection: 'row',
-    borderTopColor: '#444',
+    borderTopColor: '#484547',
     borderTopWidth: 1,
     marginTop: 20
-    // width: 280
   },
   button: {
-    // flex: 1,
-    height: 50,
-    // backgroundColor: '#FF0000',
+    paddingTop: 15,
+    paddingBottom: 15,
     justifyContent: 'center',
     alignItems: 'center'
   },
   btnText: {
-    color: '#2e73bd',
+    color: '#5291ee',
     fontSize: 16
   }
 })

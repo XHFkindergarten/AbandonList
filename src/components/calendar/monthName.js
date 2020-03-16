@@ -3,12 +3,17 @@
  * @Author       : lizhaokang
  * @Date         : 2020-02-15 21:06:13
  */
-import React, { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useRef, useMemo, useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, Animated } from 'react-native';
 import { calendar } from 'src/assets/image'
 import { vibrate } from 'src/utils'
 import { Transitioning, Transition } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import themeContext from 'src/themeContext'
+
+
+
+
 function MonthName({ currentMonth, onPress, showCanlendar }) {
   const [ firstMonth = 'Error', secondMonth = null ] = currentMonth
   const [ hide, setHide ] = useState(false)
@@ -64,6 +69,8 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
     }
   })
 
+  const theme = useContext(themeContext)
+
   return (
     <TouchableOpacity onPress={ handleOnPress }>
       <View style={ {
@@ -80,8 +87,8 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
               paddingLeft: AnimatedPaddingLeft
             } }
             >
-              <Text style={ styles.name }>{ firstMonth.en }</Text>
-              <Text style={ styles.subName }>{ firstMonth.cn }</Text>
+              <Text style={ [ styles.name, { color: theme.mainText } ] }>{ firstMonth.en }</Text>
+              <Text style={ [ styles.subName, { color: theme.mainText } ] }>{ firstMonth.cn }</Text>
             </Animated.View>
           ) }
           {
@@ -90,8 +97,8 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
                 paddingRight: AnimatedPaddingLeft
               } }
               >
-                <Text style={ [ styles.name, { fontSize: 28 } ] }>{ secondMonth.cn }</Text>
-                <Text style={ [ styles.subName, {
+                <Text style={ [ styles.name, { color: theme.mainText }, { fontSize: 28 } ] }>{ secondMonth.cn }</Text>
+                <Text style={ [ styles.subName, { color: theme.mainText }, {
                   fontFamily: 'Century Gothic',
                   textAlign: 'right'
                 } ] }
@@ -122,13 +129,13 @@ const styles = StyleSheet.create({
     height: 60
   },
   name: {
-    color: '#DBDBDB',
+    // color: '#DBDBDB',
     fontSize: 30,
     fontWeight: '900',
     fontFamily: 'Century Gothic'
   },
   subName: {
-    color: '#DBDBDB',
+    // color: '#DBDBDB',
     fontSize: 16,
     fontWeight: '900'
   },

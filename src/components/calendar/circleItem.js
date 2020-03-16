@@ -1,7 +1,7 @@
 /**
  * 日期圆点
  */
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Text, Dimensions, Animated } from 'react-native';
 import PropTypes from 'prop-types'
 import nativeCalendar from 'src/utils/nativeCalendar'
@@ -13,6 +13,7 @@ import { observer } from 'mobx-react';
 import moment from 'moment'
 import store from './store'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import themeContext from 'src/themeContext'
 
 
 const { width } = Dimensions.get('window')
@@ -85,6 +86,9 @@ function CircleItem({ time, withColor }) {
 
 
   const handleClick = () => {
+    if (store.shift) {
+      return
+    }
     setSelect(true)
     const lastTarget = srcStore.targetDate
     srcStore.updateTargetDate(time)
@@ -104,10 +108,12 @@ function CircleItem({ time, withColor }) {
     }
   }
 
+  const theme = useContext(themeContext)
+
   return (
     <TouchableOpacity onPress={ handleClick }>
       <Animated.View style={ [ styles.container, selected && {
-        borderColor: '#4192D9',
+        borderColor: theme.themeColor,
         borderWidth: 2,
         borderRadius: (itemSize + 6) / 2
       } ] }
@@ -117,7 +123,7 @@ function CircleItem({ time, withColor }) {
           height: itemSize,
           borderRadius: itemSize / 2
         }, styles.circle, {
-          backgroundColor: isToday ? '#4192D9' : 'transparent'
+          backgroundColor: isToday ? theme.themeColor : 'transparent'
         } ] }
         >
         </View>
@@ -132,7 +138,7 @@ function CircleItem({ time, withColor }) {
         } }
         >
           <Text style={ [ styles.text, {
-            color: '#DBDBDB'
+            color: theme.mainText
           } ] }
           >{ date }</Text>
         </View>

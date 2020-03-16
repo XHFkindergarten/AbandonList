@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { Dimensions } from 'react-native'
-import moment from 'moment'
+import moment from 'moment/min/moment-with-locales'
 import { Vibrate } from 'react-native-mo-vibrate'
-
+moment.locale('zh-cn');
 /**
  * 工具类函数
  */
@@ -31,22 +31,22 @@ export const fromNow = info => {
   if (nowTime < startTime) {
     if (startTime - nowTime < 1000 * 60 * 60 * 24) {
       // 一天之内开始
-      outputTime = 'start ' + moment(info.startDate).endOf('hour').fromNow()
+      outputTime = moment(info.startDate).endOf('hour').fromNow() + '开始'
     } else {
-      outputTime = 'start ' + moment(info.startDate).endOf('day').fromNow()
+      outputTime = moment(info.startDate).endOf('day').fromNow() + '开始'
     }
   } else if (nowTime < endTime) {
     if (endTime - nowTime < 1000 * 60 * 60 * 24) {
       // 一天之内结束
-      outputTime = 'end ' + moment(info.endDate).endOf('hour').fromNow()
+      outputTime = moment(info.endDate).endOf('hour').fromNow() + '结束'
     } else {
-      outputTime = 'end ' + moment(info.endDate).endOf('day').fromNow()
+      outputTime = moment(info.endDate).endOf('day').fromNow() + '结束'
     }
   } else {
     if (nowTime - endTime < 1000 * 60 * 60 * 24) {
-      outputTime = 'end ' + moment(info.endDate).startOf('hour').fromNow()
+      outputTime = moment(info.endDate).startOf('hour').fromNow() + '结束'
     } else {
-      outputTime = 'end ' + moment(info.endDate).startOf('day').fromNow()
+      outputTime = moment(info.endDate).startOf('day').fromNow() + '结束'
     }
   }
   return outputTime

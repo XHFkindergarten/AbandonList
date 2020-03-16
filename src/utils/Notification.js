@@ -1,15 +1,34 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import moment from 'moment'
+
+// IOS下的日期格式处理
+const convertDateIOS = target => moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
 
 /**
  * 通知模块
  */
 class Notification {
 
+  // 初始化通知模块
+  initialNotification = () => {
+    PushNotificationIOS.checkPermissions(res => {
+      for(let i of Object.keys(res)) {
+        if (!res[i]) {
+          // 获取权限
+          PushNotificationIOS.requestPermissions()
+          return
+        }
+      }
+    })
+  }
+
   // 设定定时通知
   setScheduleNotification = option => {
+    console.log('option', option)
+    console.log(convertDateIOS(option.fireDate))
     PushNotificationIOS.scheduleLocalNotification({
       // 通知事件
-      fireDate: option.fireDate,
+      fireDate: convertDateIOS(option.fireDate),
       // 标题
       alertTitle: option.alertTitle,
       // 正文
@@ -20,7 +39,6 @@ class Notification {
       },
       // 重复规则[enum: minute, hour, day, week, month, year]
       repeatInterval: option.repeatInterval
-      // repeatInterval: 'minute'
     })
   }
 
@@ -34,7 +52,6 @@ class Notification {
   // 获取所有的定时事件[测试]
   getScheduleList = () => new Promise((resolve) => {
     PushNotificationIOS.getScheduledLocalNotifications(res => {
-      console.log('all schedule', res)
       resolve(res)
     })
   })

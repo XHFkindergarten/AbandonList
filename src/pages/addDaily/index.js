@@ -3,7 +3,7 @@
  */
 import React, { useCallback, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { View, StyleSheet, Text, ScrollView, TextInput, TouchableWithoutFeedback, TouchableOpacity, Switch } from 'react-native';
+import { View, StyleSheet, Text, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, TouchableOpacity, Switch } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
 import { flatColorList } from 'src/common'
@@ -70,6 +70,27 @@ function AddDaily ({ navigation, route }) {
     } else {
       // 重置表单数据
       dailyStore.resetDailyForm()
+    }
+  }, [])
+
+  // 键盘弹起/收回时控制底部栏位置
+  const _keyboardShowHandler = e => {
+    srcStore.updateKeyboardHeight(e.endCoordinates.height)
+  }
+  const _keyboardHideHandler = () => {
+    srcStore.updateKeyboardHeight(0)
+  }
+
+  // 挂载时和卸载时监听/卸载keyboard事件
+  let keyboardShowListener, keyboardHideListener
+  useEffect(() => {
+    // component did mount
+    keyboardShowListener = Keyboard.addListener('keyboardWillShow', _keyboardShowHandler)
+    keyboardHideListener = Keyboard.addListener('keyboardWillHide', _keyboardHideHandler)
+    return () => {
+      // component did unmount
+      keyboardShowListener.remove()
+      keyboardHideListener.remove()
     }
   }, [])
 

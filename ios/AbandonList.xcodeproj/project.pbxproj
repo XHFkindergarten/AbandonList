@@ -8,20 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* AbandonListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AbandonListTests.m */; };
-		081C890A34D9D8C73D104CCC /* libPods-AbandonList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E0FF253A7411C5E88856F6B /* libPods-AbandonList.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		27261B3502C5033D66B614D1 /* libPods-AbandonList-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C25CEE439931F16AF69D55 /* libPods-AbandonList-tvOS.a */; };
+		2B048B71DC284A849F1A8434 /* CenturyGothic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FD835F78F4042B0B67B03D6 /* CenturyGothic.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* AbandonListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AbandonListTests.m */; };
-		9839D080322FE996F803FD50 /* libPods-AbandonList-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF60D42E86F12C178B5679E /* libPods-AbandonList-tvOSTests.a */; };
-		AA9511AC79722B01C7062A34 /* libPods-AbandonList-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F0635A6B1C290C8DA52A1AD /* libPods-AbandonList-tvOS.a */; };
-		BE9090D0923950696AC3EC45 /* libPods-AbandonListTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ADBC9904996A8204567FF83 /* libPods-AbandonListTests.a */; };
+		B234F865571CDCEA195A6693 /* libPods-AbandonList-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D566C62F73416706AD62A0 /* libPods-AbandonList-tvOSTests.a */; };
+		B5E810BC9143C080F48213E6 /* libPods-AbandonListTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BCE0D431BFF6EC590A353E /* libPods-AbandonListTests.a */; };
 		BF15FE99241DD2AB0009FBA8 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BF15FE98241DD2AB0009FBA8 /* fonts */; };
 		BF15FE9B241DD2C90009FBA8 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF15FE9A241DD2C90009FBA8 /* EventKit.framework */; };
+		C23FFE9BB8FF45A9BDDC01B8 /* ADAM.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8185DD703FD44C68E081386 /* ADAM.ttf */; };
+		DF0613B9CD6C114C91B67908 /* libPods-AbandonList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEB406B2EC651539F6A6CD66 /* libPods-AbandonList.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +48,7 @@
 		00E356EE1AD99517003FC87E /* AbandonListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AbandonListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* AbandonListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbandonListTests.m; sourceTree = "<group>"; };
+		02B77C3219CCDDE0EDCE2F34 /* Pods-AbandonList-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOS.release.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOS/Pods-AbandonList-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* AbandonList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AbandonList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = AbandonList/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = AbandonList/AppDelegate.m; sourceTree = "<group>"; };
@@ -53,24 +56,26 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AbandonList/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AbandonList/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AbandonList/main.m; sourceTree = "<group>"; };
-		1F0635A6B1C290C8DA52A1AD /* libPods-AbandonList-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		27C4E2CFB0FD7C11D92FD15A /* Pods-AbandonList-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOS/Pods-AbandonList-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* AbandonList-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AbandonList-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* AbandonList-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AbandonList-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E0FF253A7411C5E88856F6B /* libPods-AbandonList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5AD520E7CFC6C173BB9A6251 /* Pods-AbandonList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList.release.xcconfig"; path = "Target Support Files/Pods-AbandonList/Pods-AbandonList.release.xcconfig"; sourceTree = "<group>"; };
-		5DCAF2D314982A0E90894084 /* Pods-AbandonList-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOSTests/Pods-AbandonList-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5F28B9F3FCD2155E192B4336 /* Pods-AbandonList-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOSTests/Pods-AbandonList-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		6ADBC9904996A8204567FF83 /* libPods-AbandonListTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonListTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A240BF6BD4B48072E118B10 /* Pods-AbandonListTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonListTests.debug.xcconfig"; path = "Target Support Files/Pods-AbandonListTests/Pods-AbandonListTests.debug.xcconfig"; sourceTree = "<group>"; };
-		BEF53E6D0C25F3E9B2B37994 /* Pods-AbandonListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonListTests.release.xcconfig"; path = "Target Support Files/Pods-AbandonListTests/Pods-AbandonListTests.release.xcconfig"; sourceTree = "<group>"; };
-		BEF60D42E86F12C178B5679E /* libPods-AbandonList-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		61BCE0D431BFF6EC590A353E /* libPods-AbandonListTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonListTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70D566C62F73416706AD62A0 /* libPods-AbandonList-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D9C322FF7B041C695BF32DF /* Pods-AbandonList.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList/Pods-AbandonList.debug.xcconfig"; sourceTree = "<group>"; };
+		8FD835F78F4042B0B67B03D6 /* CenturyGothic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = CenturyGothic.ttf; path = ../assets/fonts/CenturyGothic.ttf; sourceTree = "<group>"; };
+		921D322718D5FB95DCFAF4A3 /* Pods-AbandonList-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOS/Pods-AbandonList-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		B17F39BC7285288C77E6E5DF /* Pods-AbandonList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList.release.xcconfig"; path = "Target Support Files/Pods-AbandonList/Pods-AbandonList.release.xcconfig"; sourceTree = "<group>"; };
+		BB10B3C91EB8EEFC6BE09327 /* Pods-AbandonList-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOSTests/Pods-AbandonList-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BF15FE98241DD2AB0009FBA8 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = ../assets/fonts; sourceTree = "<group>"; };
 		BF15FE9A241DD2C90009FBA8 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
-		CCF6A0520341854D04A64338 /* Pods-AbandonList.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList.debug.xcconfig"; path = "Target Support Files/Pods-AbandonList/Pods-AbandonList.debug.xcconfig"; sourceTree = "<group>"; };
-		D4AE5741A70E83E2BB091B70 /* Pods-AbandonList-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOS.release.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOS/Pods-AbandonList-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		BF15FE9C241DFC590009FBA8 /* AbandonList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = AbandonList.entitlements; path = AbandonList/AbandonList.entitlements; sourceTree = "<group>"; };
+		CDF362DACFC5789593F91DF1 /* Pods-AbandonList-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonList-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-AbandonList-tvOSTests/Pods-AbandonList-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		D8185DD703FD44C68E081386 /* ADAM.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = ADAM.ttf; path = ../assets/fonts/ADAM.ttf; sourceTree = "<group>"; };
+		DEB406B2EC651539F6A6CD66 /* libPods-AbandonList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F0C25CEE439931F16AF69D55 /* libPods-AbandonList-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AbandonList-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6013AA82E3D29DB6435732B /* Pods-AbandonListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonListTests.release.xcconfig"; path = "Target Support Files/Pods-AbandonListTests/Pods-AbandonListTests.release.xcconfig"; sourceTree = "<group>"; };
+		FCFE21B50ACA5798DD9C82BF /* Pods-AbandonListTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbandonListTests.debug.xcconfig"; path = "Target Support Files/Pods-AbandonListTests/Pods-AbandonListTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE9090D0923950696AC3EC45 /* libPods-AbandonListTests.a in Frameworks */,
+				B5E810BC9143C080F48213E6 /* libPods-AbandonListTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,7 +92,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF15FE9B241DD2C90009FBA8 /* EventKit.framework in Frameworks */,
-				081C890A34D9D8C73D104CCC /* libPods-AbandonList.a in Frameworks */,
+				DF0613B9CD6C114C91B67908 /* libPods-AbandonList.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA9511AC79722B01C7062A34 /* libPods-AbandonList-tvOS.a in Frameworks */,
+				27261B3502C5033D66B614D1 /* libPods-AbandonList-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9839D080322FE996F803FD50 /* libPods-AbandonList-tvOSTests.a in Frameworks */,
+				B234F865571CDCEA195A6693 /* libPods-AbandonList-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +135,7 @@
 		13B07FAE1A68108700A75B9A /* AbandonList */ = {
 			isa = PBXGroup;
 			children = (
+				BF15FE9C241DFC590009FBA8 /* AbandonList.entitlements */,
 				BF15FE98241DD2AB0009FBA8 /* fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -148,12 +154,21 @@
 				BF15FE9A241DD2C90009FBA8 /* EventKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				4E0FF253A7411C5E88856F6B /* libPods-AbandonList.a */,
-				1F0635A6B1C290C8DA52A1AD /* libPods-AbandonList-tvOS.a */,
-				BEF60D42E86F12C178B5679E /* libPods-AbandonList-tvOSTests.a */,
-				6ADBC9904996A8204567FF83 /* libPods-AbandonListTests.a */,
+				DEB406B2EC651539F6A6CD66 /* libPods-AbandonList.a */,
+				F0C25CEE439931F16AF69D55 /* libPods-AbandonList-tvOS.a */,
+				70D566C62F73416706AD62A0 /* libPods-AbandonList-tvOSTests.a */,
+				61BCE0D431BFF6EC590A353E /* libPods-AbandonListTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4118598BD01E41C39C9EF71C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D8185DD703FD44C68E081386 /* ADAM.ttf */,
+				8FD835F78F4042B0B67B03D6 /* CenturyGothic.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -172,6 +187,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				9D5109905FD2C50D67624802 /* Pods */,
+				4118598BD01E41C39C9EF71C /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -192,14 +208,14 @@
 		9D5109905FD2C50D67624802 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CCF6A0520341854D04A64338 /* Pods-AbandonList.debug.xcconfig */,
-				5AD520E7CFC6C173BB9A6251 /* Pods-AbandonList.release.xcconfig */,
-				27C4E2CFB0FD7C11D92FD15A /* Pods-AbandonList-tvOS.debug.xcconfig */,
-				D4AE5741A70E83E2BB091B70 /* Pods-AbandonList-tvOS.release.xcconfig */,
-				5DCAF2D314982A0E90894084 /* Pods-AbandonList-tvOSTests.debug.xcconfig */,
-				5F28B9F3FCD2155E192B4336 /* Pods-AbandonList-tvOSTests.release.xcconfig */,
-				7A240BF6BD4B48072E118B10 /* Pods-AbandonListTests.debug.xcconfig */,
-				BEF53E6D0C25F3E9B2B37994 /* Pods-AbandonListTests.release.xcconfig */,
+				8D9C322FF7B041C695BF32DF /* Pods-AbandonList.debug.xcconfig */,
+				B17F39BC7285288C77E6E5DF /* Pods-AbandonList.release.xcconfig */,
+				921D322718D5FB95DCFAF4A3 /* Pods-AbandonList-tvOS.debug.xcconfig */,
+				02B77C3219CCDDE0EDCE2F34 /* Pods-AbandonList-tvOS.release.xcconfig */,
+				BB10B3C91EB8EEFC6BE09327 /* Pods-AbandonList-tvOSTests.debug.xcconfig */,
+				CDF362DACFC5789593F91DF1 /* Pods-AbandonList-tvOSTests.release.xcconfig */,
+				FCFE21B50ACA5798DD9C82BF /* Pods-AbandonListTests.debug.xcconfig */,
+				F6013AA82E3D29DB6435732B /* Pods-AbandonListTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -211,7 +227,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "AbandonListTests" */;
 			buildPhases = (
-				031E02362EFC578CCD1B1388 /* [CP] Check Pods Manifest.lock */,
+				CEA612B1705155878D656164 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -230,7 +246,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AbandonList" */;
 			buildPhases = (
-				72AE8643BE3D0B48890166B7 /* [CP] Check Pods Manifest.lock */,
+				74B5A44D6A731066B379322F /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
@@ -250,7 +266,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "AbandonList-tvOS" */;
 			buildPhases = (
-				A204E9C45ACF3E9EE5B587A7 /* [CP] Check Pods Manifest.lock */,
+				A0C8F7EC80DD1FBACB35021C /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -270,7 +286,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "AbandonList-tvOSTests" */;
 			buildPhases = (
-				F6E8C311F74EE4AABEE82517 /* [CP] Check Pods Manifest.lock */,
+				546E2009CB18B25E40E4A726 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -291,12 +307,16 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 940;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = A32TP4CR47;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = A32TP4CR47;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -346,6 +366,8 @@
 				BF15FE99241DD2AB0009FBA8 /* fonts in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				C23FFE9BB8FF45A9BDDC01B8 /* ADAM.ttf in Resources */,
+				2B048B71DC284A849F1A8434 /* CenturyGothic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,28 +403,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		031E02362EFC578CCD1B1388 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AbandonListTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -417,7 +417,29 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		72AE8643BE3D0B48890166B7 /* [CP] Check Pods Manifest.lock */ = {
+		546E2009CB18B25E40E4A726 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AbandonList-tvOSTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		74B5A44D6A731066B379322F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -439,7 +461,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A204E9C45ACF3E9EE5B587A7 /* [CP] Check Pods Manifest.lock */ = {
+		A0C8F7EC80DD1FBACB35021C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -461,7 +483,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F6E8C311F74EE4AABEE82517 /* [CP] Check Pods Manifest.lock */ = {
+		CEA612B1705155878D656164 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -476,7 +498,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AbandonList-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AbandonListTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -588,13 +610,15 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A240BF6BD4B48072E118B10 /* Pods-AbandonListTests.debug.xcconfig */;
+			baseConfigurationReference = FCFE21B50ACA5798DD9C82BF /* Pods-AbandonListTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = A32TP4CR47;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AbandonListTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -611,10 +635,12 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BEF53E6D0C25F3E9B2B37994 /* Pods-AbandonListTests.release.xcconfig */;
+			baseConfigurationReference = F6013AA82E3D29DB6435732B /* Pods-AbandonListTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = A32TP4CR47;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AbandonListTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -631,11 +657,45 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CCF6A0520341854D04A64338 /* Pods-AbandonList.debug.xcconfig */;
+			baseConfigurationReference = 8D9C322FF7B041C695BF32DF /* Pods-AbandonList.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = AbandonList/AbandonList.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = A32TP4CR47;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCAsyncStorage\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCMaskedView\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCPushNotificationIOS\"",
+					"\"${PODS_ROOT}/Headers/Public/RNDateTimePicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
+					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
+					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-blur\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-calendar-events\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(SRCROOT)/../node_modules/@react-native-community/push-notification-ios\"/**",
+				);
 				INFOPLIST_FILE = AbandonList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -651,10 +711,44 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5AD520E7CFC6C173BB9A6251 /* Pods-AbandonList.release.xcconfig */;
+			baseConfigurationReference = B17F39BC7285288C77E6E5DF /* Pods-AbandonList.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = AbandonList/AbandonList.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A32TP4CR47;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCAsyncStorage\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCMaskedView\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCPushNotificationIOS\"",
+					"\"${PODS_ROOT}/Headers/Public/RNDateTimePicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
+					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
+					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-blur\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-calendar-events\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(SRCROOT)/../node_modules/@react-native-community/push-notification-ios\"/**",
+				);
 				INFOPLIST_FILE = AbandonList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -670,9 +764,8 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 27C4E2CFB0FD7C11D92FD15A /* Pods-AbandonList-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 921D322718D5FB95DCFAF4A3 /* Pods-AbandonList-tvOS.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -681,6 +774,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "AbandonList-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -698,9 +792,8 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D4AE5741A70E83E2BB091B70 /* Pods-AbandonList-tvOS.release.xcconfig */;
+			baseConfigurationReference = 02B77C3219CCDDE0EDCE2F34 /* Pods-AbandonList-tvOS.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -709,6 +802,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "AbandonList-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -726,7 +820,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DCAF2D314982A0E90894084 /* Pods-AbandonList-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = BB10B3C91EB8EEFC6BE09327 /* Pods-AbandonList-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -736,6 +830,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "AbandonList-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -753,7 +848,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5F28B9F3FCD2155E192B4336 /* Pods-AbandonList-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = CDF362DACFC5789593F91DF1 /* Pods-AbandonList-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -763,6 +858,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "AbandonList-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (

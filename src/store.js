@@ -149,6 +149,10 @@ class Store {
 
   // 控制阻止其他操作
   preventOtherHandler = false
+
+  // 当前处于操作状态的卡片id
+  @observable focusCardId = ''
+  @action updateFocusCardId = value => this.focusCardId = value
 }
 
 const store = new Store()

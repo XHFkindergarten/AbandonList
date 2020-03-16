@@ -287,5 +287,8 @@ class Store {
     }
     return res
   }
+
+  // 是否正在执行展开/收回动画
+  shift = false
 }
 export default new Store()
