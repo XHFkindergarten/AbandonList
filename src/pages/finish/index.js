@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useContext, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useContext, useRef, Fragment } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, Animated, Dimensions, Image, SafeAreaView, Platform, ImageBackground, TouchableOpacity } from 'react-native';
 import srcStore from 'src/store'
@@ -13,13 +13,11 @@ import { elipsis, isNewIPhone } from 'src/utils'
 import Chart from './chart'
 import themeContext from 'src/themeContext'
 import HistoryList from './historyList'
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { Transitioning, Transition } from 'react-native-reanimated'
-const Stack = createStackNavigator()
 
 
 
-const { width } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window')
 
 
 const MonthNameMap = [
@@ -124,65 +122,96 @@ function Finish({ navigation }) {
     </Transition.Sequence>
   )
 
+  const [ moveY ] = useState(new Animated.Value(0))
+
+  const handleOnScroll = event => {
+    const dy = event.nativeEvent.contentOffset.y
+    moveY.setValue(dy)
+  }
+
+  const AnimatedScale = moveY.interpolate({
+    inputRange: [ -41, -40, 0, 1 ],
+    outputRange: [ 1.2, 1.2, 1, 1 ]
+  })
+
+  const titleHeight = moveY.interpolate({
+    inputRange: [ -1, 0, 140, 141 ],
+    outputRange: [ 160, 160, 20, 20 ]
+  })
+
+  const titleOpacity = moveY.interpolate({
+    inputRange: [ 39, 40, 100, 101 ],
+    outputRange: [ 1, 1, 0, 0 ]
+  })
+
+  const AnimatedPadding = moveY.interpolate({
+    inputRange: [ -1, 0, 100, 101 ],
+    outputRange: [ 30, 30, 100, 100 ]
+  })
+
+  const AnimatedOpacity = moveY.interpolate({
+    inputRange: [ 99, 100, 140, 141 ],
+    outputRange: [ 0, 0, 1, 1 ]
+  })
+
+  const scrollRef = useRef()
+  // 松手时在40-140范围内自动收起
+  const handleRelease = event => {
+    const y = event.nativeEvent.contentOffset.y
+    if (y >= 40 && y < 140) {
+      Animated.spring(moveY, { toValue: 140 }).start()
+      scrollRef.current.scrollTo({ y: 140 })
+    }
+  }
+
   return (
-    <View style={ { flex: 1, backgroundColor: theme.themeColor } }>
-      <ImageBackground source={ wallpaper }
+    <Fragment>
+      <ImageBackground
+        imageStyle={ {
+          resizeMode: 'repeat'
+        } }
+        source={ wallpaper }
         style={ {
+          paddingTop: newIPhone ? 44 : 0,
           width: width,
-          height: 160,
-          paddingTop: newIPhone ? 44 : 0
+          height: height
         } }
       >
-        <ScrollView
-          horizontal
-          onScrollEndDrag={ handleScrollEnd }
-          pagingEnabled
-          scrollEnabled
-          showsHorizontalScrollIndicator={ false }
-          showsVerticalScrollIndicator={ false }
-        >
-          {
-            dailyList.map((item, index) => (
-              <View key={ item.id }
-                style={ styles.scrollItem }
-              >
-                <Text style={ [ styles.scrollItemName, {
-                  backgroundColor: theme.themeColor,
-                  color: theme.mainText
-                } ] }
-                >{ elipsis(item.name) }</Text>
-              </View>
-            ))
-          }
-        </ScrollView>
-      </ImageBackground>
-      <ScrollView
-        contentContainerStyle={ {
-          paddingTop: 30
-        } }
-        scrollEventThrottle={ 200 }
-        showsHorizontalScrollIndicator={ false }
-        showsVerticalScrollIndicator={ false }
-        style={ {
+        <Animated.View style={ {
+          marginTop: titleHeight,
           flex: 1,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          backgroundColor: theme.mainColor
-        } }
-      >
-        <View style={ {
-          paddingBottom: 120
+          backgroundColor: theme.mainColor,
+          paddingTop: AnimatedPadding
         } }
         >
-
-          <View style={ {
-            paddingTop: 20,
-            paddingLeft: 20,
-            paddingRight: 20,
-            flex: 1
-          } }
+          <Animated.Text style={ [ styles._title, {
+            opacity: AnimatedOpacity,
+            lineHeight: 100,
+            color: theme.themeColor,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0
+          } ] }
+          >{ curItem.name }</Animated.Text>
+          <ScrollView
+            contentContainerStyle={ {
+              paddingTop: 30,
+              paddingBottom: 100,
+              minHeight: height
+            } }
+            onScroll={ handleOnScroll }
+            onScrollEndDrag={ handleRelease }
+            ref={ scrollRef }
+            scrollEventThrottle={ 1 }
+            showsHorizontalScrollIndicator={ false }
+            showsVerticalScrollIndicator={ false }
+            style={ {
+              // paddingTop: 20
+            } }
           >
-            { /* 月份选择器 */ }
             <View style={ styles.monthContainer }>
               <TouchableWithoutFeedback
                 onPress={ handlePrevMonth }
@@ -227,35 +256,71 @@ function Finish({ navigation }) {
               transition={ transition }
             >
               {
-                toggleCards ? <HistoryList monthTime={ curMonthTime } /> : <Chart monthTime={ curMonthTime } />
+                toggleCards ? (
+                  <HistoryList monthTime={ curMonthTime } />
+                ) : (
+                  <Chart
+                    curItem={ curItem }
+                    monthTime={ curMonthTime }
+                  />
+                )
               }
             </Transitioning.View>
-
-
-          </View>
-          <SetModal visible={ showSetting } />
-        </View>
-      </ScrollView>
-
-    </View>
-
-
+          </ScrollView>
+        </Animated.View>
+      </ImageBackground>
+      <Animated.View style={ {
+        position: 'absolute',
+        top: newIPhone ? 44 : 0,
+        left: 0,
+        right: 0,
+        height: titleHeight
+      } }
+      >
+        <ScrollView
+          horizontal
+          onScrollEndDrag={ handleScrollEnd }
+          pagingEnabled
+          scrollEnabled
+          showsHorizontalScrollIndicator={ false }
+          showsVerticalScrollIndicator={ false }
+        >
+          {
+            dailyList.map((item, index) => (
+              <View key={ item.id }
+                style={ styles.scrollItem }
+              >
+                <Animated.Text style={ [ styles.scrollItemName, {
+                  opacity: titleOpacity,
+                  backgroundColor: theme.themeColor,
+                  color: theme.mainText,
+                  transform: [ { scale: AnimatedScale } ]
+                } ] }
+                >{ elipsis(item.name) }</Animated.Text>
+              </View>
+            ))
+          }
+        </ScrollView>
+      </Animated.View>
+      <SetModal visible={ showSetting } />
+    </Fragment>
   )
 }
 export default observer(Finish)
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   // paddingTop: 20,
-  //   // paddingLeft: 20,
-  //   // paddingRight: 20,
-  //   paddingBottom: 40
-  // },
   scrollItem: {
+    // height: '100%',
+    flex: 1,
+    // height: 160,
     width: width,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  _title: {
+    fontSize: 24,
+    fontWeight: '900',
+    textAlign: 'center'
   },
   scrollItemName: {
     fontSize: 28,

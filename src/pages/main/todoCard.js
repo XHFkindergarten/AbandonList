@@ -17,7 +17,17 @@ import { Transition, Transitioning } from 'react-native-reanimated';
 
 // 全局唯一定时器
 let pressTimeout = null
+// 唯二和唯三
+let timeout1
 function TodoCard({ info, navigation }) {
+
+  useEffect(() => {
+    return () => {
+      // component will unmount
+      clearTimeout(timeout1)
+      // clearTimeout(timeout2)
+    }
+  })
   // console.log('info', info)
   // const { allDay, startDate, endDate } = info
   const [ ScaleValue ] = useState(new Animated.Value(1))
@@ -67,7 +77,7 @@ function TodoCard({ info, navigation }) {
           .then(() => resolve())
       })
     ]).then(() => {
-      setTimeout(() => {
+      timeout1 = setTimeout(() => {
         disappearX.start()
         disappearY.start()
       }, 1000)
@@ -87,7 +97,7 @@ function TodoCard({ info, navigation }) {
           .then(() => resolve())
       })
     ]).then(() => {
-      setTimeout(() => {
+      timeout1 = setTimeout(() => {
         disappearX.start()
         disappearY.start()
       }, 1000)
@@ -124,7 +134,7 @@ function TodoCard({ info, navigation }) {
             .then(() => resolve())
         })
       ]).then(() => {
-        setTimeout(() => {
+        timeout1 = setTimeout(() => {
           disappearX.start()
           disappearY.start()
         }, 1000)
@@ -148,7 +158,7 @@ function TodoCard({ info, navigation }) {
             .then(() => resolve())
         })
       ]).then(() => {
-        setTimeout(() => {
+        timeout1 = setTimeout(() => {
           disappearX.start()
           disappearY.start()
         }, 1000)

@@ -74,7 +74,10 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
     )
   } else {
     return (
-      <View>
+      <View style={ {
+        minHeight: 80
+      } }
+      >
         { todoList.map((item) => {
           if (item.allDay) {
             return (

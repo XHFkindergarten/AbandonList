@@ -3,10 +3,12 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import AsyncStorage from '@react-native-community/async-storage'
 const historyKey = '@h1story_list_key'
+import finishStore from 'src/pages/finish/store'
+import { toJS } from 'mobx';
 
 export default function TestModule() {
   const onPress = () => {
-    AsyncStorage.removeItem(historyKey)
+
   }
   return (
     <TouchableOpacity onPress={ onPress }>

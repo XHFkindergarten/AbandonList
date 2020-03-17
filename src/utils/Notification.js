@@ -10,22 +10,45 @@ const convertDateIOS = target => moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.
 class Notification {
 
   // 初始化通知模块
-  initialNotification = () => {
+  initialNotification = () => new Promise((resolve, reject) => {
+    // 检查通知全新啊
     PushNotificationIOS.checkPermissions(res => {
+      let isBlock = false
       for(let i of Object.keys(res)) {
         if (!res[i]) {
+          isBlock = true
           // 获取权限
-          PushNotificationIOS.requestPermissions()
-          return
+          PushNotificationIOS.requestPermissions().then(res => {
+            console.log('fetch permission')
+            resolve()
+            return
+          }).catch(err => reject(err))
         }
       }
+      if (!isBlock) {
+        resolve()
+      }
     })
+  })
+
+  onPresentNotification = instance => {
+    // 获取当前角标数
+    const badgeNum = instance.getBadgeCount()
+    PushNotificationIOS.setApplicationIconBadgeNumber(badgeNum > 1 ? badgeNum - 1 : 0)
+  }
+
+  initialListener = () => {
+    // 添加本地通知监听事件
+    PushNotificationIOS.addEventListener('localNotification', this.onPresentNotification)
+  }
+
+  // 移除本地监听事件
+  removeListeners = () => {
+    PushNotificationIOS.removeEventListener('localNotification', this.onPresentNotification)
   }
 
   // 设定定时通知
   setScheduleNotification = option => {
-    console.log('option', option)
-    console.log(convertDateIOS(option.fireDate))
     PushNotificationIOS.scheduleLocalNotification({
       // 通知事件
       fireDate: convertDateIOS(option.fireDate),
@@ -37,6 +60,7 @@ class Notification {
       userInfo: {
         id: option.id
       },
+      applicationIconBadgeNumber: 1,
       // 重复规则[enum: minute, hour, day, week, month, year]
       repeatInterval: option.repeatInterval
     })

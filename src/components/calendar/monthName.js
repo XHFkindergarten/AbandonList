@@ -16,27 +16,21 @@ import themeContext from 'src/themeContext'
 
 function MonthName({ currentMonth, onPress, showCanlendar }) {
   const [ firstMonth = 'Error', secondMonth = null ] = currentMonth
-  const [ hide, setHide ] = useState(false)
+  // const [ hide, setHide ] = useState(false)
   const [ hideSec, setHideSec ] = useState(true)
+
+
 
   const [ AnimatedLogoOpacity ] = useState(new Animated.Value(1))
 
   const handleOnPress = () => {
     vibrate(0)
-    if (showCanlendar) {
-      Animated.timing(AnimatedLogoOpacity, {
-        toValue: 1,
-        duration: 600
-      }).start()
-      setHideSec(true)
-    } else {
-      Animated.timing(AnimatedLogoOpacity, {
-        toValue: 0,
-        duration: 300
-      }).start()
-      setHideSec(false)
-    }
     onPress()
+    Animated.timing(AnimatedLogoOpacity, {
+      toValue: showCanlendar ? 1 : 0,
+      duration: 300
+    }).start()
+    setHideSec(showCanlendar)
   }
   const AnimatedPaddingLeft = AnimatedLogoOpacity.interpolate({
     inputRange: [ 0, 1 ],
@@ -56,12 +50,14 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
   )
   const ref = useRef()
 
-  useEffect(() => {
-    setHide(true)
-    setTimeout(() => {
-      setHide(false)
-    })
-  }, [ currentMonth.en ])
+  // useEffect(() => {
+  //   ref.current.animateNextTransition()
+  //   setHide(true)
+  //   setTimeout(() => {
+  //     ref.current.animateNextTransition()
+  //     setHide(false)
+  //   })
+  // }, [ currentMonth.en ])
 
   useMemo(() => {
     if (ref.current) {
@@ -82,17 +78,15 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
           style={ styles.container }
           transition={ transition }
         >
-          { !hide && (
-            <Animated.View style={ {
-              paddingLeft: AnimatedPaddingLeft
-            } }
-            >
-              <Text style={ [ styles.name, { color: theme.mainText } ] }>{ firstMonth.en }</Text>
-              <Text style={ [ styles.subName, { color: theme.mainText } ] }>{ firstMonth.cn }</Text>
-            </Animated.View>
-          ) }
+          <Animated.View style={ {
+            paddingLeft: AnimatedPaddingLeft
+          } }
+          >
+            <Text style={ [ styles.name, { color: theme.mainText } ] }>{ firstMonth.en }</Text>
+            <Text style={ [ styles.subName, { color: theme.mainText } ] }>{ firstMonth.cn }</Text>
+          </Animated.View>
           {
-            secondMonth && !hideSec && !hide && (
+            secondMonth && !hideSec && (
               <Animated.View style={ {
                 paddingRight: AnimatedPaddingLeft
               } }

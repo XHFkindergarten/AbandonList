@@ -19,6 +19,7 @@ function HistoryList({ monthTime }) {
   for(let i in hisListMap) {
     hisList.push(hisListMap[i])
   }
+  hisList.reverse()
 
   const ref = useRef()
   useMemo(() => {
@@ -31,7 +32,7 @@ function HistoryList({ monthTime }) {
     <Transition.Sequence>
       <Transition.Out type="fade" />
       <Transition.Change interpolation="easeInOut" />
-      <Transition.In type="scale" />
+      <Transition.In type="fade" />
     </Transition.Sequence>
   )
   return (

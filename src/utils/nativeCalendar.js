@@ -149,6 +149,14 @@ class NativeCalendar {
    */
   removeEvent = (event, futureEvents = true) => {
     console.log('remove event', event)
+    if (!futureEvents) {
+      // 如果是完成，更新当天的日志
+      const todayKey = moment(new Date()).format('YYYY-MM-DD')
+      dailyStore.updateDailyLogItem({
+        date: new Date(),
+        finishItems: dailyStore.dailyLog[todayKey].finishItems + 1
+      })
+    }
     return new Promise((resolve, reject) => {
       // 原生模块resolve事件id
       RNCalendarEvents.removeEvent(

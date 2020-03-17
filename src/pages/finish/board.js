@@ -34,7 +34,12 @@ export default function Board({ item, monthTime }) {
     maxContinueTimes = item.data.monthList[monthKey] ? item.data.monthList[monthKey].finishDays : 0
     finishTimes = item.data.allFinishTimes || 0
   } else {
-    monthFinishTimes = item.finishLog[monthKey] || 0
+    monthFinishTimes = 0
+    for(let i of Object.keys(item.finishLog)) {
+      if (i.startsWith(monthKey)) {
+        monthFinishTimes += item.finishLog[i]
+      }
+    }
     maxContinueTimes = item.maxContinueTimes
     finishTimes = item.finishTimes
   }
@@ -105,7 +110,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1 / PixelRatio.get(),
     borderBottomWidth: 1 / PixelRatio.get(),
     paddingTop: 30,
-    paddingBottom: 30
+    paddingBottom: 30,
+    marginLeft: 20,
+    marginRight: 20
   },
   dataItem: {
     alignItems: 'center'

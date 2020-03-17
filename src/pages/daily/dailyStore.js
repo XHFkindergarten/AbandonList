@@ -171,13 +171,13 @@ class DailyStore {
   // 标记完成次数+1
   handleFinish = info => {
     console.log('handle finish')
-    const monthKey = moment(new Date()).format('YYYY-MM')
+    const dayKey = moment(new Date()).format('YYYY-MM-DD')
     const target = {
       ...info,
       finish: true,
       finishTimes: info.finishTimes + 1,
       finishLog: Object.assign(info.finishLog, {
-        [monthKey]: info.finishLog[monthKey] ? info.finishLog[monthKey] + 1 : 1
+        [dayKey]: info.finishLog[dayKey] ? info.finishLog[dayKey] + 1 : 1
       })
     }
     // 完成栈中没有记录
@@ -212,13 +212,13 @@ class DailyStore {
   // 取消完成
   handleCancel = info => {
     console.log('handle cancel')
-    const monthKey = moment(new Date()).format('YYYY-MM')
+    const dayKey = moment(new Date()).format('YYYY-MM-DD')
     const target = {
       ...info,
       finish: false,
       finishTimes: info.finishTimes - 1,
       finishLog: Object.assign({}, info.finishLog, {
-        [monthKey]: info.finishLog[monthKey] ? info.finishLog[monthKey] - 1 : 0
+        [dayKey]: info.finishLog[dayKey] ? info.finishLog[dayKey] - 1 : 0
       })
     }
     if (info.continueTimesStack.length && info.lastFinishStack.length) {

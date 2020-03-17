@@ -10,27 +10,15 @@ import themeContext from 'src/themeContext'
 
 
 function Calendar() {
+
+
   const [ showCanlendar, setShowCalendar ] = useState(false)
-  const ref = useRef()
-  // calendarRef = createRef()
 
   const handlePressMonthName = () => {
     // 清空选中日期
-    srcStore.updateTargetDate(null)
-    ref.current.animateNextTransition()
     setShowCalendar(!showCanlendar)
+    srcStore.updateTargetDate(null)
   }
-
-  const transition = (
-    <Transition.Sequence>
-      <Transition.Out type="scale" />
-      <Transition.Change interpolation="linear" />
-      <Transition.In delayMs={ 300 }
-        type="scale"
-      />
-    </Transition.Sequence>
-  )
-
   const theme = useContext(themeContext)
 
   return (
@@ -43,12 +31,12 @@ function Calendar() {
         onPress={ handlePressMonthName }
         showCanlendar={ showCanlendar }
       />
-      <Transitioning.View
-        ref={ ref }
-        transition={ transition }
+      <View style={ {
+        maxHeight: showCanlendar ? 500 : 0
+      } }
       >
-        { showCanlendar && <CalendarBody /> }
-      </Transitioning.View>
+        <CalendarBody />
+      </View>
     </View>
   )
 }
