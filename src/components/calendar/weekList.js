@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Dimensions, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types'
-import CircleItem from './circleItem'
+import CircleItem, { EmptyItem } from './circleItem'
 const { width } = Dimensions.get('window')
 export default function WeekList({ weekArray, index }) {
   const withColor = index === 1
@@ -9,19 +9,28 @@ export default function WeekList({ weekArray, index }) {
     <View
       style={ styles.container }
     >
-      { weekArray.map((item, index) => (
-        <CircleItem
-          key={ index }
-          time={ item }
-          withColor={ withColor }
-        ></CircleItem>
-      )) }
+      { weekArray.map((item, index) => {
+        if (item) {
+          return (
+            <CircleItem
+              key={ index }
+              time={ item }
+              withColor={ withColor }
+            ></CircleItem>
+          )
+        } else {
+          return (
+            <EmptyItem />
+          )
+        }
+      }) }
     </View>
   )
 }
 WeekList.propTypes = {
   weekArray: PropTypes.arrayOf(PropTypes.object)
 }
+
 
 
 

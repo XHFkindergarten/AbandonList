@@ -40,15 +40,15 @@ function CircleItem({ time, withColor }) {
     }
   }, [ withColor ])
   // 如果是占位符直接返回空白元素
-  if (!time) {
-    return (
-      <View style={ {
-        width: itemSize + 6,
-        height: itemSize + 6
-      } }
-      ></View>
-    )
-  }
+  // if (!time) {
+  //   return (
+  //     <View style={ {
+  //       width: itemSize + 6,
+  //       height: itemSize + 6
+  //     } }
+  //     />
+  //   )
+  // }
   // 判断是否是今天
   const date = time.getDate()
   const now = new Date()
@@ -158,6 +158,16 @@ function CircleItem({ time, withColor }) {
 }
 
 export default observer(CircleItem)
+
+export function EmptyItem () {
+  return (
+    <View style={ {
+      width: itemSize + 6,
+      height: itemSize + 6
+    } }
+    />
+  )
+}
 
 CircleItem.propTypes = {
   width: PropTypes.number,

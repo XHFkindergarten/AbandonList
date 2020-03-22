@@ -11,8 +11,10 @@ export const theme = {
   darkTheme :{
     themeColor: '#0068C4',
     name: '@global_dark_theme',
+    // mainColor: '#111',
+    // subColor: '#252525',
     mainColor: '#191919',
-    subColor: '#2F2F2F',
+    subColor: '#232323',
     mainText: '#DBDBDB',
     subText: '#616161',
     gapLine: '#999',
