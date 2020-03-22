@@ -12,17 +12,16 @@ class Notification {
   // 初始化通知模块
   initialNotification = () => new Promise((resolve, reject) => {
     // 检查通知全新啊
-    PushNotificationIOS.checkPermissions(res => {
+    PushNotificationIOS.checkPermissions(async res => {
       let isBlock = false
       for(let i of Object.keys(res)) {
         if (!res[i]) {
           isBlock = true
           // 获取权限
-          PushNotificationIOS.requestPermissions().then(res => {
-            console.log('fetch permission')
-            resolve()
-            return
-          }).catch(err => reject(err))
+          await PushNotificationIOS.requestPermissions()
+            .catch(err => reject(err))
+          resolve()
+          return
         }
       }
       if (!isBlock) {
@@ -105,6 +104,10 @@ class Notification {
   // 设置应用角标
   setBadge = num => {
     PushNotificationIOS.setApplicationIconBadgeNumber(num)
+  }
+  // 清空应用角标数
+  clearBadgeNum = () => {
+    this.setBadge(0)
   }
 }
 

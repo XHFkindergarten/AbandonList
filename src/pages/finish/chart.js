@@ -1,13 +1,14 @@
 /**
  * 类似Github的表格
  */
-import React, { useContext } from 'react';
-import { View, StyleSheet, Dimensions, Text } from 'react-native';
+import React, { useContext, useState, useRef, useMemo } from 'react';
+import { View, StyleSheet, Dimensions, Text, TouchableWithoutFeedback } from 'react-native';
 import dailyStore from '../daily/dailyStore';
 import { getMonthDay } from 'src/utils'
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales'
 import ThemeContext from 'src/themeContext'
-
+import { Transitioning, Transition } from 'react-native-reanimated';
+moment.locale()
 const { width } = Dimensions.get('window')
 
 const contentWidth = width - 40
@@ -45,6 +46,19 @@ const generateFlatList = date => {
 }
 
 
+const itemColorMap = [
+  '#082136',
+  '#00398e',
+  '#003c9d',
+  '#003fac',
+  '#0041bb',
+  '#0043c9',
+  '#0043d7',
+  '#0043e4',
+  '#0042f1',
+  '#1c3ffd'
+]
+
 
 
 export default function Chart({ monthTime, curItem }) {
@@ -53,23 +67,95 @@ export default function Chart({ monthTime, curItem }) {
 
   // 单个模块组件
   const BlockItem = ({ colWidth, item }) => {
+
     const theme = useContext(ThemeContext)
+
     const gapWidth = 100 / flatList.length
     if (item.date) {
-      const dayKey = moment(item.date).format('YYYY-MM-DD')
-      const dayLog = dailyLog[dayKey] || {}
-      const finishTimes = dayLog.finishItems || 0
-      const opacity = finishTimes / 30 + 0.4
+      const temp = moment(item.date)
+      const dayKey = temp.format('YYYY-MM-DD')
+      const showDate = temp.format('MMMDo')
+      let finishTimes = 0
+      if (curItem.id === '@data_over_view') {
+        const dayLog = dailyLog[dayKey] || {}
+        finishTimes = dayLog.finishItems || 0
+      } else {
+        finishTimes = curItem.finishLog[dayKey] || 0
+      }
+      const itemColor = itemColorMap[finishTimes > 9 ? 9 : finishTimes]
+
+      const [ showPop, setPop ] = useState(false)
+
+      const onPressIn = () => {
+        setPop(true)
+      }
+
+      const onPressOut = () => {
+        setPop(false)
+      }
+
       return (
-        <View style={ [ {
-          borderRadius: 6,
-          height: colWidth,
-          width: colWidth,
-          backgroundColor: theme.themeColor,
-          marginBottom: gapWidth,
-          opacity: opacity
-        } ] }
-        />
+        <TouchableWithoutFeedback
+          onPressIn={ onPressIn }
+          onPressOut={ onPressOut }
+        >
+          <View style={ [ {
+            borderRadius: 6,
+            height: colWidth,
+            width: colWidth,
+            backgroundColor: itemColor,
+            marginBottom: gapWidth,
+            zIndex: 60
+          } ] }
+          >
+            {
+              showPop && (
+                <View style={ [ {
+                  backgroundColor: '#4183d7',
+                  borderRadius: 6,
+                  position: 'absolute',
+                  top: -90,
+                  left: '50%',
+                  marginLeft: -40,
+                  width: 80,
+                  padding: 10,
+                  zIndex: 90
+                } ] }
+                >
+                  <Text style={ {
+                    color: '#DBDBDB',
+                    fontSize: 12,
+                    textAlign: 'center'
+                  } }
+                  >{ showDate }</Text>
+                  <Text style={ {
+                    color: '#FFF',
+                    fontSize: 16,
+                    textAlign: 'center',
+                    marginTop: 10,
+                    marginBottom: 10
+                  } }
+                  >{ finishTimes }</Text>
+                  <View style={ {
+                    position: 'absolute',
+                    bottom: -8,
+                    left: '50%',
+                    marginLeft: 8,
+                    height: 0,
+                    width: 0,
+                    borderTopColor: '#4183d7',
+                    borderTopWidth: 8,
+                    borderLeftColor: 'transparent',
+                    borderRightColor: 'transparent',
+                    borderLeftWidth: 8,
+                    borderRightWidth: 8
+                  } }
+                  />
+                </View>
+              )
+            }
+          </View>
+        </TouchableWithoutFeedback>
       )
     } else {
       return (
@@ -85,11 +171,11 @@ export default function Chart({ monthTime, curItem }) {
   }
   // 列组件
   const WeekCol = ({ list, colWidth }) => {
-    console.log('list', list)
     return (
+
       <View style={ [ styles.weekCol, {
         width: colWidth
-      // backgroundColor: theme.themeColor
+        // backgroundColor: theme.themeColor
       } ] }
       >
         {
@@ -109,18 +195,40 @@ export default function Chart({ monthTime, curItem }) {
   const flatList = generateFlatList(date)
   // 每一列的宽度
   const colWidth = (contentWidth - 100) / flatList.length
+
+
+  const ref = useRef()
+  const transition = (
+    <Transition.Together>
+      <Transition.Out
+        type="fade"
+      />
+      <Transition.Change interpolation="linear" />
+      <Transition.In type="fade" />
+    </Transition.Together>
+  )
+  useMemo(() => {
+    if (ref.current) {
+      ref.current.animateNextTransition()
+    }
+  })
   return (
-    <View style={ styles.container }>
-      {
-        flatList.map((item, index) => (
-          <WeekCol
-            colWidth={ colWidth }
-            key={ Math.random() }
-            list={ item }
-          />
-        ))
-      }
-    </View>
+    <Transitioning.View
+      ref={ ref }
+      transition={ transition }
+    >
+      <View style={ styles.container }>
+        {
+          flatList.map((item, index) => (
+            <WeekCol
+              colWidth={ colWidth }
+              key={ index }
+              list={ item }
+            />
+          ))
+        }
+      </View>
+    </Transitioning.View>
   )
 }
 

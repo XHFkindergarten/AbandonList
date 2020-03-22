@@ -1,18 +1,25 @@
-import React, { useState, Fragment, useCallback, useEffect } from 'react';
-import { View, Modal,Text, StyleSheet, Image, TouchableOpacity, PanResponder, ActionSheetIOS } from 'react-native';
+import React, { useState, Fragment, useCallback, useEffect, useRef } from 'react';
+import { View, Modal,Text, StyleSheet, Image, Animated, TouchableOpacity, Dimensions, PanResponder, ActionSheetIOS } from 'react-native';
 import { down, addThin, correctGreen } from 'src/assets/image'
 import finishStore from './store'
-import { vibrate } from 'src/utils'
+import { vibrate, isNewIPhone } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import { correct } from 'src/assets/image'
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
-// import { useFocusEffect } from '@react-navigation/native'
 import { observer } from 'mobx-react';
 import AddCalendar from './addCalendar'
+import StoreReview from './storeReview'
+import Clock, { SelectReviewTime } from './clock'
 
 import { ScrollView } from 'react-native-gesture-handler';
 import srcStore from 'src/store'
 import calStore from 'src/components/calendar/store'
+import { Transitioning, Transition } from 'react-native-reanimated';
+
+const { height } = Dimensions.get('window')
+const newIphone = isNewIPhone()
+
+const fullModalHeight = height - 30 - (newIphone ? 44 : 0)
 
 const Stack = createStackNavigator()
 
@@ -93,7 +100,10 @@ function CalendarList ({ navigation }) {
     navigation.navigate('addCalendar')
   }
   return (
-    <ScrollView>
+    <View style={ {
+      marginBottom: 40
+    } }
+    >
       <TouchableOpacity onPress={ handleClickAdd }>
         <View style={ {
           flexDirection: 'row',
@@ -119,19 +129,28 @@ function CalendarList ({ navigation }) {
           />
         ))
       }
-    </ScrollView>
+    </View>
   )
 }
 
 const CalendarList_ob = observer(CalendarList)
 
+function SetModal({ visible, navigation }) {
 
+  function Set({ navigation }) {
+    return (
+      <Fragment>
+        <CalendarList_ob navigation={ navigation } />
+        <Clock navigation={ navigation } />
+        <StoreReview />
+      </Fragment>
+    )
+  }
 
-function SetModal({ visible }) {
   const handleClose = ()=> {
     finishStore.toggleSet(false)
   }
-  const isAdd = finishStore.isAddCalendar
+  const { isAddCalendar:isAdd, isEditReview } = finishStore
 
   // 在添加路由页面点击返回按钮
   const handleClickBack = () => {
@@ -140,25 +159,30 @@ function SetModal({ visible }) {
 
   // 点击确认创建按钮
   const handleClickCreate = async () => {
-    if (!finishStore.addCalendarForm.id) {
+    if (readyToCreate) {
       // 数据没有ID, 是创建行为
       const res = await nativeCalendar.createCalendar(finishStore.addCalendarForm)
         .catch(() => {
-        // TODO: 弹出提示框
+          // TODO: 弹出提示框
         })
       // 返回值就是新日历的id,默认设置为可见的
       nativeCalendar.toggleVisibleGroupIds(res)
-    } else {
-      // 有ID，是更新行为
-      await nativeCalendar.updateCalendar(finishStore.addCalendarForm)
-        .catch(() => {
-        // TODO: 弹出提示框
-        })
+
+      // 创建成功
+      await finishStore.refreshGroupStorage()
     }
 
-    // 创建成功
-    await finishStore.refreshGroupStorage()
     finishStore.nav.navigate('calendarList')
+  }
+
+  const scrollRef = useRef()
+
+  // const [ moveY ] = useState(new Animated.Value(0))
+  const handleOnScroll = event => {
+    const dy = event.nativeEvent.contentOffset.y
+    if (dy < -60) {
+      handleClose()
+    }
   }
   const readyToCreate = (isAdd && finishStore.addCalendarForm.name && finishStore.addCalendarForm.color)
   return (
@@ -168,10 +192,14 @@ function SetModal({ visible }) {
       visible={ visible }
     >
       <View style={ styles.wrapper }>
-        <View style={ styles.container }>
+        <Animated.View
+          style={ [ styles.container, {
+            // minHeight: fullModalHeight
+          } ] }
+        >
           <View style={ styles.header } >
             {
-              readyToCreate ? (
+              (readyToCreate || isEditReview) ? (
                 <TouchableOpacity onPress={ handleClickCreate }>
                   <Image source={ correctGreen }
                     style={ styles.closeIcon }
@@ -186,7 +214,7 @@ function SetModal({ visible }) {
               )
             }
             {
-              isAdd && (
+              (isAdd || isEditReview) && (
                 <TouchableOpacity onPress={ handleClickBack }>
                   <Image source={ down }
                     style={ [ styles.closeIcon, {
@@ -197,39 +225,66 @@ function SetModal({ visible }) {
               )
             }
           </View>
-          <Stack.Navigator
-            headerMode="none"
-            initialRouteName="calendarList"
+
+          <ScrollView
+            onScroll={ handleOnScroll }
+            ref={ scrollRef }
+            // onScrollEndDrag={ handleRelease }
+            scrollEventThrottle={ 1 }
+            showsHorizontalScrollIndicator={ false }
+            showsVerticalScrollIndicator={ false }
+            style={ { flex: 1 } }
           >
-            <Stack.Screen
-              component={ CalendarList_ob }
-              name="calendarList"
-              options={ {
-                cardStyle: {
-                  backgroundColor: 'transparent'
-                },
-                header: null
-              } }
-            ></Stack.Screen>
-            <Stack.Screen
-              component={ AddCalendar }
-              name="addCalendar"
-              options={ {
-                cardStyle: {
-                  backgroundColor: 'transparent'
-                },
-                header: null,
-                cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-              } }
-            ></Stack.Screen>
-          </Stack.Navigator>
-        </View>
+            <View style={ { height: height } }>
+              <Stack.Navigator
+                headerMode="none"
+                initialRouteName="calendarList"
+              >
+                <Stack.Screen
+                  component={ Set }
+                  name="calendarList"
+                  options={ {
+                    cardStyle: {
+                      backgroundColor: 'transparent'
+                    },
+                    header: null
+                  } }
+                ></Stack.Screen>
+                <Stack.Screen
+                  component={ AddCalendar }
+                  name="addCalendar"
+                  options={ {
+                    cardStyle: {
+                      backgroundColor: 'transparent'
+                    },
+                    header: null,
+                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+                  } }
+                ></Stack.Screen>
+                <Stack.Screen
+                  component={ SelectReviewTime }
+                  initialParams={ { scrollRef } }
+                  name="selectReviewTime"
+                  options={ {
+                    cardStyle: {
+                      backgroundColor: 'transparent'
+                    },
+                    header: null,
+                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+                  } }
+                ></Stack.Screen>
+              </Stack.Navigator>
+            </View>
+
+          </ScrollView>
+        </Animated.View>
       </View>
     </Modal>
   )
 }
 
 export default observer(SetModal)
+
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -239,12 +294,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#2F2F2F',
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
-    minHeight: 500,
+    // flex: 1,
+    height: height - 30 - (newIphone ? 44 : 0),
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0
-    // paddingBottom: 60
+    bottom: 0,
+    paddingBottom: 60
   },
   header: {
     flexDirection: 'row-reverse',

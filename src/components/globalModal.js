@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Text, Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window')
-export default function GlobalModal({ visible, setVisible }) {
+export default function GlobalModal({ visible, setVisible, content }) {
   const handleCloseModal = () => {
     setVisible(false)
   }
@@ -24,9 +24,13 @@ export default function GlobalModal({ visible, setVisible }) {
         } ] }
       >
         <View>
-          <Text style={ styles.content }>
-            提示内容
-          </Text>
+          {
+            typeof content === 'string' ? (
+              <Text style={ styles.content }>
+                { content }
+              </Text>
+            ) : content
+          }
         </View>
         <View style={ styles.footer }>
           <TouchableOpacity

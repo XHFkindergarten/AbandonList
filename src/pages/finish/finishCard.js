@@ -7,14 +7,20 @@ import { wallpaper, wrongRed, setting } from 'src/assets/image'
 import { StyleSheet, Dimensions, ImageBackground, TouchableOpacity, View, Animated, PanResponder, Image, Text } from 'react-native';
 import { observer } from 'mobx-react';
 import srcStore from 'src/store'
+import finishStore from './store'
 import { elipsis, vibrate } from 'src/utils'
 import themeContext from 'src/themeContext'
+import nativeCalendar from 'src/utils/nativeCalendar'
+import calStore from 'src/components/calendar/store'
+import moment from 'moment'
 
 const { width } = Dimensions.get('window')
 
 // 全局唯一定时器
 let pressTimeout = null
-function TodoCard({ info }) {
+function TodoCard({ info, monthTime }) {
+
+  const monthKey = moment(new Date(monthTime)).format('YYYY-MM')
   const [ ScaleValue ] = useState(new Animated.Value(1))
   const ScaleAnimation = Animated.timing(ScaleValue, {
     toValue: 0,
@@ -42,7 +48,6 @@ function TodoCard({ info }) {
       vibrate()
       ScaleAnimation.stop()
       ScaleBackAnimation.start(() => {
-        srcStore.preventOtherHandler = true
         setExpand(true)
         setIsHold(false)
       })
@@ -61,51 +66,29 @@ function TodoCard({ info }) {
     ScaleBackAnimation.start()
   }
 
-  // 点击卡片右侧的完成按钮
+  // 点击卡片右侧的恢复按钮
   const handleExpandAbandon = () => {
-    // setFinish(true)
-    // TranslateXAnimationCenter.start(() => {
-    //   Promise.all([
-    //     new Promise(resolve => {
-    //       opacityAnimation.start(() => resolve())
-    //     }),
-    //     new Promise(resolve => {
-    //       // 第二个参数传false,因为一般只完成当次
-    //       nativeCalendar.removeEvent(info, false)
-    //         .then(() => resolve())
-    //     })
-    //   ]).then(() => {
-    //     setTimeout(() => {
-    //       disappearX.start()
-    //       disappearY.start()
-    //     }, 1000)
-    //   })
-    // })
-    // // 更新完成次数数据
-    // dailyStore.handleCalendarItemFinish()
-    // setIsLeft('center')
+    setExpand(false)
+    finishStore.removeHisItem(monthKey, info)
+    setTimeout(() => {
+      disappearX.start()
+      disappearY.start()
+    }, 300)
   }
   // 点击卡片右侧的删除按钮
   const handleExpandFinish = () => {
-    // setFinish(false)
-    // TranslateXAnimationCenter.start(() => {
-    //   Promise.all([
-    //     new Promise(resolve => {
-    //       opacityAnimation.start(() => resolve())
-    //     }),
-    //     new Promise(resolve => {
-    //       // 第二个参数传true,因为删除一般是针对整个事件而言
-    //       nativeCalendar.removeEvent(info, true)
-    //         .then(() => resolve())
-    //     })
-    //   ]).then(() => {
-    //     setTimeout(() => {
-    //       disappearX.start()
-    //       disappearY.start()
-    //     }, 1000)
-    //   })
-    // })
-    // setIsLeft('center')
+    setExpand(false)
+    nativeCalendar.reCreateEvent(info).then(() => {
+      // 刷新日历中的数据
+      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+      setTimeout(() => {
+        disappearX.start()
+        disappearY.start()
+      }, 300)
+      finishStore.removeHisItem(monthKey, info)
+    }).catch(err => {
+      console.error(err)
+    })
   }
 
   const _panHandlers = PanResponder.create({

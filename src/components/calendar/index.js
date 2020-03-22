@@ -11,6 +11,10 @@ import themeContext from 'src/themeContext'
 
 function Calendar() {
 
+  const centerSunday = store.centerSunday
+  const calYear = new Date(centerSunday).getFullYear()
+  const curYear = new Date().getFullYear()
+  const showYear = calYear !== curYear ? calYear : ''
 
   const [ showCanlendar, setShowCalendar ] = useState(false)
 
@@ -21,21 +25,28 @@ function Calendar() {
   }
   const theme = useContext(themeContext)
 
+  // 控制高度展开动画
+  const [ AnimatedExpand ] = useState(new Animated.Value(0))
+
   return (
     <View style={ [ styles.container, {
       backgroundColor: theme.mainColor
     } ] }
     >
       <MonthName
+        AnimatedExpand={ AnimatedExpand }
         currentMonth={ store.currentMonth }
         onPress={ handlePressMonthName }
         showCanlendar={ showCanlendar }
+        showYear={ showYear }
       />
       <View style={ {
         maxHeight: showCanlendar ? 500 : 0
       } }
       >
-        <CalendarBody />
+        <CalendarBody
+          AnimatedExpand={ AnimatedExpand }
+        />
       </View>
     </View>
   )

@@ -5,10 +5,13 @@ import AsyncStorage from '@react-native-community/async-storage'
 const historyKey = '@h1story_list_key'
 import finishStore from 'src/pages/finish/store'
 import { toJS } from 'mobx';
+import srcStore from 'src/store'
 
 export default function TestModule() {
   const onPress = () => {
-
+    PushNotificationIOS.getScheduledLocalNotifications(res => {
+      console.log(res)
+    })
   }
   return (
     <TouchableOpacity onPress={ onPress }>

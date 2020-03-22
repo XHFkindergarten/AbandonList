@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, Fragment } from 'react';
 import finishStore from './store'
 // import { TouchableScale } from 'src/components'
 import { View, StyleSheet, Text, Dimensions, Animated, TouchableWithoutFeedback } from 'react-native'
@@ -83,10 +83,7 @@ function AddCalendar({ navigation }) {
   }
 
   return (
-    <ScrollView
-      keyboardDismissMode="on-drag"
-      style={ styles.container }
-    >
+    <View style={ styles.container }>
       <TextInput
         clearButtonMode="while-editing"
         keyboardAppearance="dark"
@@ -115,7 +112,7 @@ function AddCalendar({ navigation }) {
         ))
       }
       <View style={ { height: 80 } } />
-    </ScrollView>
+    </View>
   )
 }
 

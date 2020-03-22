@@ -290,5 +290,7 @@ class Store {
 
   // 是否正在执行展开/收回动画
   shift = false
+  // 是展开还是关闭状态
+  isExpanded = false
 }
 export default new Store()

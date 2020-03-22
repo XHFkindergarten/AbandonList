@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Fragment, useContext } from 'react';
+import React, { useState, useEffect, Fragment, useContext, useMemo } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
-import { info_, ring, correctGreen, wrongRed, shalou } from 'src/assets/image'
+import { info_, setting, ring, correctGreen, wrongRed, shalou } from 'src/assets/image'
 import moment from 'moment/min/moment-with-locales'
 import srcStore from 'src/store'
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -10,7 +10,7 @@ import ThemeContext from 'src/themeContext'
 
 moment.locale('zh-cn');
 const { width, height } = Dimensions.get('window')
-const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
+const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handleSetting }) => {
   const handleClose = () => {
     setVisible(false)
     srcStore.preventOtherHandler = false
@@ -24,11 +24,11 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
   }, [])
   const [ ringText, setRingText ] = useState('')
   Notification.getScheduleList().then(res => {
-    if (info.allDay) {
+    const scheduleList = res.filter(item => item.userInfo.id === info.id)
+    if (info.allDay && scheduleList.length) {
       setRingText('将会在当日早晨8:00AM提醒')
       return
     }
-    const scheduleList = res.filter(item => item.userInfo.id === info.id)
     if (scheduleList.length === 2) {
       setRingText('将会在事件开始和结束时时提醒')
     } else if (scheduleList.length === 1) {
@@ -41,6 +41,11 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
       setRingText('暂无提醒')
     }
   })
+
+  // 是否显示结束时间
+  const showEndTime = useMemo(() => {
+    return ringText === '将会在事件结束时提醒' || ringText === '将会在事件开始和结束时时提醒'
+  }, [ ringText ])
 
   const theme = useContext(ThemeContext)
 
@@ -105,12 +110,16 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
                   ></Image>
                   <Text style={ styles.content }>{ moment(info.startDate).format('LLL') }</Text>
                 </View>
-                <View style={ styles.row }>
-                  <Image source={ shalou }
-                    style={ styles.icon }
-                  ></Image>
-                  <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
-                </View>
+                {
+                  showEndTime && (
+                    <View style={ styles.row }>
+                      <Image source={ shalou }
+                        style={ styles.icon }
+                      ></Image>
+                      <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
+                    </View>
+                  )
+                }
               </Fragment>
             )
           }
@@ -149,6 +158,21 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
               style={ styles.handleIcon }
             />
           </TouchableOpacity>
+          {
+            info.allDay && (
+
+              <TouchableOpacity
+                onPress={ handleSetting }
+                style={ {
+                  padding: 20
+                } }
+              >
+                <Image source={ setting }
+                  style={ styles.handleIcon }
+                />
+              </TouchableOpacity>
+            )
+          }
         </View>
       </Animated.View>
     </Modal>

@@ -30,6 +30,7 @@ export default function Board({ item, monthTime }) {
   const isOverView = item.id === '@data_over_view'
   let monthFinishTimes, maxContinueTimes, finishTimes
   if (isOverView) {
+    console.log('show over view item', item)
     monthFinishTimes = item.data.monthList[monthKey] ? item.data.monthList[monthKey].finishItems : 0
     maxContinueTimes = item.data.monthList[monthKey] ? item.data.monthList[monthKey].finishDays : 0
     finishTimes = item.data.allFinishTimes || 0

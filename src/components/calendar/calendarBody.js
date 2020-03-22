@@ -16,10 +16,9 @@ const { width } = Dimensions.get('window')
 
 const itemHeight = (width - 180) / 7 + 16
 const maxHeight = itemHeight * 6
-let isExpanded = false
+// let store.isExpanded = false
 
-function CalendarBody (){
-  // const [ isExpanded, setIsExpanded ] = useState(false)
+function CalendarBody ({ AnimatedExpand }){
   // 控制切换动画ref
   const scrollViewRef = useRef()
   const rePosition = () => {
@@ -33,16 +32,16 @@ function CalendarBody (){
     }
     vibrate(0)
     store.shift = true
-    if (isExpanded) {
+    if (store.isExpanded) {
       miniAnimation.start(() => {
-        isExpanded = false
+        store.isExpanded = false
         // 展开时上划收起
         store.updateIsExpand(false)
         store.shift = false
       })
     } else {
       expandAnimation.start(() => {
-        isExpanded = true
+        store.isExpanded = true
         store.updateIsExpand(true)
         store.shift = false
       })
@@ -61,8 +60,6 @@ function CalendarBody (){
     }
   }
 
-  // 控制高度展开动画
-  const [ AnimatedExpand ] = useState(new Animated.Value(0))
   const expandAnimation = Animated.timing(AnimatedExpand, {
     toValue: 1,
     durationMs: 1000

@@ -11,13 +11,12 @@ import { fromNow, elipsis, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import dailyStore from 'src/pages/daily/dailyStore';
 import themeContext from 'src/themeContext'
-import { Transition, Transitioning } from 'react-native-reanimated';
 
 
 
 // 全局唯一定时器
 let pressTimeout = null
-// 唯二和唯三
+// 唯二1
 let timeout1
 function TodoCard({ info, navigation }) {
 
@@ -27,7 +26,7 @@ function TodoCard({ info, navigation }) {
       clearTimeout(timeout1)
       // clearTimeout(timeout2)
     }
-  })
+  }, [])
   // console.log('info', info)
   // const { allDay, startDate, endDate } = info
   const [ ScaleValue ] = useState(new Animated.Value(1))
@@ -76,7 +75,7 @@ function TodoCard({ info, navigation }) {
         nativeCalendar.removeEvent(info, false)
           .then(() => resolve())
       })
-    ]).then(() => {
+    ]).finally(() => {
       timeout1 = setTimeout(() => {
         disappearX.start()
         disappearY.start()
@@ -96,13 +95,14 @@ function TodoCard({ info, navigation }) {
         nativeCalendar.removeEvent(info, true)
           .then(() => resolve())
       })
-    ]).then(() => {
+    ]).finally(() => {
       timeout1 = setTimeout(() => {
         disappearX.start()
         disappearY.start()
       }, 1000)
     })
   }
+
   useEffect(() => {
     if (!isHold) {
       clearTimeout(pressTimeout)
@@ -133,15 +133,13 @@ function TodoCard({ info, navigation }) {
           nativeCalendar.removeEvent(info, false)
             .then(() => resolve())
         })
-      ]).then(() => {
+      ]).finally(() => {
         timeout1 = setTimeout(() => {
           disappearX.start()
           disappearY.start()
         }, 1000)
       })
     })
-    // 更新完成次数数据
-    dailyStore.handleCalendarItemFinish()
     setIsLeft('center')
   }
   // 点击卡片右侧的删除按钮
@@ -157,7 +155,7 @@ function TodoCard({ info, navigation }) {
           nativeCalendar.removeEvent(info, true)
             .then(() => resolve())
         })
-      ]).then(() => {
+      ]).finally(() => {
         timeout1 = setTimeout(() => {
           disappearX.start()
           disappearY.start()

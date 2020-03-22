@@ -1,17 +1,28 @@
-import React, { useState, useCallback, useContext } from 'react';
-import { View, StyleSheet, Animated, PanResponder, Dimensions, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
+import { View, StyleSheet, Animated, PanResponder, Dimensions, SafeAreaView, StatusBar, AppState } from 'react-native';
 import TodoList from './todoList'
 import store from 'src/store'
 import { useFocusEffect } from '@react-navigation/native';
 import { Calendar } from 'src/components'
 import themeContext from 'src/themeContext'
 import TestModule from './testModule'
+import Notification from 'src/utils/Notification'
 
 const { width } = Dimensions.get('window')
 
 const Main = ({ navigation }) => {
+
+  useEffect(() => {
+    // 允许左右滑动屏幕切换页面
+    store.preventOtherHandler = false
+  }, [])
   useFocusEffect(
     useCallback(() => {
+      // 主页活跃时，清空角标
+      if (AppState.currentState === 'active') {
+        // 清空应用角标数
+        Notification.clearBadgeNum()
+      }
       // Do something when the screen is focused
       store.updateBottomNavName('Main')
       return () => {

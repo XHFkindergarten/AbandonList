@@ -92,24 +92,42 @@ function Add({ route }) {
           setRAE(true)
           setRAB(true)
           updateFormData({ RAE: true, RAB: true })
-        } else {
+        } else if (scheduleList.length === 1) {
           setRAB(true)
           updateFormData({ RAB: true })
         }
       })
+      // 判断分组是否可见
+      judgeGroupVisible(info.calendar.id)
     } else {
       updateFormData({
         start: defaultStartTime,
         end: defaultEndTime,
         groupId: defaultGroupId
       })
+      // 判断分组是否可见
+      judgeGroupVisible(defaultGroupId)
     }
     setIsMounted(true)
   }, [])
 
+  /**
+   * 判断某个分组是否处于可见状态
+   */
+  const judgeGroupVisible = targetId => {
+    // 可见分组
+    const visibleGroupIds = nativeCalendar.visibleGroupIds
+    // 判断分组是否可见
+    if (!visibleGroupIds.includes(targetId)) {
+      groupModalClose()
+      srcStore.globalNotify('当前所选择的分组处于不显示状态,请在【数据总览】->【设置】->【日历分组】中勾选目标分组，或直接新建一个分组')
+    }
+  }
+
   // 初始化分组
   const groups = nativeCalendar.groupStorage
-  const defaultGroup = groups.find(item => item.source === 'Default' || item.title === '默认') || groups[0]
+  // 默认分组
+  const defaultGroup = groups.find(item => item.isPrimary) || groups[0]
   const defaultGroupId = defaultGroup.id
   /* =================== 表单数据管理 =================== */
 
@@ -138,6 +156,7 @@ function Add({ route }) {
   const handleGroupIdChange = value => {
     setGroupId(value)
     updateFormData({ groupId: value })
+    judgeGroupVisible(value)
   }
   const handleStartChange = value => {
     setStart(value)
@@ -352,6 +371,12 @@ function Add({ route }) {
               />
             </View>
             <View style={ styles.itemRow }>
+              <Text style={ styles.itemLabel }>时间</Text>
+              <TouchableOpacity onPress={ startModalOpen }>
+                <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={ styles.itemRow }>
               <Text style={ styles.itemLabel }>重复</Text>
               <TouchableOpacity onPress={ repeatModalOpen }>
                 <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
@@ -375,24 +400,18 @@ function Add({ route }) {
             { (RAB && !allDay) && (
               <Fragment>
                 <View style={ styles.itemRow }>
-                  <Text style={ styles.itemLabel }>开始时间</Text>
-                  <TouchableOpacity onPress={ startModalOpen }>
-                    <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={ styles.itemRow }>
-                  <Text style={ styles.itemLabel }>结束时间</Text>
-                  <TouchableOpacity onPress={ endModalOpen }>
-                    <Text style={ styles.itemValue }>{ moment(end).format('lll') }</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={ styles.itemRow }>
                   <Text style={ styles.itemLabel }>结束时提醒</Text>
                   <Switch
                     onValueChange={ handleRAEChange }
                     trackColor={ { false: '', true: '#4192D9' } }
                     value={ RAE }
                   />
+                </View>
+                <View style={ styles.itemRow }>
+                  <Text style={ styles.itemLabel }>结束时间</Text>
+                  <TouchableOpacity onPress={ endModalOpen }>
+                    <Text style={ styles.itemValue }>{ moment(end).format('lll') }</Text>
+                  </TouchableOpacity>
                 </View>
               </Fragment>
             ) }

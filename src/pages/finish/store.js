@@ -3,8 +3,20 @@ import RNCalendarEvents from 'react-native-calendar-events'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import AsyncStorage from '@react-native-community/async-storage'
 import moment from 'moment'
+import Notification from 'src/utils/Notification'
+import { Alert } from 'react-native';
 
 const historyKey = '@h1story_list_key'
+const reviewKey = '@review_time_key'
+
+// IOS下的日期格式处理
+const convertDateIOS = target => {
+  console.log('target', target)
+  const output = moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+  console.log('output', output)
+  return output
+}
+
 class Store {
   // 设置弹框是否活跃
   @observable
@@ -20,6 +32,14 @@ class Store {
   @action
   toggleIsAddCalendar = flag => {
     this.isAddCalendar = typeof flag === 'boolean' ? flag : !this.isAddCalendar
+  }
+
+  // 是否正在编辑回顾时间
+  @observable
+  isEditReview = false
+  @action
+  toggleIsEditReview = flag => {
+    this.isEditReview = typeof flag === 'boolean' ? flag : !this.isEditReview
   }
 
   /* =================== 日历表单 =================== */
@@ -90,7 +110,10 @@ class Store {
   @observable
   historyList = {}
   @action
-  updateHistoryList = value => this.historyList = value
+  updateHistoryList = value => {
+    this.historyList = value
+    this.saveHistory()
+  }
   @action
   updateHistoryItem = (monthKey, info) => {
     // 同一个月同一个事件只允许完成一次
@@ -103,10 +126,26 @@ class Store {
         }
       }
     }
+    this.saveHistory()
   }
+  /**
+   * 保存到本机存储
+   */
   saveHistory = () => {
     console.log('save history', this.historyList)
     AsyncStorage.setItem(historyKey, JSON.stringify(toJS(this.historyList)))
+  }
+  /**
+   * 删除一条历史记录
+   */
+  removeHisItem = (monthKey, info) => {
+    const hisData = {
+      ...this.historyList
+    }
+    if (hisData[monthKey] && hisData[monthKey][info.id]) {
+      delete hisData[monthKey][info.id]
+    }
+    this.updateHistoryList(hisData)
   }
   /**
    * 初始化历史记录列表
@@ -126,16 +165,65 @@ class Store {
       // JS化数据
       const JSItem = toJS(item)
       JSItem.isDelete = isDelete
+      JSItem.finishDate = convertDateIOS(new Date())
       const monthKey = moment(new Date()).format('YYYY-MM')
       this.updateHistoryItem(monthKey, JSItem)
-      // 保存到本地存储
-      this.saveHistory()
       resolve()
     })
   }
 
   // 路由navigation
   nav = null
+
+
+  // 每天回顾的时间
+  @observable reviewTime = ''
+  @action updateReviewTime = value => {
+    if (value) {
+      const dateStr = convertDateIOS(value)
+      if (dateStr && dateStr !== 'Invalid date') {
+        this.reviewTime = dateStr
+        // 清空所有的每日通知
+        Notification.removeTarget(reviewKey)
+        // 重新添加每日通知
+        Notification.setScheduleNotification({
+          fireDate: convertDateIOS(value),
+          alertTitle: 'AbandonList',
+          alertBody: '回顾一下今天的日程吧',
+          id: reviewKey,
+          repeatInterval: 'day'
+        })
+      } else {
+        // 数据不正确
+        this.reviewTime = ''
+        // 清空所有的每日通知
+        Notification.removeTarget(reviewKey)
+        Alert.alert('回顾处理失败，已重置数据，请重新设置')
+      }
+    } else {
+      this.reviewTime = ''
+      // 清空所有的每日通知
+      Notification.removeTarget(reviewKey)
+    }
+    // Notification
+    this.saveReviewTime()
+  }
+  // 保存到本地
+  saveReviewTime = () => {
+    AsyncStorage.setItem(reviewKey, this.reviewTime)
+  }
+  // 初始化
+  @action
+  initialReviewTime = async () => {
+    const str = await AsyncStorage.getItem(reviewKey)
+    console.log('async str', str)
+    if (str && str.length > 10) {
+      const dateStr = convertDateIOS(str)
+      if (dateStr && dateStr !== 'Invalid date') {
+        this.reviewTime = dateStr
+      }
+    }
+  }
 }
 
 export default new Store()

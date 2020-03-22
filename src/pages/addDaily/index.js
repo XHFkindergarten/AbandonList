@@ -198,7 +198,9 @@ function AddDaily ({ navigation, route }) {
           placeholder="请输入任务名称"
           placeholderTextColor="#bfbfbf"
           returnKeyType="done"
-          style={ styles.textInput }
+          style={ [ styles.textInput, color && {
+            backgroundColor: color
+          } ] }
         />
         <TextInput
           clearButtonMode="while-editing"

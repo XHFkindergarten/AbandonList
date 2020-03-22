@@ -1,7 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import moment from 'moment'
-import { observer } from 'mobx-react'
 
 let timeoutId = ''
 class Store {
@@ -153,6 +152,9 @@ class Store {
   // 当前处于操作状态的卡片id
   @observable focusCardId = ''
   @action updateFocusCardId = value => this.focusCardId = value
+
+  // 发送全局通知的方法
+  globalNotify = () => {}
 }
 
 const store = new Store()

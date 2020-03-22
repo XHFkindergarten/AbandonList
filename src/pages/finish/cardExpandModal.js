@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment, useContext } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
-import { info_, ring, correctGreen, wrongRed, shalou } from 'src/assets/image'
+import { info_, ring, refresh, circleWrong, shalou, type } from 'src/assets/image'
 import moment from 'moment/min/moment-with-locales'
 import srcStore from 'src/store'
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -13,7 +13,6 @@ const { width, height } = Dimensions.get('window')
 const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
   const handleClose = () => {
     setVisible(false)
-    srcStore.preventOtherHandler = false
   }
   const [ AnimatedScale ] = useState(new Animated.Value(0.2))
   // component did mount
@@ -24,11 +23,11 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
   }, [])
   const [ ringText, setRingText ] = useState('')
   Notification.getScheduleList().then(res => {
-    if (info.allDay) {
+    const scheduleList = res.filter(item => item.userInfo.id === info.id)
+    if (info.allDay && scheduleList.length) {
       setRingText('将会在当日早晨8:00AM提醒')
       return
     }
-    const scheduleList = res.filter(item => item.userInfo.id === info.id)
     if (scheduleList.length === 2) {
       setRingText('将会在事件开始和结束时时提醒')
     } else if (scheduleList.length === 1) {
@@ -43,6 +42,8 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
   })
 
   const theme = useContext(ThemeContext)
+
+  const finishDate = info.finishDate
 
   return (
     <Modal
@@ -115,6 +116,12 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
             )
           }
           <View style={ styles.row }>
+            <Image source={ type }
+              style={ styles.icon }
+            ></Image>
+            <Text style={ styles.content }>{ `${info.isDelete ? '删除' : '完成'}于${moment(finishDate).format('lll')}` }</Text>
+          </View>
+          <View style={ styles.row }>
             <Image source={ ring }
               style={ styles.icon }
             ></Image>
@@ -135,7 +142,7 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
               padding: 20
             } }
           >
-            <Image source={ correctGreen }
+            <Image source={ refresh }
               style={ styles.handleIcon }
             />
           </TouchableOpacity>
@@ -145,7 +152,7 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
               padding: 20
             } }
           >
-            <Image source={ wrongRed }
+            <Image source={ circleWrong }
               style={ styles.handleIcon }
             />
           </TouchableOpacity>

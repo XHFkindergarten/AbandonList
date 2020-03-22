@@ -145,17 +145,40 @@ class NativeCalendar {
   }
 
   /**
+   * 恢复一个事件
+   */
+  reCreateEvent = (event) => {
+    return new Promise((resolve, reject) => {
+      RNCalendarEvents.saveEvent(
+        event.title,
+        {
+          calendarId: event.calendar.id,
+          startDate: event.startDate,
+          endDate: event.endDate,
+          allDay: event.allDay,
+          notes: event.notes
+        }
+      ).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  }
+
+  /**
    * 移除事件，futureEvents决定是否删除同一series的后续事件
    */
   removeEvent = (event, futureEvents = true) => {
     console.log('remove event', event)
     if (!futureEvents) {
       // 如果是完成，更新当天的日志
-      const todayKey = moment(new Date()).format('YYYY-MM-DD')
-      dailyStore.updateDailyLogItem({
-        date: new Date(),
-        finishItems: dailyStore.dailyLog[todayKey].finishItems + 1
-      })
+      // const todayKey = moment(new Date()).format('YYYY-MM-DD')
+      // dailyStore.updateDailyLogItem({
+      //   date: new Date(),
+      //   finishItems: dailyStore.dailyLog[todayKey].finishItems + 1
+      // })
+      dailyStore.handleCalendarItemFinish()
     }
     return new Promise((resolve, reject) => {
       // 原生模块resolve事件id

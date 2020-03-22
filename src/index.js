@@ -11,6 +11,7 @@ import dailyStore from 'src/pages/daily/dailyStore'
 import ThemeContext, { theme as themeValue } from './themeContext'
 import Notification from 'src/utils/Notification'
 import finishStore from 'src/pages/finish/store'
+import setModal from './pages/finish/setModal';
 
 // 创建栈路由
 const Stack = createStackNavigator()
@@ -38,12 +39,21 @@ function App() {
     dailyStore.initialDailyStore()
     // 初始化历史记录
     finishStore.initialHistoryList()
+
+    // 初始化每日通知时间
+    finishStore.initialReviewTime()
+
+    // 更新全局通知方法
+    store.globalNotify = globalNotify
+
+
     return () => {
       // App will unmount
       Notification.removeListeners()
     }
   }, [])
 
+  // const [ theme, setThemeValue ] = useState(themeValue.lightTheme)
   const [ theme, setThemeValue ] = useState(themeValue.darkTheme)
   // 切换主题方法,存储在全局store中
   // const toggleTheme = () => {
@@ -53,6 +63,16 @@ function App() {
   //     setThemeValue(theme.darkTheme)
   //   }
   // }
+
+  const [ showGlobalModal, setShowModal ] = useState(false)
+  const [ modalContent, setModalContent ] = useState('')
+
+  // 发送全局通知的方法
+  const globalNotify = content => {
+    setModalContent(content)
+    setShowModal(true)
+  }
+
   return (
     <ThemeContext.Provider value={ theme }>
       <View style={ { flex: 1, backgroundColor: theme.mainColor } }>
@@ -102,7 +122,11 @@ function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </View>
-      <GlobalModal visible={ false } />
+      <GlobalModal
+        content={ modalContent }
+        setVisible={ setShowModal }
+        visible={ showGlobalModal }
+      />
       <BottomNavigation />
     </ThemeContext.Provider>
 

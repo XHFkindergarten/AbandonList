@@ -1,12 +1,13 @@
 import React, { useContext, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import ThemeContext from 'src/themeContext'
 import { observer } from 'mobx-react';
 import store from './store'
 import moment from 'moment';
+import { glasses, handStop } from 'src/assets/image'
 import FinishCard from './finishCard'
 import { Transitioning, Transition } from 'react-native-reanimated'
-
+const { height } = Dimensions.get('window')
 function HistoryList({ monthTime }) {
 
   const theme = useContext(ThemeContext)
@@ -21,12 +22,16 @@ function HistoryList({ monthTime }) {
   }
   hisList.reverse()
 
+  console.log('list', hisList)
+
   const ref = useRef()
   useMemo(() => {
     if (ref.current) {
       ref.current.animateNextTransition()
     }
   })
+
+  const isCurrentMonth = new Date(monthTime).getMonth() === new Date().getMonth()
 
   const transition = (
     <Transition.Sequence>
@@ -42,13 +47,31 @@ function HistoryList({ monthTime }) {
       transition={ transition }
     >
       {
-        hisList.map((item, index) => (
+        hisList.length ? (hisList.map((item, index) => (
           <FinishCard
             info={ item }
             key={ item.id }
             level={ index }
+            monthTime={ monthTime }
           />
-        ))
+        ))) : (
+          isCurrentMonth && (
+            <View style={ styles.emptyContainer }>
+              <Image source={ glasses }
+                style={ styles.emoji }
+              />
+              <Image source={ handStop }
+                style={ styles.handStop }
+              />
+              <Text style={ [ styles.emptyText, {
+                color: theme.mainText
+              } ] }
+              >
+                当月无卡片数据，请在主页创建一张卡片并结束卡片状态
+              </Text>
+            </View>
+          )
+        )
       }
     </Transitioning.View>
   )
@@ -60,8 +83,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 40,
-    alignItems: 'center'
-    // justifyContent: 'center'
-    // alignItems: 'center'
+    alignItems: 'center',
+    minHeight: height - 160
+  },
+  emptyContainer: {
+    // justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200
+  },
+  emoji: {
+    height: 100,
+    width: 100,
+    marginBottom: 60
+  },
+  handStop: {
+    position: 'absolute',
+    left: 40,
+    top: 60,
+    height: 80,
+    width: 80
+  },
+  emptyText: {
+    width: 300,
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: '600',
+    textAlign: 'center'
   }
 })

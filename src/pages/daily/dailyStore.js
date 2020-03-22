@@ -345,12 +345,13 @@ class DailyStore {
       const item = log[i]
       // 累加总完成天数
       res.allFinishTimes += item.finishItems
+      console.log('item', item)
       const tempArr = i.split('-')
       const monthKey = `${tempArr[0]}-${tempArr[1]}`
       if (!res.monthList[monthKey]) {
         res.monthList[monthKey] = {
           finishItems: item.finishItems,
-          finishDays: 1
+          finishDays: item.finishItems ? 1 : 0
         }
       } else {
         res.monthList[monthKey] = {

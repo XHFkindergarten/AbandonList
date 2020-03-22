@@ -11,8 +11,8 @@ export const theme = {
   darkTheme :{
     themeColor: '#0068C4',
     name: '@global_dark_theme',
-    mainColor: '#111',
-    subColor: '#252525',
+    mainColor: '#191919',
+    subColor: '#2F2F2F',
     mainText: '#DBDBDB',
     subText: '#616161',
     gapLine: '#999',
@@ -21,9 +21,10 @@ export const theme = {
   // 亮色
   lightTheme: {
     name: '@global_light_theme',
+    themeColor: '#0068C4',
     mainColor: '#FFF',
-    subColor: '#DBDBDB',
-    mainText: '#DBDBDB',
+    subColor: '#F4F4F8',
+    mainText: '#000',
     subText: '#444'
   }
 }

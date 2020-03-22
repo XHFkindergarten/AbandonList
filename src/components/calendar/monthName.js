@@ -10,11 +10,12 @@ import { vibrate } from 'src/utils'
 import { Transitioning, Transition } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import themeContext from 'src/themeContext'
+import store from './store'
 
 
 
 
-function MonthName({ currentMonth, onPress, showCanlendar }) {
+function MonthName({ currentMonth, onPress, showCanlendar, showYear, AnimatedExpand }) {
   const [ firstMonth = 'Error', secondMonth = null ] = currentMonth
   // const [ hide, setHide ] = useState(false)
   const [ hideSec, setHideSec ] = useState(true)
@@ -31,6 +32,12 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
       duration: 300
     }).start()
     setHideSec(showCanlendar)
+    if (showCanlendar) {
+      AnimatedExpand.setValue(0)
+      // 同步store中的动画状态
+      store.shift = false
+      store.isExpanded = false
+    }
   }
   const AnimatedPaddingLeft = AnimatedLogoOpacity.interpolate({
     inputRange: [ 0, 1 ],
@@ -49,15 +56,6 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
     </Transition.Sequence>
   )
   const ref = useRef()
-
-  // useEffect(() => {
-  //   ref.current.animateNextTransition()
-  //   setHide(true)
-  //   setTimeout(() => {
-  //     ref.current.animateNextTransition()
-  //     setHide(false)
-  //   })
-  // }, [ currentMonth.en ])
 
   useMemo(() => {
     if (ref.current) {
@@ -83,7 +81,18 @@ function MonthName({ currentMonth, onPress, showCanlendar }) {
           } }
           >
             <Text style={ [ styles.name, { color: theme.mainText } ] }>{ firstMonth.en }</Text>
-            <Text style={ [ styles.subName, { color: theme.mainText } ] }>{ firstMonth.cn }</Text>
+            <View style={ {
+              flexDirection: 'row',
+              alignItems: 'center'
+            } }
+            >
+              <Text style={ [ styles.subName, { color: theme.mainText } ] }>{ firstMonth.cn }</Text>
+              <Text style={ [ styles.year, {
+                color: theme.mainText
+              } ] }
+              >{ showYear }</Text>
+            </View>
+
           </Animated.View>
           {
             secondMonth && !hideSec && (
@@ -129,9 +138,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Century Gothic'
   },
   subName: {
-    // color: '#DBDBDB',
     fontSize: 16,
     fontWeight: '900'
+  },
+  year: {
+    marginLeft: 5,
+    fontSize: 16
   },
   calendar: {
     height: 30,

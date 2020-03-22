@@ -12,7 +12,7 @@ import themeContext from 'src/themeContext'
 
 const { width } = Dimensions.get('window')
 
-function AllDayCard({ info }) {
+function AllDayCard({ info, navigation }) {
   const [ expand, setExpand ] = useState(false)
   // 点击展开卡片的完成按钮
   const handleExpandFinish = () => {
@@ -30,6 +30,14 @@ function AllDayCard({ info }) {
       setTimeout(() => {
         srcStore.refreshTodoList(srcStore.startDay)
       }, 1000)
+    })
+  }
+
+  // 点击展开卡片的编辑功能
+  const handleExpandSetting = () => {
+    setExpand(false)
+    navigation.navigate('Add', {
+      info
     })
   }
 
@@ -58,6 +66,7 @@ function AllDayCard({ info }) {
       <CardExpandModal
         handleAbandon={ handleExpandAbandon }
         handleFinish={ handleExpandFinish }
+        handleSetting={ handleExpandSetting }
         info={ info }
         setVisible={ setExpand }
       /> }

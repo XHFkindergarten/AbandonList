@@ -167,9 +167,6 @@ function Finish({ navigation }) {
   return (
     <Fragment>
       <ImageBackground
-        imageStyle={ {
-          resizeMode: 'repeat'
-        } }
         source={ wallpaper }
         style={ {
           paddingTop: newIPhone ? 44 : 0,
@@ -318,7 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   _title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '900',
     textAlign: 'center'
   },
