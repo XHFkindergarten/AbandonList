@@ -20,6 +20,7 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
         durationMs={ 300 }
         type="fade"
       />
+      <Transition.Change interpolation="easeInOut" />
       <Transition.Out
         durationMs={ 300 }
         type="fade"

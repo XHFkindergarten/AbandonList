@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useRef, useContext, useMemo } from 'react';
+import React, { useState, Fragment, useRef, useContext, useMemo, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, PanResponder } from 'react-native';
 import store from 'src/store'
 import TodoCard from './todoCard'
@@ -60,6 +60,11 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
       date
     })
   }
+
+  // useEffect(() => {
+  //   setRemovedList([])
+  // }, todo)
+
   const EmptyItem = () => (
     <TouchableWithoutFeedback onPress={ addItem }>
       <View style={ {
@@ -68,6 +73,15 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
       />
     </TouchableWithoutFeedback>
   )
+
+  // const [ removedList, setRemovedList ] = useState([])
+  // const handleRemoveMe = id => {
+  //   setRemovedList([
+  //     ...removedList,
+  //     id
+  //   ])
+  // }
+
   if (todoList.length === 0) {
     return (
       <EmptyItem />
@@ -85,6 +99,7 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
                 info={ item }
                 key={ item.id }
                 navigation={ navigation }
+                // remove={ handleRemoveMe }
               />
             )
           } else {
@@ -93,6 +108,7 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
                 info={ item }
                 key={ item.id }
                 navigation={ navigation }
+                // remove={ handleRemoveMe }
               />
             )
           }

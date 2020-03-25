@@ -16,6 +16,7 @@ import { fromNow, elipsis, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import themeContext from 'src/themeContext'
 import mainStore from './store'
+import calStore from 'src/components/calendar/store'
 
 
 
@@ -77,10 +78,7 @@ function TodoCard({ info, navigation }) {
           .then(() => resolve())
       })
     ]).finally(() => {
-      timeout1 = setTimeout(() => {
-        disappearX.start()
-        disappearY.start()
-      }, 1000)
+      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
     })
   }
   // 点击展开卡片的删除按钮
@@ -97,10 +95,7 @@ function TodoCard({ info, navigation }) {
           .then(() => resolve())
       })
     ]).finally(() => {
-      timeout1 = setTimeout(() => {
-        disappearX.start()
-        disappearY.start()
-      }, 1000)
+      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
     })
   }
 
@@ -136,10 +131,7 @@ function TodoCard({ info, navigation }) {
             .then(() => resolve())
         })
       ]).finally(() => {
-        timeout1 = setTimeout(() => {
-          disappearX.start()
-          disappearY.start()
-        }, 1000)
+        srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
       })
     })
   }
@@ -157,10 +149,7 @@ function TodoCard({ info, navigation }) {
             .then(() => resolve())
         })
       ]).finally(() => {
-        timeout1 = setTimeout(() => {
-          disappearX.start()
-          disappearY.start()
-        }, 1000)
+        srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
       })
     })
   }
@@ -340,6 +329,8 @@ function TodoCard({ info, navigation }) {
   const fromNowTime = fromNow(info)
 
   const theme = useContext(themeContext)
+
+
   return (
     <View>
       <Animated.View style={ {

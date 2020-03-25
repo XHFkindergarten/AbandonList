@@ -54,11 +54,11 @@ class Store {
       })
       startDay.setDate(startDay.getDate() + 1)
     }
-    this.showTodoList = false
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => {
-      this.showTodoList = true
-    })
+    // this.showTodoList = false
+    // clearTimeout(timeoutId)
+    // timeoutId = setTimeout(() => {
+    //   this.showTodoList = true
+    // })
     this.todoList = res
   }
   // 更新todoList不出现闪动动画
