@@ -32,7 +32,6 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
       listRef.current.animateNextTransition()
     }
   })
-  const storeShowTodoList = store.showTodoList
 
 
   return (
@@ -54,7 +53,7 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
             scrollEnabled={ !store.leftItemId }
             showsVerticalScrollIndicator={ false }
           >
-            { storeShowTodoList && todoList.map(item => (
+            { todoList.map(item => (
               <TodoItem
                 expandCard={ expandCard }
                 item={ item }

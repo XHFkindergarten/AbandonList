@@ -9,7 +9,13 @@ class Store {
   @action setNav = value => this.nav = value
   // 当前点击的日期
   @observable targetDate = new Date()
-  @action updateTargetDate = value => this.targetDate = new Date(value)
+  @action updateTargetDate = value => {
+    if (value) {
+      this.targetDate = new Date(value)
+    } else {
+      this.targetDate = null
+    }
+  }
   // 当前的路由栈
   @observable bottomNavName = 'Main'
   @action updateBottomNavName = value => this.bottomNavName = value
@@ -29,7 +35,6 @@ class Store {
   }
   // 当前显示的待办列表数组
   @observable todoList = []
-  @observable showTodoList = true
   @action updateTodoListById = (index, id, value) => {
     this.todoList[index][id] = value
   }
@@ -54,11 +59,7 @@ class Store {
       })
       startDay.setDate(startDay.getDate() + 1)
     }
-    // this.showTodoList = false
-    // clearTimeout(timeoutId)
-    // timeoutId = setTimeout(() => {
-    //   this.showTodoList = true
-    // })
+    console.log('更新事件列表', res)
     this.todoList = res
   }
   // 更新todoList不出现闪动动画

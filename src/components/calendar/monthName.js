@@ -33,10 +33,12 @@ function MonthName({ currentMonth, onPress, showCanlendar, showYear, AnimatedExp
     }).start()
     setHideSec(showCanlendar)
     if (showCanlendar) {
-      AnimatedExpand.setValue(0)
-      // 同步store中的动画状态
-      store.shift = false
-      store.isExpanded = false
+      setTimeout(() => {
+        AnimatedExpand.setValue(0)
+        // 同步store中的动画状态
+        store.shift = false
+        store.isExpanded = false
+      })
     }
   }
   const AnimatedPaddingLeft = AnimatedLogoOpacity.interpolate({

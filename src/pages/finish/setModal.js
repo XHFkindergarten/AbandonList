@@ -31,6 +31,8 @@ function CalendarItem({ item }) {
   const handleClick = () => {
     nativeCalendar.toggleVisibleGroupIds(item.id)
     // 刷新日历中的数据
+    console.log('day1', srcStore.targetDate)
+    console.log('day2', calStore.centerSunday)
     srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
     // 因为groupids不是响应式的，所以需要手动刷新组件
     setFlag(!flag)
