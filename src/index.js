@@ -1,4 +1,4 @@
-import { Add, Main, Finish, Daily, AddDaily } from './pages'
+import { Add, Main, Finish, Daily, AddDaily, Guide } from './pages'
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,8 +10,9 @@ import { BottomNavigation, GlobalModal } from 'src/components'
 import dailyStore from 'src/pages/daily/dailyStore'
 import ThemeContext, { theme as themeValue } from './themeContext'
 import Notification from 'src/utils/Notification'
+import { isFirstOpen } from 'src/utils'
 import finishStore from 'src/pages/finish/store'
-import setModal from './pages/finish/setModal';
+import { observer } from 'mobx-react';
 
 // 创建栈路由
 const Stack = createStackNavigator()
@@ -19,21 +20,30 @@ const Stack = createStackNavigator()
 function App() {
   // App did mount
   useEffect(() => {
-    // 初始化通知模块
-    Notification.initialNotification().then(() => {
-      // 初始化监听事件
-      Notification.initialListener()
-    })
-    // 检查日历权限
-    nativeCalendar.checkAuth().then(() => {
-      // 获取存储在本地的可见分组数据
-      nativeCalendar.initialVisibleGroup().then(() => {
-        // 获取日历所有分组信息[默认只显示默认日历的信息]
-        nativeCalendar.getCalendarGroups().then(() => {
-          // 获取事件
-          store.initialStorageData()
-        })
-      })
+
+    isFirstOpen().then(ifFirst => {
+      if (!ifFirst) {
+        try {
+          // 初始化通知模块
+          Notification.initialNotification().then(() => {
+            // 初始化监听事件
+            Notification.initialListener()
+          })
+          // 检查日历权限
+          nativeCalendar.checkAuth().then(() => {
+            // 获取存储在本地的可见分组数据
+            nativeCalendar.initialVisibleGroup().then(() => {
+              // 获取日历所有分组信息[默认只显示默认日历的信息]
+              nativeCalendar.getCalendarGroups().then(() => {
+                // 获取事件
+                store.initialStorageData()
+              })
+            })
+          })
+        } catch(e) {
+          console.log(e)
+        }
+      }
     })
     // 从AsyncStorage中初始化每日待办列表
     dailyStore.initialDailyStore()
@@ -72,6 +82,12 @@ function App() {
     setModalContent(content)
     setShowModal(true)
   }
+
+  const [ showBottom, setBottom ] = useState(true)
+
+  store.setShowBottom = setBottom
+
+  // const isGuiding = store.bottomNavName === 'Guide'
 
   return (
     <ThemeContext.Provider value={ theme }>
@@ -115,8 +131,15 @@ function App() {
               component={ AddDaily }
               name="AddDaily"
               options={ {
-              // gestureDirection: 'vertical',
                 cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS
+              } }
+            />
+            <Stack.Screen
+              component={ Guide }
+              name="Guide"
+              options={ {
+                gestureEnabled: false,
+                cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
               } }
             />
           </Stack.Navigator>
@@ -127,7 +150,10 @@ function App() {
         setVisible={ setShowModal }
         visible={ showGlobalModal }
       />
-      <BottomNavigation />
+      {
+        showBottom && <BottomNavigation />
+      }
+
     </ThemeContext.Provider>
 
   );
@@ -135,6 +161,6 @@ function App() {
 
 
 
-export default App;
+export default (App);
 
 // react-navigation@5.x路由需要用NavigationContainer包裹

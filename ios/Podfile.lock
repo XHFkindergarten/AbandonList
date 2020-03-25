@@ -190,6 +190,8 @@ PODS:
     - React
   - react-native-safe-area-context (0.7.3):
     - React
+  - react-native-splash-screen (3.2.0):
+    - React
   - react-native-webview (6.0.2):
     - React
   - React-RCTActionSheet (0.61.5):
@@ -266,6 +268,7 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-mo-vibrate (from `../node_modules/react-native-mo-vibrate`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -329,6 +332,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-mo-vibrate"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-RCTActionSheet:
@@ -390,6 +395,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
   react-native-mo-vibrate: 711ca73bac32cd95801a2d7d3247ef5aaf7410f6
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webview: bb6d9ecbd3963f2279fdf50e4fdf3914f70b0acd
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360

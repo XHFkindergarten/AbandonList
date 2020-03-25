@@ -7,11 +7,11 @@ import finishStore from 'src/pages/finish/store'
 import { toJS } from 'mobx';
 import srcStore from 'src/store'
 
+const firstLaunchKey = '@first_launch_key'
+
 export default function TestModule() {
   const onPress = () => {
-    PushNotificationIOS.getScheduledLocalNotifications(res => {
-      console.log(res)
-    })
+    AsyncStorage.removeItem(firstLaunchKey)
   }
   return (
     <TouchableOpacity onPress={ onPress }>

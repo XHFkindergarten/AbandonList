@@ -21,6 +21,9 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handle
     Animated.spring(AnimatedScale, {
       toValue: 1
     }).start()
+    return () => {
+      srcStore.preventOtherHandler = false
+    }
   }, [])
   const [ ringText, setRingText ] = useState('')
   Notification.getScheduleList().then(res => {
@@ -158,21 +161,16 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handle
               style={ styles.handleIcon }
             />
           </TouchableOpacity>
-          {
-            info.allDay && (
-
-              <TouchableOpacity
-                onPress={ handleSetting }
-                style={ {
-                  padding: 20
-                } }
-              >
-                <Image source={ setting }
-                  style={ styles.handleIcon }
-                />
-              </TouchableOpacity>
-            )
-          }
+          <TouchableOpacity
+            onPress={ handleSetting }
+            style={ {
+              padding: 20
+            } }
+          >
+            <Image source={ setting }
+              style={ styles.handleIcon }
+            />
+          </TouchableOpacity>
         </View>
       </Animated.View>
     </Modal>

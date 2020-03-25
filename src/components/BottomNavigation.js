@@ -97,14 +97,6 @@ function BottomNavigation() {
       })
     })
   }, [ focusStackName ])
-  // useEffect(() => {
-  //   if (isDaily) {
-  //     Animated.timing(AnimatedScale[0], {
-  //       toValue: 1,
-  //       duration: 2000
-  //     }).start()
-  //   }
-  // }, [ isDaily ])
   // 添加/修改日历事件
   const isAddPage = store.isAddPage
   const isAddDaily = store.isAddDaily
@@ -294,6 +286,7 @@ const styles = StyleSheet.create({
   halfContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: 20
   }
 })

@@ -7,6 +7,8 @@ import { Calendar } from 'src/components'
 import themeContext from 'src/themeContext'
 import TestModule from './testModule'
 import Notification from 'src/utils/Notification'
+import mainStore from './store'
+import { isFirstOpen } from 'src/utils'
 
 const { width } = Dimensions.get('window')
 
@@ -15,6 +17,13 @@ const Main = ({ navigation }) => {
   useEffect(() => {
     // 允许左右滑动屏幕切换页面
     store.preventOtherHandler = false
+
+    isFirstOpen().then(res => {
+      if(res) {
+        navigation.navigate('Guide')
+      }
+    })
+
   }, [])
   useFocusEffect(
     useCallback(() => {
@@ -27,7 +36,7 @@ const Main = ({ navigation }) => {
       store.updateBottomNavName('Main')
       return () => {
         // Do something when the screen is unfocused
-
+        store.updateFocusCardId('')
       }
     }, [])
   )
@@ -37,7 +46,7 @@ const Main = ({ navigation }) => {
   // 页面左右边缘滑动时切换页面
   const _panResponder = PanResponder.create({
     onMoveShouldSetPanResponderCapture: (event, gesture) => {
-      if (store.preventOtherHandler) return false
+      if (store.preventOtherHandler || mainStore.isScrollCard) return false
       return gesture.moveX < 20 || gesture.moveX > width - 20
     },
     onPanResponderMove: (event, gesture) => {

@@ -20,7 +20,7 @@ export default function WeekList({ weekArray, index }) {
           )
         } else {
           return (
-            <EmptyItem />
+            <EmptyItem key={ index } />
           )
         }
       }) }

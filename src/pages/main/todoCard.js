@@ -1,3 +1,8 @@
+/*
+ * @Descripttion :
+ * @Author       : lizhaokang
+ * @Date         : 2020-03-25 10:15:01
+ */
 /**
  * 待办项卡片item
  */
@@ -9,8 +14,8 @@ import { observer } from 'mobx-react';
 import srcStore from 'src/store'
 import { fromNow, elipsis, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
-import dailyStore from 'src/pages/daily/dailyStore';
 import themeContext from 'src/themeContext'
+import mainStore from './store'
 
 
 
@@ -19,20 +24,16 @@ let pressTimeout = null
 // 唯二1
 let timeout1
 function TodoCard({ info, navigation }) {
-
   useEffect(() => {
     return () => {
       // component will unmount
       clearTimeout(timeout1)
-      // clearTimeout(timeout2)
     }
   }, [])
-  // console.log('info', info)
-  // const { allDay, startDate, endDate } = info
   const [ ScaleValue ] = useState(new Animated.Value(1))
   const ScaleAnimation = Animated.timing(ScaleValue, {
     toValue: 0,
-    duration: 3000
+    duration: 2000
   })
   const ScaleBackAnimation = Animated.timing(ScaleValue, {
     toValue: 1,
@@ -60,7 +61,7 @@ function TodoCard({ info, navigation }) {
         setExpand(true)
         setIsHold(false)
       })
-    }, 600)
+    }, 400)
   }
   // 点击展开卡片的完成按钮
   const handleExpandFinish = () => {
@@ -123,7 +124,8 @@ function TodoCard({ info, navigation }) {
   // 点击卡片右侧的完成按钮
   const handlePressFinish = () => {
     setFinish(true)
-    TranslateXAnimationCenter.start(() => {
+    TranslateToCenter(() => {
+      srcStore.updateFocusCardId('')
       Promise.all([
         new Promise(resolve => {
           opacityAnimation.start(() => resolve())
@@ -140,12 +142,11 @@ function TodoCard({ info, navigation }) {
         }, 1000)
       })
     })
-    setIsLeft('center')
   }
   // 点击卡片右侧的删除按钮
   const handlePressAbandon = () => {
     setFinish(false)
-    TranslateXAnimationCenter.start(() => {
+    TranslateToCenter(() => {
       Promise.all([
         new Promise(resolve => {
           opacityAnimation.start(() => resolve())
@@ -162,10 +163,9 @@ function TodoCard({ info, navigation }) {
         }, 1000)
       })
     })
-    setIsLeft('center')
   }
   // 控制左右滑动效果
-  const [ AnimatedTranslateX ] = useState(new Animated.Value(0))
+  const [ moveY ] = useState(new Animated.Value(0))
   const [ AnimatedIconOpacity ] = useState(new Animated.Value(0))
   const AnimatedIconOpacityReverse = AnimatedIconOpacity.interpolate({
     inputRange: [ 0, 1 ],
@@ -176,31 +176,110 @@ function TodoCard({ info, navigation }) {
     toValue: 1,
     duration: 500
   })
-  const TranslateXAnimationLeft = Animated.spring(AnimatedTranslateX, {
-    toValue: -140
+  const TranslateXAnimationLeft = Animated.timing(moveY, {
+    toValue: -140,
+    duration: 300
   })
-  const TranslateXAnimationRight = Animated.spring(AnimatedTranslateX, {
-    toValue: 70
+  const TranslateXAnimationRight = Animated.timing(moveY, {
+    toValue: 70,
+    duration: 300
   })
-  const TranslateXAnimationCenter = Animated.spring(AnimatedTranslateX, {
-    toValue: 0
+  const TranslateXAnimationCenter = Animated.timing(moveY, {
+    toValue: 0,
+    duration: 300
   })
+  const TranslateToLeft = (endHandler) => {
+    Animated.timing(moveY, {
+      toValue: isLeft === 'left' ? 0 : -140,
+      duration: 300
+    }).start(() => {
+      if (typeof endHandler === 'function') {
+        endHandler()
+      }
+    })
+  }
+  const TranslateToRight = endHandler => {
+    Animated.timing(moveY, {
+      toValue: isLeft === 'right' ? 0 : 70,
+      duration: 300
+    }).start(() => {
+      if (typeof endHandler === 'function') {
+        endHandler()
+      }
+    })
+  }
+  const TranslateToCenter = (endHandler) => {
+    if (isLeft === 'left') {
+      Animated.timing(moveY, {
+        toValue: 140,
+        duration: 300
+      }).start(() => {
+        setIsLeft('center')
+        moveY.setValue(0)
+        if (typeof endHandler === 'function') {
+          endHandler()
+        }
+      })
+    } else if (isLeft === 'right') {
+      Animated.timing(moveY, {
+        toValue: -70,
+        duration: 300
+      }).start(() => {
+        setIsLeft('center')
+        moveY.setValue(0)
+        if (typeof endHandler === 'function') {
+          endHandler()
+        }
+      })
+    }
+  }
+
+  const AnimatedTranslateX = moveY.interpolate({
+    inputRange: [ -211, -210, -140, 0, 70, 140, 141 ],
+    outputRange: [ -210, -210, -140, 0, 70, 140, 140 ]
+  })
+
+  const AnimatedTranslateX_left = moveY.interpolate({
+    inputRange: [ -140, -70, 0, 140, 210, 211 ],
+    outputRange: [ -245, -210, -140, 0, 30, 30 ]
+  })
+  const AnimatedTranslateX_right = moveY.interpolate({
+    inputRange: [ -141, -140, -70, 0, 70, 210, 211 ],
+    outputRange: [ -30, -30, 0, 70, 140, 210, 210 ]
+  })
+
   const [ isLeft, setIsLeft ] = useState('center')
   const _handleMoveEnd = (eve, gesture) => {
+    mainStore.updateIsScroll(false)
     handlePressOut()
-    if ((isLeft === 'left' && gesture.dx > 50) || (isLeft === 'right' && gesture.dx < -50)) {
-      srcStore.updateFocusCardId('')
-      TranslateXAnimationCenter.start()
-      setIsLeft('center')
+    const { dx } = gesture
+    if (isLeft === 'left') {
+      if (dx > 10) {
+        TranslateToCenter(() => srcStore.updateFocusCardId(''))
+      } else {
+        TranslateToLeft()
+      }
+    } else if (isLeft === 'right') {
+      if (dx < -10) {
+        TranslateToCenter(() => srcStore.updateFocusCardId(''))
+      } else {
+        TranslateToRight()
+      }
     } else if (isLeft === 'center') {
-      if (gesture.dx > 50) {
+      if (dx > 50) {
         srcStore.updateFocusCardId(info.id)
-        TranslateXAnimationRight.start()
-        setIsLeft('right')
-      } else if (gesture.dx < -50) {
+        TranslateXAnimationRight.start(() => {
+          setIsLeft('right')
+          moveY.setValue(0)
+        })
+      } else if (dx < -50) {
         srcStore.updateFocusCardId(info.id)
-        TranslateXAnimationLeft.start()
-        setIsLeft('left')
+        TranslateXAnimationLeft.start(() => {
+          setIsLeft('left')
+          moveY.setValue(0)
+        })
+      } else {
+        TranslateXAnimationCenter.start()
       }
     }
   }
@@ -209,15 +288,34 @@ function TodoCard({ info, navigation }) {
   const focusCardId = srcStore.focusCardId
 
   useEffect(() => {
-    if (srcStore.focusCardId !== info.id && isLeft !== 'center') {
-      TranslateXAnimationCenter.start()
-      setIsLeft('center')
+    if (srcStore.focusCardId !== info.id) {
+      if (isLeft === 'left') {
+        Animated.timing(moveY, {
+          toValue: 140,
+          duration: 300
+        }).start(() => {
+          setIsLeft('center')
+          moveY.setValue(0)
+        })
+      } else if (isLeft === 'right') {
+        Animated.timing(moveY, {
+          toValue: -70,
+          duration: 300
+        }).start(() => {
+          setIsLeft('center')
+          moveY.setValue(0)
+        })
+      }
     }
   }, [ focusCardId ])
 
   const _panHandlers = PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    // onMoveShouldSetPanResponder: () => true,
     onStartShouldSetPanResponderCapture: () => true,
+    // onMoveShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: () => {
+      mainStore.updateIsScroll(true)
       if (isLeft === 'center') {
         handlePressIn()
       }
@@ -228,14 +326,17 @@ function TodoCard({ info, navigation }) {
       if (Math.abs(dx) > 2) {
         handlePressOut()
       }
+      moveY.setValue(dx)
     },
     onPanResponderTerminate: _handleMoveEnd,
     onPanResponderRelease: _handleMoveEnd
   })
-  const AnimatedTextTranslateX = AnimatedTranslateX.interpolate({
-    inputRange: [ -181, -180, 0, 180, 181 ],
-    outputRange: [ 70, 70, 0, -70, -70 ]
-  })
+
+  // const AnimatedTextTranslateX = moveY.interpolate({
+  //   inputRange: [ -181, -180, 0, 180, 181 ],
+  //   outputRange: [ 70, 70, 0, -70, -70 ]
+  // })
+
   const fromNowTime = fromNow(info)
 
   const theme = useContext(themeContext)
@@ -243,7 +344,7 @@ function TodoCard({ info, navigation }) {
     <View>
       <Animated.View style={ {
         transform: [
-          { translateX: AnimatedTranslateX },
+          { translateX: isLeft === 'center' ? AnimatedTranslateX : ( isLeft === 'left' ? AnimatedTranslateX_left : AnimatedTranslateX_right) },
           { scaleY: AnimatedScaleX }
         ],
         maxHeight: AnimatedHeightY
@@ -262,7 +363,7 @@ function TodoCard({ info, navigation }) {
           <View style={ styles.cardHeader }>
             <Animated.View style={ [ styles.cardCircle, {
               backgroundColor: info.calendar.color,
-              transform: [ { translateX: AnimatedTextTranslateX } ],
+              // transform: [ { translateX: AnimatedTextTranslateX } ],
               opacity: AnimatedIconOpacityReverse
             } ] }
             />
@@ -270,7 +371,7 @@ function TodoCard({ info, navigation }) {
               styles.cardTitle, {
                 maxWidth: 200,
                 color: theme.pureText,
-                transform: [ { translateX: AnimatedTextTranslateX } ],
+                // transform: [ { translateX: AnimatedTextTranslateX } ],
                 opacity: AnimatedIconOpacityReverse
               }
             ] }
@@ -278,7 +379,7 @@ function TodoCard({ info, navigation }) {
           </View>
           <Animated.Text style={ [ styles.timeLeft, {
             color: theme.subText,
-            transform: [ { translateX: AnimatedTextTranslateX } ],
+            // transform: [ { translateX: AnimatedTextTranslateX } ],
             opacity: AnimatedIconOpacityReverse
           } ] }
           >{ fromNowTime }</Animated.Text>

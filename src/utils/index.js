@@ -2,6 +2,7 @@
 import { Dimensions } from 'react-native'
 import moment from 'moment/min/moment-with-locales'
 import { Vibrate } from 'react-native-mo-vibrate'
+import AsyncStorage from '@react-native-community/async-storage';
 moment.locale('zh-cn');
 /**
  * 工具类函数
@@ -130,3 +131,19 @@ export const vibrate = (index = 1) => {
 //   return value < 110
 // }
 
+const firstLaunchKey = '@first_launch_key'
+
+/**
+ * 判断是否是第一次打开App
+ */
+export function isFirstOpen() {
+  return new Promise(resolve => {
+    AsyncStorage.getItem(firstLaunchKey).then(res => {
+      if (!res) {
+        resolve('first')
+      } else {
+        resolve('')
+      }
+    })
+  })
+}

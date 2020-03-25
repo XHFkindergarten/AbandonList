@@ -155,6 +155,9 @@ class Store {
 
   // 发送全局通知的方法
   globalNotify = () => {}
+
+  // 控制底部导航栏显示
+  setShowBottom = () => {}
 }
 
 const store = new Store()
