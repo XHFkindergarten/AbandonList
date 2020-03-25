@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect, useContext } from 'react';
 import CardExpandModal from './cardExpandModal'
-import { StyleSheet, TouchableOpacity, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Dimensions, Animated } from 'react-native';
 import { observer } from 'mobx-react';
 import srcStore from 'src/store'
 import { elipsis } from 'src/utils'
@@ -14,13 +14,20 @@ const { width } = Dimensions.get('window')
 
 function AllDayCard({ info, navigation }) {
   const [ expand, setExpand ] = useState(false)
+
+  const [ animateOpacity ] = useState(new Animated.Value(1))
+  const [ animateHeight ] = useState(new Animated.Value(60))
+
   // 点击展开卡片的完成按钮
   const handleExpandFinish = () => {
     setExpand(false)
     nativeCalendar.removeEvent(info, false).then(() => {
       setTimeout(() => {
-        srcStore.refreshTodoList(srcStore.startDay)
-      }, 1000)
+        // srcStore.refreshTodoList(srcStore.startDay)
+        Animated.spring(animateOpacity, { toValue: 0 }).start(() => {
+          Animated.spring(animateHeight, { toValue: 0 }).start()
+        })
+      }, 600)
     })
   }
   // 点击展开卡片的删除按钮
@@ -28,8 +35,11 @@ function AllDayCard({ info, navigation }) {
     setExpand(false)
     nativeCalendar.removeEvent(info, true).then(() => {
       setTimeout(() => {
-        srcStore.refreshTodoList(srcStore.startDay)
-      }, 1000)
+        // srcStore.refreshTodoList(srcStore.startDay)
+        Animated.spring(animateOpacity, { toValue: 0 }).start(() => {
+          Animated.spring(animateHeight, { toValue: 0 }).start()
+        })
+      }, 600)
     })
   }
 
@@ -49,7 +59,11 @@ function AllDayCard({ info, navigation }) {
 
   return (
     <TouchableOpacity onPress={ onPress }>
-      <View style={ styles.container }>
+      <Animated.View style={ [ styles.container, {
+        opacity: animateOpacity,
+        maxHeight: animateHeight
+      } ] }
+      >
         <View style={ [ styles.circle, {
           backgroundColor: info.calendar.color
         } ] }
@@ -61,7 +75,7 @@ function AllDayCard({ info, navigation }) {
           }
         ] }
         >{ elipsis(info.title, 50) + '  全天' }</Text>
-      </View>
+      </Animated.View>
       { expand &&
       <CardExpandModal
         handleAbandon={ handleExpandAbandon }

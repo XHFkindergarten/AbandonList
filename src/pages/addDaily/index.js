@@ -3,7 +3,7 @@
  */
 import React, { useCallback, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { View, StyleSheet, Text, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, TouchableOpacity, Switch } from 'react-native';
+import { View, StyleSheet, Text, Keyboard, ScrollView, Alert, Linking, TextInput, TouchableWithoutFeedback, TouchableOpacity, Switch } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
 import { flatColorList } from 'src/common'
@@ -11,6 +11,8 @@ import moment from 'moment'
 import { TimePickModal } from 'src/components'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { toJS } from 'mobx';
+import Notification from 'src/utils/Notification'
+
 const pickDay = [
   '星期日',
   '星期一',
@@ -126,9 +128,29 @@ function AddDaily ({ navigation, route }) {
     })
   }
   const handleNotiChange = value => {
-    setNoti(value)
-    dailyStore.addDailyFormItem({
-      noti: value
+    Notification.withAuth(false).then(() => {
+      setNoti(value)
+      dailyStore.addDailyFormItem({
+        noti: value
+      })
+    }).catch(() => {
+      Alert.alert(
+        '提示',
+        '请开启通知权限',
+        [
+          {
+            text: '确定',
+            onPress: () => {
+
+            }
+          },{
+            text: '去开启通知',
+            onPress: () => {
+              Linking.openURL('app-settings:')
+            }
+          }
+        ]
+      )
     })
   }
   const handleNotiTimeChange = value => {

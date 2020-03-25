@@ -78,10 +78,10 @@ function FirstScreen({ handleEnd }) {
       } ] }
       >
         <Text style={ styles.subLabel }>
-            AbandonList是一款时间管理App
+            AbandonList是一款日程管理App
         </Text>
         <Text style={ styles.subLabel }>
-          检视当周计划和每日任务来完成时间管理
+          检视当周计划和每日任务来完成日程管理
         </Text>
       </Animated.View>
 
@@ -150,36 +150,40 @@ function SecondScreen({ handleEnd }) {
           store.initialStorageData()
         })
       })
-    }).finally(() => {
-      Animated.timing(logoProgress, {
-        toValue: 0,
-        duration: 400
-      }).start()
-      Animated.timing(word1Progress, {
-        toValue: 0,
-        duration: 400
-      }).start()
-      Animated.timing(word2Progress, {
-        toValue: 0,
-        duration: 400,
-        delay: 100
-      }).start(() => {
-        setCalendarText(false)
+    })
+      .catch(e => {
+        console.log(e)
+      })
+      .finally(() => {
+        Animated.timing(logoProgress, {
+          toValue: 0,
+          duration: 400
+        }).start()
         Animated.timing(word1Progress, {
-          toValue: 1,
-          duration: 400,
-          delay: 100
+          toValue: 0,
+          duration: 400
         }).start()
         Animated.timing(word2Progress, {
-          toValue: 1,
-          duration: 400
-        }).start()
-        Animated.timing(logoProgress, {
-          toValue: 1,
-          duration: 400
-        }).start()
+          toValue: 0,
+          duration: 400,
+          delay: 100
+        }).start(() => {
+          setCalendarText(false)
+          Animated.timing(word1Progress, {
+            toValue: 1,
+            duration: 400,
+            delay: 100
+          }).start()
+          Animated.timing(word2Progress, {
+            toValue: 1,
+            duration: 400
+          }).start()
+          Animated.timing(logoProgress, {
+            toValue: 1,
+            duration: 400
+          }).start()
+        })
       })
-    })
   }
 
   const onPressNoti = () => {

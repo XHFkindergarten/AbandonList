@@ -4,7 +4,7 @@ import store from 'src/store'
 import TodoItem from './todoItem'
 import { observer } from 'mobx-react';
 import { Transitioning, Transition } from 'react-native-reanimated'
-export default observer(function TodoList({ expandCard, navigation }) {
+export default observer(function TodoList({ expandCard, navigation, authorized }) {
   const todoList = store.todoList
   todoList.filter((a, b) => {
     if (a.allDay) {
@@ -32,32 +32,57 @@ export default observer(function TodoList({ expandCard, navigation }) {
     }
   })
   const storeShowTodoList = store.showTodoList
+
+
   return (
     <Transitioning.View
       ref={ listRef }
       style={ { flex: 1 } }
       transition={ transition }
     >
-      <ScrollView
-        contentContainerStyle={ {
-          paddingTop: 20,
-          paddingBottom: 100
-        } }
-        keyboardDismissMode="on-drag"
-        pagingEnabled={ false }
-        removeClippedSubviews
-        scrollEnabled={ !store.leftItemId }
-        showsVerticalScrollIndicator={ false }
-      >
-        { storeShowTodoList && todoList.map(item => (
-          <TodoItem
-            expandCard={ expandCard }
-            item={ item }
-            key={ item.date }
-            navigation={ navigation }
-          />
-        )) }
-      </ScrollView>
+      {
+        authorized ? (
+          <ScrollView
+            contentContainerStyle={ {
+              paddingTop: 20,
+              paddingBottom: 100
+            } }
+            keyboardDismissMode="on-drag"
+            pagingEnabled={ false }
+            removeClippedSubviews
+            scrollEnabled={ !store.leftItemId }
+            showsVerticalScrollIndicator={ false }
+          >
+            { storeShowTodoList && todoList.map(item => (
+              <TodoItem
+                expandCard={ expandCard }
+                item={ item }
+                key={ item.date }
+                navigation={ navigation }
+              />
+            )) }
+          </ScrollView>
+        ) : (
+          <View style={ {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+          } }
+          >
+            <Text style={ {
+              color: '#FFF',
+              lineHeight: 30,
+              fontSize: 16,
+              width: 300,
+              fontWeight: '300',
+              textAlign: 'center'
+            } }
+            >
+            请在[设置] -> [AbandonList] -> [日历]   开启日历管理权限
+            </Text>
+          </View>
+        )
+      }
     </Transitioning.View>
   )
 })

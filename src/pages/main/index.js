@@ -9,6 +9,7 @@ import TestModule from './testModule'
 import Notification from 'src/utils/Notification'
 import mainStore from './store'
 import { isFirstOpen } from 'src/utils'
+import nativeCalendar from 'src/utils/nativeCalendar'
 
 const { width } = Dimensions.get('window')
 
@@ -34,12 +35,23 @@ const Main = ({ navigation }) => {
       }
       // Do something when the screen is focused
       store.updateBottomNavName('Main')
+      // 检查是否已经授权
+      nativeCalendar.withAuth().then(() => {
+      // 已授权
+      }).catch(() => {
+        setAuthorized(false)
+      })
       return () => {
         // Do something when the screen is unfocused
         store.updateFocusCardId('')
       }
     }, [])
   )
+
+  // 用户是否已经授权
+  const [ authorized, setAuthorized ] = useState(true)
+
+
   // 将路由存储到mobx store中方便外部调用
   store.setNav(navigation)
   const [ moveX ] = useState(new Animated.Value(0))
@@ -69,6 +81,9 @@ const Main = ({ navigation }) => {
   })
 
   const theme = useContext(themeContext)
+
+
+
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
       <View style={ {
@@ -76,7 +91,6 @@ const Main = ({ navigation }) => {
         backgroundColor: theme.subColor
       } }
       >
-        { /* <TestModule /> */ }
         <Animated.View
           style={  {
             flex: 1,
@@ -91,7 +105,10 @@ const Main = ({ navigation }) => {
               backgroundColor: theme.subColor
             } ] }
           >
-            <TodoList navigation={ navigation }/>
+            <TodoList
+              authorized={ authorized }
+              navigation={ navigation }
+            />
           </View>
         </Animated.View>
       </View>

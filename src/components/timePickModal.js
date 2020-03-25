@@ -23,6 +23,7 @@ function TimePickModal({ visible = false, handleClose, defaultTime = new Date(),
             </TouchableOpacity>
           </View>
           <DateTimePicker
+            locale="zh-Hans"
             mode={ mode }
             onChange={ onDateChange }
             value={ defaultTime }

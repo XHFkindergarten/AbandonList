@@ -24,7 +24,7 @@ function TodoCard({ info, monthTime }) {
   const [ ScaleValue ] = useState(new Animated.Value(1))
   const ScaleAnimation = Animated.timing(ScaleValue, {
     toValue: 0,
-    duration: 3000
+    duration: 2000
   })
   const ScaleBackAnimation = Animated.timing(ScaleValue, {
     toValue: 1,
@@ -51,7 +51,7 @@ function TodoCard({ info, monthTime }) {
         setExpand(true)
         setIsHold(false)
       })
-    }, 600)
+    }, 400)
   }
 
   useEffect(() => {

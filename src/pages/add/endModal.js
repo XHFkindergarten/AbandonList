@@ -20,6 +20,7 @@ function EndModal({ visible, handleClose, endTime, setEndTime }) {
             </TouchableOpacity>
           </View>
           <DateTimePicker
+            locale="zh-Hans"
             mode="datetime"
             onChange={ onDateChange }
             value={ endTime }

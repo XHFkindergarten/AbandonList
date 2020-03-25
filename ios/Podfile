@@ -36,6 +36,8 @@ target 'AbandonList' do
 
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'AbandonListTests' do
     inherit! :search_paths
     # Pods for testing

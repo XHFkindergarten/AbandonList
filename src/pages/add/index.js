@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, Fragment, useCallback } from 'react';
-import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
+import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Alert, Linking, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
 import { Transitioning, Transition } from 'react-native-reanimated';
-import moment from 'moment'
+import moment from 'moment/min/moment-with-locales'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import GroupModal from './groupModal'
 import StartModal from './startModal'
@@ -12,6 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
 import Notification from 'src/utils/Notification'
 
+moment.locale('zh-cn');
 
 
 
@@ -206,18 +207,38 @@ function Add({ route }) {
     }
   }
   const handleRABChange = newValue => {
-    contentRef.current.animateNextTransition()
-    setRAB(newValue)
-    updateFormData({ RAB: newValue })
-    if (isMounted) {
-      if (allDay && newValue) {
-        toast('将会在当天早晨8:00提醒')
-      } else if (newValue && RAE ) {
-        toast('将会在事件开始和结束时设置提醒')
-      } else if (newValue) {
-        toast('将会在事件开始时提醒')
+    Notification.withAuth(false).then(() => {
+      contentRef.current.animateNextTransition()
+      setRAB(newValue)
+      updateFormData({ RAB: newValue })
+      if (isMounted) {
+        if (allDay && newValue) {
+          toast('将会在当天早晨8:00提醒')
+        } else if (newValue && RAE ) {
+          toast('将会在事件开始和结束时设置提醒')
+        } else if (newValue) {
+          toast('将会在事件开始时提醒')
+        }
       }
-    }
+    }).catch(() => {
+      Alert.alert(
+        '提示',
+        '请开启通知权限',
+        [
+          {
+            text: '确定',
+            onPress: () => {
+
+            }
+          },{
+            text: '去开启通知',
+            onPress: () => {
+              Linking.openURL('app-settings:')
+            }
+          }
+        ]
+      )
+    })
   }
 
 

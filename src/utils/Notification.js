@@ -1,5 +1,6 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import moment from 'moment'
+import srcStore from 'src/store'
 
 // IOS下的日期格式处理
 const convertDateIOS = target => moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -9,22 +10,49 @@ const convertDateIOS = target => moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.
  */
 class Notification {
 
+  // 是否获得了授权
+  authorized = false
+
+  // 检查通知授权，没有的话发送警告
+  withAuth = (needWarn = true) => new Promise((resolve, reject) => {
+    PushNotificationIOS.checkPermissions(res => {
+      if (!res.alert || !res.badge || !res.sound) {
+        if (needWarn) {
+          setTimeout(() => {
+            srcStore.globalNotify('未开启通知权限，无法发送通知。请在[设置] -> [AbandonList] -> [通知]中开启所有权限')
+          })
+        }
+        reject()
+      } else {
+        resolve()
+      }
+    })
+  })
+
   // 初始化通知模块
   initialNotification = () => new Promise((resolve, reject) => {
-    // 检查通知全新啊
+    // 检查通知权限
     PushNotificationIOS.checkPermissions(async res => {
       let isBlock = false
       for(let i of Object.keys(res)) {
         if (!res[i]) {
           isBlock = true
           // 获取权限
-          await PushNotificationIOS.requestPermissions()
+          const requestRes = await PushNotificationIOS.requestPermissions()
             .catch(err => reject(err))
-          resolve()
+          if (!requestRes.alert || !requestRes.badge || !requestRes.sound) {
+            // 用户拒绝授权
+            reject()
+          } else {
+            // 用户授权
+            // this.authorized = true
+            resolve()
+          }
           return
         }
       }
       if (!isBlock) {
+        // this.authorized = true
         resolve()
       }
     })

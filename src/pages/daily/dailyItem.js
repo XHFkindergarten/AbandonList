@@ -123,8 +123,7 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
 
   return (
     <Animated.View style={ [ styles.container, {
-      // backgroundColor: info.color || '#23cba7',
-      backgroundColor: '#f15a22',
+      backgroundColor: info.color || '#23cba7',
       transform: [ { scale: AnimatedScale } ]
     }, isSelect && {
       borderColor: '#FFF',

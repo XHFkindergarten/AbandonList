@@ -6,6 +6,7 @@ import SplashScreen from 'react-native-splash-screen'
 
 export default function App() {
   useEffect(() => {
+    // 关闭启动屏
     SplashScreen.hide()
   }, [])
   return (

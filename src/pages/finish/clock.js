@@ -1,10 +1,11 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Switch, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert, Linking, Text, Switch, Image } from 'react-native';
 import { clock, clockActive } from 'src/assets/image'
 import { useFocusEffect } from '@react-navigation/native'
 import finishStore from './store'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment/min/moment-with-locales'
+import Notification from 'src/utils/Notification'
 
 moment.locale('zh-cn');
 
@@ -68,6 +69,7 @@ export function SelectReviewTime({ route }) {
         />
       </View>
       <DateTimePicker
+        locale="zh-Hans"
         mode={ 'time' }
         onChange={ onTimeChange }
         value={ time }
@@ -81,7 +83,27 @@ export function SelectReviewTime({ route }) {
  */
 function StoreReview({ navigation }) {
   const handlePress = () => {
-    navigation.navigate('selectReviewTime')
+    Notification.withAuth(false).then(() => {
+      navigation.navigate('selectReviewTime')
+    }).catch(() => {
+      Alert.alert(
+        '提示',
+        '请开启通知权限',
+        [
+          {
+            text: '确定',
+            onPress: () => {
+
+            }
+          },{
+            text: '去开启通知',
+            onPress: () => {
+              Linking.openURL('app-settings:')
+            }
+          }
+        ]
+      )
+    })
   }
   const { reviewTime } = finishStore
   return (

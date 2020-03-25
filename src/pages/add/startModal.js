@@ -23,6 +23,7 @@ function StartModal({ visible, handleClose, startTime, setStartTime }) {
             </TouchableOpacity>
           </View>
           <DateTimePicker
+            locale="zh-Hans"
             mode="datetime"
             onChange={ onDateChange }
             value={ startTime }

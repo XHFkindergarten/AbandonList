@@ -54,6 +54,8 @@ const visibleGroupKey = '@_visible_group_key'
 
 
 class NativeCalendar {
+  // 是否已经获得用户授权
+  authorized = false
   // 获取当前权限状态
   checkAuth = () => {
     return new Promise((resolve, reject) => {
@@ -61,12 +63,20 @@ class NativeCalendar {
         if (res !== 'authorized') {
           // 如果没有取得授权,申请日历权限
           RNCalendarEvents.authorizeEventStore().then(res => {
-            resolve()
+            if (res === 'denied') {
+              // 用户拒绝了授权
+              reject()
+            } else {
+              // 用户给与了授权
+              // this.authorized = true
+              resolve()
+            }
           }).catch(err => {
             reject(err)
           })
         } else {
           // 已有权限
+          // this.authorized = true
           resolve()
         }
       }).catch(err => {
@@ -74,6 +84,17 @@ class NativeCalendar {
       })
     })
   }
+
+  withAuth = () => new Promise((resolve, reject) => {
+    RNCalendarEvents.authorizationStatus().then(res => {
+      console.log('res', res)
+      if (res === 'authorized' || res === 'undetermined') {
+        resolve()
+      } else {
+        reject()
+      }
+    })
+  } )
 
   /**
    * 新增/更新 日历事件
