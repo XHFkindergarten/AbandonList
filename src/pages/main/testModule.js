@@ -11,19 +11,41 @@ const firstLaunchKey = '@first_launch_key'
 
 export default function TestModule() {
   const onPress = () => {
-    AsyncStorage.removeItem(firstLaunchKey)
+    PushNotificationIOS.getScheduledLocalNotifications(res => {
+      console.log('notification list', res)
+    })
+  }
+  const onPress2 = () => {
+    PushNotificationIOS.cancelAllLocalNotifications()
   }
   return (
-    <TouchableOpacity onPress={ onPress }>
-      <View style={ {
-        height: 100
-      } }
-      >
-        <Text style={ {
-          color: '#FFF'
+    <View>
+      <TouchableOpacity onPress={ onPress }>
+        <View style={ {
+          height: 100
         } }
-        >测试</Text>
-      </View>
-    </TouchableOpacity>
+        >
+          <Text style={ {
+            color: '#FFF'
+          } }
+          >
+          查看所有通知
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={ onPress2 }>
+        <View style={ {
+          height: 100
+        } }
+        >
+          <Text style={ {
+            color: '#FFF'
+          } }
+          >
+          清除所有通知
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   )
 }

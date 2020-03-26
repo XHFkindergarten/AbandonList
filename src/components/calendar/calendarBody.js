@@ -53,10 +53,12 @@ function CalendarBody ({ AnimatedExpand }){
       // 左划滑到顶部
       store.scrollBackward()
       rePosition()
+      srcStore.updateTargetDate(null)
     } else if (event.nativeEvent.targetContentOffset.x === event.nativeEvent.layoutMeasurement.width * 2) {
       // 右划滑到底部
       store.scrollForward()
       rePosition()
+      srcStore.updateTargetDate(null)
     }
   }
 
@@ -85,7 +87,6 @@ function CalendarBody ({ AnimatedExpand }){
       <ScrollView
         contentOffset={ { x: width - 60, y: 0 } }
         horizontal // 因为初始化前面有6页
-        onScrollBeginDrag={ () => srcStore.updateTargetDate(null) }
         onScrollEndDrag={ scrollEndHandler }
         pagingEnabled
         ref={ scrollViewRef }

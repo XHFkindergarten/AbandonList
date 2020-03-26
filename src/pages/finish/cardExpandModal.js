@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useContext } from 'react';
+import React, { useState, useMemo, useEffect, Fragment, useContext } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
 import { info_, ring, refresh, circleWrong, shalou, type } from 'src/assets/image'
@@ -40,6 +40,11 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
       setRingText('暂无提醒')
     }
   })
+
+  // 是否显示结束时间
+  const showEndTime = useMemo(() => {
+    return ringText === '将会在事件结束时提醒' || ringText === '将会在事件开始和结束时时提醒'
+  }, [ ringText ])
 
   const theme = useContext(ThemeContext)
 
@@ -106,12 +111,16 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
                   ></Image>
                   <Text style={ styles.content }>{ moment(info.startDate).format('LLL') }</Text>
                 </View>
-                <View style={ styles.row }>
-                  <Image source={ shalou }
-                    style={ styles.icon }
-                  ></Image>
-                  <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
-                </View>
+                {
+                  showEndTime && (
+                    <View style={ styles.row }>
+                      <Image source={ shalou }
+                        style={ styles.icon }
+                      ></Image>
+                      <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
+                    </View>
+                  )
+                }
               </Fragment>
             )
           }

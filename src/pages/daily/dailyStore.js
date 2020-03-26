@@ -125,7 +125,7 @@ class DailyStore {
             tempDate.setDate(tempDate.getDate() + 1)
             const day = tempDate.getDay()
             if (item.notiDay.has(day)) {
-            // 依次设置通知
+              // 依次设置通知
               Notification.setScheduleNotification({
                 fireDate: new Date(tempDate),
                 alertTitle: '每日任务',
@@ -154,7 +154,7 @@ class DailyStore {
             tempDate.setDate(tempDate.getDate() + 1)
             const day = tempDate.getDay()
             if (item.notiDay.has(day)) {
-            // 依次设置通知
+              // 依次设置通知
               Notification.setScheduleNotification({
                 fireDate: new Date(tempDate),
                 alertTitle: '每日任务',

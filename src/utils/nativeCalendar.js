@@ -102,7 +102,6 @@ class NativeCalendar {
    * @params details[ description, calendarId, startDate, endDate, allDay ]
    */
   saveEvent = props => {
-    console.log('save Event', props)
     const { id, title, description, start, end, allDay, groupId, repeat, RAE, RAB } = props
     if (!title) {
       return Promise.resolve()

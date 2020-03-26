@@ -9,37 +9,27 @@ import srcStore from 'src/store'
 import { elipsis } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import themeContext from 'src/themeContext'
+import calStore from 'src/components/calendar/store'
 
 const { width } = Dimensions.get('window')
 
 function AllDayCard({ info, navigation }) {
   const [ expand, setExpand ] = useState(false)
 
-  const [ animateOpacity ] = useState(new Animated.Value(1))
-  const [ animateHeight ] = useState(new Animated.Value(60))
+  // const [ animateOpacity ] = useState(new Animated.Value(1))
+  // const [ animateHeight ] = useState(new Animated.Value(60))
 
   // 点击展开卡片的完成按钮
   const handleExpandFinish = () => {
     setExpand(false)
     nativeCalendar.removeEvent(info, false).then(() => {
-      setTimeout(() => {
-        // srcStore.refreshTodoList(srcStore.startDay)
-        Animated.spring(animateOpacity, { toValue: 0 }).start(() => {
-          Animated.spring(animateHeight, { toValue: 0 }).start()
-        })
-      }, 600)
+      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
     })
   }
   // 点击展开卡片的删除按钮
   const handleExpandAbandon = () => {
     setExpand(false)
     nativeCalendar.removeEvent(info, true).then(() => {
-      setTimeout(() => {
-        // srcStore.refreshTodoList(srcStore.startDay)
-        Animated.spring(animateOpacity, { toValue: 0 }).start(() => {
-          Animated.spring(animateHeight, { toValue: 0 }).start()
-        })
-      }, 600)
     })
   }
 
@@ -59,11 +49,7 @@ function AllDayCard({ info, navigation }) {
 
   return (
     <TouchableOpacity onPress={ onPress }>
-      <Animated.View style={ [ styles.container, {
-        opacity: animateOpacity,
-        maxHeight: animateHeight
-      } ] }
-      >
+      <View style={ styles.container }>
         <View style={ [ styles.circle, {
           backgroundColor: info.calendar.color
         } ] }
@@ -75,7 +61,7 @@ function AllDayCard({ info, navigation }) {
           }
         ] }
         >{ elipsis(info.title, 50) + '  全天' }</Text>
-      </Animated.View>
+      </View>
       { expand &&
       <CardExpandModal
         handleAbandon={ handleExpandAbandon }

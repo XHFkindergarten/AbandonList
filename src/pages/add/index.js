@@ -379,9 +379,48 @@ function Add({ route }) {
 
             <View style={ styles.itemRow }>
               <Text style={ styles.itemLabel }>分组</Text>
-              <TouchableOpacity onPress={ groupModalOpen }>
-                <Text style={ styles.itemValue }>{ selectGroup.title }</Text>
-              </TouchableOpacity>
+              {
+                !info ? (
+                  <TouchableOpacity onPress={ groupModalOpen }>
+                    <View style={ {
+                      padding: 10,
+                      borderColor: selectGroup.color,
+                      borderWidth: 3,
+                      borderRadius: 18,
+                      minWidth: 60,
+                      alignItems: 'center'
+                    } }
+                    >
+                      <Text style={ {
+                        fontSize: 16,
+                        lineHeight: 16,
+                        color: selectGroup.color,
+                        fontWeight: '600'
+                      } }
+                      >{ selectGroup.title }</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={ {
+                    opacity: 0.4,
+                    padding: 10,
+                    borderColor: selectGroup.color,
+                    borderWidth: 3,
+                    borderRadius: 18,
+                    minWidth: 60,
+                    alignItems: 'center'
+                  } }
+                  >
+                    <Text style={ {
+                      fontSize: 16,
+                      lineHeight: 16,
+                      color: selectGroup.color,
+                      fontWeight: '600'
+                    } }
+                    >{ selectGroup.title }</Text>
+                  </View>
+                )
+              }
             </View>
             <View style={ styles.itemRow } >
               <Text style={ styles.itemLabel }>提醒</Text>

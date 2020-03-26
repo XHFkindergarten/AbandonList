@@ -223,6 +223,14 @@ function TodoCard({ info, navigation }) {
     }
   }
 
+  // 点击展开卡片的编辑功能
+  const handleExpandSetting = () => {
+    setExpand(false)
+    navigation.navigate('Add', {
+      info
+    })
+  }
+
   const AnimatedTranslateX = moveY.interpolate({
     inputRange: [ -211, -210, -140, 0, 70, 140, 141 ],
     outputRange: [ -210, -210, -140, 0, 70, 140, 140 ]
@@ -239,6 +247,7 @@ function TodoCard({ info, navigation }) {
 
   const [ isLeft, setIsLeft ] = useState('center')
   const _handleMoveEnd = (eve, gesture) => {
+    srcStore.updatePreventScroll(false)
     mainStore.updateIsScroll(false)
     handlePressOut()
     const { dx } = gesture
@@ -300,9 +309,7 @@ function TodoCard({ info, navigation }) {
 
   const _panHandlers = PanResponder.create({
     onStartShouldSetPanResponder: () => false,
-    // onMoveShouldSetPanResponder: () => true,
     onStartShouldSetPanResponderCapture: () => true,
-    // onMoveShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: () => {
       mainStore.updateIsScroll(true)
       if (isLeft === 'center') {
@@ -314,6 +321,7 @@ function TodoCard({ info, navigation }) {
       // 当出现左滑/右滑动作时,展开动作结束
       if (Math.abs(dx) > 2) {
         handlePressOut()
+        srcStore.updatePreventScroll(true)
       }
       moveY.setValue(dx)
     },
@@ -418,6 +426,7 @@ function TodoCard({ info, navigation }) {
       <CardExpandModal
         handleAbandon={ handleExpandAbandon }
         handleFinish={ handleExpandFinish }
+        handleSetting={ handleExpandSetting }
         info={ info }
         setVisible={ setExpand }
       /> }
@@ -436,10 +445,14 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 20,
     paddingBottom: 20,
-    marginBottom: 2,
+    marginBottom: 10,
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    shadowOffset: { width: 4, height: 4 }
   },
   cardHeader: {
     flexDirection: 'row',

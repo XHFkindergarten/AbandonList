@@ -33,9 +33,20 @@ const ItemHeader = ({ date }) => {
   const theme = useContext(themeContext)
   return (
     <TouchableOpacity onPress={ pressHandler }>
-      <View style={ { marginBottom: 10 } }>
+      <View style={ {
+        marginBottom: 10
+        // flexDirection: 'row'
+      } }
+      >
+        { /* <View style={ {
+          backgroundColor: '#444',
+          padding: 10
+        } }
+        > */ }
         <Text style={ [ styles.title, { color: theme.mainText } ] }>{ isToday ? '今天' : weekdayMap[date.getDay()] }</Text>
         <Text style={ [ styles.subtitle, { color: theme.subText } ] }>{ `${date.getMonth() + 1}月${date.getDate()}日` }</Text>
+        { /* </View> */ }
+
       </View>
     </TouchableOpacity>
   )
@@ -142,6 +153,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700'
+    // shadowColor: '#000',
+    // shadowRadius: 10,
+    // shadowOpacity: 0.6
   },
   // 副标题
   subtitle: {

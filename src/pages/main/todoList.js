@@ -33,6 +33,8 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
     }
   })
 
+  const preventScroll = store.preventScroll
+
 
   return (
     <Transitioning.View
@@ -50,7 +52,7 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
             keyboardDismissMode="on-drag"
             pagingEnabled={ false }
             removeClippedSubviews
-            scrollEnabled={ !store.leftItemId }
+            scrollEnabled={ !store.leftItemId && !preventScroll }
             showsVerticalScrollIndicator={ false }
           >
             { todoList.map(item => (

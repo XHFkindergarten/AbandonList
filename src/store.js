@@ -159,6 +159,10 @@ class Store {
 
   // 控制底部导航栏显示
   setShowBottom = () => {}
+
+  // 左滑右滑卡片时禁止scroll
+  @observable preventScroll = false
+  @action updatePreventScroll = value => this.preventScroll = value
 }
 
 const store = new Store()

@@ -21,7 +21,6 @@ function Calendar() {
   const handlePressMonthName = () => {
     // 清空选中日期
     setShowCalendar(!showCanlendar)
-    srcStore.updateTargetDate(null)
   }
   const theme = useContext(themeContext)
 
