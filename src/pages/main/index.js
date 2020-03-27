@@ -18,7 +18,6 @@ const Main = ({ navigation }) => {
   useEffect(() => {
     // 允许左右滑动屏幕切换页面
     store.preventOtherHandler = false
-
     isFirstOpen().then(res => {
       if(res) {
         navigation.navigate('Guide')
@@ -51,13 +50,12 @@ const Main = ({ navigation }) => {
   // 用户是否已经授权
   const [ authorized, setAuthorized ] = useState(true)
 
-
   // 将路由存储到mobx store中方便外部调用
   store.setNav(navigation)
   const [ moveX ] = useState(new Animated.Value(0))
   // 页面左右边缘滑动时切换页面
   const _panResponder = PanResponder.create({
-    onMoveShouldSetPanResponderCapture: (event, gesture) => {
+    onMoveShouldSetPanResponder: (event, gesture) => {
       if (store.preventOtherHandler || mainStore.isScrollCard) return false
       return gesture.moveX < 20 || gesture.moveX > width - 20
     },
@@ -86,7 +84,7 @@ const Main = ({ navigation }) => {
 
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
-      { /* <TestModule /> */ }
+      <TestModule />
       <View style={ {
         flex: 1,
         backgroundColor: theme.subColor

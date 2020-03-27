@@ -6,10 +6,14 @@ class Store {
   isScrollCard = false
   // @action
   updateIsScroll = value => {
-    // console.warn('before', this.isScrollCard.toString())
-    // console.warn('after', value)
     this.isScrollCard = value
   }
+
+  // 左滑右滑卡片时禁止scroll
+  // @observable
+  // preventScroll = false
+  // @action
+  // updatePreventScroll = value => this.preventScroll = value
 }
 
 export default new Store()

@@ -43,11 +43,6 @@ function TodoCard({ info, navigation }) {
   const [ expand, setExpand ] = useState(false)
   const [ isHold, setIsHold ] = useState(false)
 
-  const [ AnimatedScaleX ] = useState(new Animated.Value(1))
-  const disappearX = Animated.spring(AnimatedScaleX, { toValue: 0 })
-  const [ AnimatedHeightY ] = useState(new Animated.Value(300))
-  const disappearY = Animated.spring(AnimatedHeightY, { toValue: 0 })
-
 
   // 因为useState的异步性,需要额外使用一个控制变量
   const handlePressIn = () => {
@@ -247,7 +242,7 @@ function TodoCard({ info, navigation }) {
 
   const [ isLeft, setIsLeft ] = useState('center')
   const _handleMoveEnd = (eve, gesture) => {
-    srcStore.updatePreventScroll(false)
+    mainStore.updatePreventScroll(false)
     mainStore.updateIsScroll(false)
     handlePressOut()
     const { dx } = gesture
@@ -308,9 +303,10 @@ function TodoCard({ info, navigation }) {
   }, [ focusCardId ])
 
   const _panHandlers = PanResponder.create({
-    onStartShouldSetPanResponder: () => false,
+    onStartShouldSetPanResponder: () => true,
     onStartShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: () => {
+      // mainStore.updatePreventScroll(false)
       mainStore.updateIsScroll(true)
       if (isLeft === 'center') {
         handlePressIn()
@@ -321,18 +317,13 @@ function TodoCard({ info, navigation }) {
       // 当出现左滑/右滑动作时,展开动作结束
       if (Math.abs(dx) > 2) {
         handlePressOut()
-        srcStore.updatePreventScroll(true)
+        // mainStore.updatePreventScroll(true)
       }
       moveY.setValue(dx)
     },
     onPanResponderTerminate: _handleMoveEnd,
     onPanResponderRelease: _handleMoveEnd
   })
-
-  // const AnimatedTextTranslateX = moveY.interpolate({
-  //   inputRange: [ -181, -180, 0, 180, 181 ],
-  //   outputRange: [ 70, 70, 0, -70, -70 ]
-  // })
 
   const fromNowTime = fromNow(info)
 
@@ -343,10 +334,8 @@ function TodoCard({ info, navigation }) {
     <View>
       <Animated.View style={ {
         transform: [
-          { translateX: isLeft === 'center' ? AnimatedTranslateX : ( isLeft === 'left' ? AnimatedTranslateX_left : AnimatedTranslateX_right) },
-          { scaleY: AnimatedScaleX }
-        ],
-        maxHeight: AnimatedHeightY
+          { translateX: isLeft === 'center' ? AnimatedTranslateX : ( isLeft === 'left' ? AnimatedTranslateX_left : AnimatedTranslateX_right) }
+        ]
       } }
       >
         <Animated.View

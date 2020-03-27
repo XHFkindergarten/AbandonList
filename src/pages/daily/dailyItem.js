@@ -55,7 +55,7 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
   const [ AnimatedScale ] = useState(new Animated.Value(1))
   const ScaleMiniAnimation = Animated.timing(AnimatedScale, {
     toValue: 0,
-    duration: 4000
+    duration: 2000
   })
   const ScaleMaxAnimation = Animated.spring(AnimatedScale, {
     toValue: 1
@@ -97,7 +97,7 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
         ScaleMiniAnimation.stop()
         toggleFinish()
         ScaleMaxAnimation.start()
-      }, 800)
+      }, 400)
     },
     onPanResponderRelease: _touchEndHandler,
     onPanResponderTerminate:  _touchEndHandler

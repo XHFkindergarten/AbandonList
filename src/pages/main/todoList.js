@@ -1,10 +1,14 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { View, Text } from 'react-native';
 import store from 'src/store'
 import TodoItem from './todoItem'
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { Transitioning, Transition } from 'react-native-reanimated'
+import mainStore from './store'
+import { ScrollView } from 'react-native-gesture-handler'
+
 export default observer(function TodoList({ expandCard, navigation, authorized }) {
+
   const todoList = store.todoList
   todoList.filter((a, b) => {
     if (a.allDay) {
@@ -15,26 +19,23 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
   })
   const listRef = useRef()
   const transition = (
-    <Transition.Together>
-      <Transition.In
-        durationMs={ 300 }
-        type="fade"
-      />
-      <Transition.Change interpolation="easeInOut" />
+    <Transition.Sequence>
       <Transition.Out
         durationMs={ 300 }
         type="fade"
       />
-    </Transition.Together>
+      <Transition.Change interpolation="easeInOut" />
+      <Transition.In
+        durationMs={ 300 }
+        type="fade"
+      />
+    </Transition.Sequence>
   )
   useMemo(() => {
     if (listRef.current) {
       listRef.current.animateNextTransition()
     }
   })
-
-  const preventScroll = store.preventScroll
-
 
   return (
     <Transitioning.View
@@ -50,9 +51,7 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
               paddingBottom: 100
             } }
             keyboardDismissMode="on-drag"
-            pagingEnabled={ false }
-            removeClippedSubviews
-            scrollEnabled={ !store.leftItemId && !preventScroll }
+            scrollEnabled
             showsVerticalScrollIndicator={ false }
           >
             { todoList.map(item => (
@@ -64,6 +63,7 @@ export default observer(function TodoList({ expandCard, navigation, authorized }
               />
             )) }
           </ScrollView>
+
         ) : (
           <View style={ {
             flex: 1,

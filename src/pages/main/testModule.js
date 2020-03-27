@@ -6,20 +6,21 @@ const historyKey = '@h1story_list_key'
 import finishStore from 'src/pages/finish/store'
 import { toJS } from 'mobx';
 import srcStore from 'src/store'
+import { observer } from 'mobx-react';
+import mainStore from './store'
 
-const firstLaunchKey = '@first_launch_key'
 
-export default function TestModule() {
+export default observer(function TestModule() {
   const onPress = () => {
-    PushNotificationIOS.getScheduledLocalNotifications(res => {
-      console.log('notification list', res)
-    })
-  }
-  const onPress2 = () => {
-    PushNotificationIOS.cancelAllLocalNotifications()
+    mainStore.updatePreventScroll(!mainStore.preventScroll)
+    // mainStore.updatePreventScroll(!m)
   }
   return (
     <View>
+      <Text style={ {
+        color: '#FFF'
+      } }
+      >{ mainStore.preventScroll.toString() }</Text>
       <TouchableOpacity onPress={ onPress }>
         <View style={ {
           height: 100
@@ -29,23 +30,10 @@ export default function TestModule() {
             color: '#FFF'
           } }
           >
-          查看所有通知
-          </Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={ onPress2 }>
-        <View style={ {
-          height: 100
-        } }
-        >
-          <Text style={ {
-            color: '#FFF'
-          } }
-          >
-          清除所有通知
+          test
           </Text>
         </View>
       </TouchableOpacity>
     </View>
   )
-}
+})

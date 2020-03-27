@@ -130,7 +130,7 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
 }
 
 const TodoItem = ({ item, navigation }) => {
-  const [ todo, setTodo ] = useState([ {} ])
+  // const [ todo, setTodo ] = useState([ {} ])
   return (
     <View style={ {
       marginTop: 10
