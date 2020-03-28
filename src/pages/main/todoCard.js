@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext, useRef, Fragment } from 'react';
 import CardExpandModal from './cardExpandModal'
-import { correctGreen, wrongRed, setting } from 'src/assets/image'
-import { StyleSheet, TouchableOpacity, Dimensions, View, Animated, PanResponder, Image, Text } from 'react-native';
+import { correctGreen, wrongRed, bell, setting } from 'src/assets/image'
+import { StyleSheet, TouchableOpacity, Dimensions, View, Animated, Image, Text } from 'react-native';
 import { observer } from 'mobx-react';
 import srcStore from 'src/store'
-import { fromNow, elipsis, vibrate } from 'src/utils'
+import { fromNow, vibrate } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import themeContext from 'src/themeContext'
-import mainStore from './store'
 import calStore from 'src/components/calendar/store'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { TapGestureHandler, State } from 'react-native-gesture-handler'
+import Notification from 'src/utils/Notification'
 
 const { width } = Dimensions.get('window')
 
@@ -87,10 +87,24 @@ function TodoCard({ info, navigation }) {
                 ] }
               >{ info.title }</Text>
             </View>
-            <Text style={ [ styles.timeLeft, {
-              color: theme.subText
-            } ] }
-            >{ fromNowTime }</Text>
+            <View style={ {
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center'
+            } }
+            >
+              <Text style={ [ styles.timeLeft, {
+                color: theme.subText
+              } ] }
+              >{ fromNowTime }</Text>
+              {
+                hasNoti && (
+                  <Image source={ bell }
+                    style={ styles.miniIcon }
+                  />
+                )
+              }
+            </View>
           </Animated.View>
           {
             finishStatus === 1 && (
@@ -286,10 +300,20 @@ function TodoCard({ info, navigation }) {
       srcStore.updateFocusCardId('@not_any_one')
     }, 300)
   }
-
   const _handleRightOpen = () => {
     srcStore.updateFocusCardId(info.id)
   }
+
+
+  const [ hasNoti, setHasNoti ] = useState(false)
+
+  Notification.getScheduleList().then(res => {
+    const scheduleList = res.filter(item => item.userInfo.id === info.id)
+    if (scheduleList.length) {
+      setHasNoti(true)
+    }
+  })
+
   return (
     <Fragment>
       <Swipeable
@@ -350,7 +374,8 @@ const styles = StyleSheet.create({
     maxWidth: 200,
     textAlign: 'center',
     fontSize: 16,
-    lineHeight: 18
+    lineHeight: 20,
+    marginBottom: 6
   },
   cardCircle: {
     // paddingTop: 6,
@@ -362,7 +387,6 @@ const styles = StyleSheet.create({
   },
   timeLeft: {
     fontSize: 14,
-    marginTop: 6,
     textAlign: 'center'
   },
   leftContainer: {
@@ -397,5 +421,9 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  miniIcon: {
+    height: 16,
+    width: 16
   }
 })

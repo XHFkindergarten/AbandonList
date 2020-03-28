@@ -1,7 +1,6 @@
 /**
  * 全局提示框
  */
-
 import React from 'react';
 import dailyStore from './dailyStore'
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Text, Dimensions } from 'react-native';

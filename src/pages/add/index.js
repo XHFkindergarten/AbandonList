@@ -52,7 +52,6 @@ function Add({ route }) {
 
   // 获取路由参数
   let { date, info } = route.params || {}
-
   const textInputRef = useRef()
 
   // 更新表单数据方法
