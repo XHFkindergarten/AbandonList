@@ -14,7 +14,7 @@ import Chart from './chart'
 import themeContext from 'src/themeContext'
 import HistoryList from './historyList'
 import { Transitioning, Transition } from 'react-native-reanimated'
-
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 const { width, height } = Dimensions.get('window')
@@ -40,6 +40,12 @@ function Finish({ navigation }) {
   const [ _isMount, _setIsMount ] = useState(false)
   useEffect(() => {
     _setIsMount(true)
+    AsyncStorage.getItem('@ever_finish_tip_show').then(res => {
+      if (!res) {
+        srcStore.globalNotify('滑动上方蓝色区域可以查看不同事项每个月的完成情况^ ^.')
+        AsyncStorage.setItem('@ever_finish_tip_show', 'whatever')
+      }
+    })
     return () => {
       _setIsMount(false)
     }
@@ -75,6 +81,11 @@ function Finish({ navigation }) {
     const offsetX =  event.nativeEvent.targetContentOffset.x
     const index = Math.ceil(offsetX / itemWidth)
     setCurItem(dailyList[index])
+
+    if (index !== 0 && toggleCards) {
+      ref.current.animateNextTransition()
+      setToggle(false)
+    }
   }
 
   // 控制当前显示的月份时间
@@ -320,7 +331,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   scrollItemName: {
-    fontSize: 28,
+    fontSize: 24,
     // marginTop: 20,
     fontWeight: '900',
     textAlign: 'center'

@@ -43,6 +43,7 @@ const Main = ({ navigation }) => {
       return () => {
         // Do something when the screen is unfocused
         store.updateFocusCardId('')
+        moveX.setValue(0)
       }
     }, [])
   )
@@ -53,26 +54,7 @@ const Main = ({ navigation }) => {
   // 将路由存储到mobx store中方便外部调用
   store.setNav(navigation)
   const [ moveX ] = useState(new Animated.Value(0))
-  // 页面左右边缘滑动时切换页面
-  const _panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (event, gesture) => {
-      if (store.preventOtherHandler || mainStore.isScrollCard) return false
-      return gesture.moveX < 20 || gesture.moveX > width - 20
-    },
-    onPanResponderMove: (event, gesture) => {
-      moveX.setValue(gesture.dx)
-      if (gesture.dx > 40) {
-        store.nav.navigate('Daily')
-      } else if (gesture.dx < -40) {
-        store.nav.navigate('Finish')
-      }
-    },
-    onPanResponderRelease: () => {
-      Animated.spring(moveX, {
-        toValue: 0
-      }).start()
-    }
-  })
+
   const AnimatedTranslateX = moveX.interpolate({
     inputRange: [ -41, -40, 0, 40, 41 ],
     outputRange: [ -60, -60, 0, 60, 60 ]
@@ -84,7 +66,7 @@ const Main = ({ navigation }) => {
 
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
-      <TestModule />
+      { /* <TestModule /> */ }
       <View style={ {
         flex: 1,
         backgroundColor: theme.subColor
@@ -99,16 +81,17 @@ const Main = ({ navigation }) => {
         >
           <Calendar />
           <View
-            { ..._panResponder.panHandlers }
             style={ [ styles.container, {
               backgroundColor: theme.subColor
             } ] }
           >
             <TodoList
               authorized={ authorized }
+              moveX={ moveX }
               navigation={ navigation }
             />
           </View>
+          { /* </PanGestureHandler> */ }
         </Animated.View>
       </View>
       <StatusBar hidden></StatusBar>
@@ -120,8 +103,8 @@ export default (Main)
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 30,
-    paddingRight: 30,
+    // paddingLeft: 30,
+    // paddingRight: 30,
     paddingBottom: 40,
     // paddingTop: 20,
     flex: 1

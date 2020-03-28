@@ -11,10 +11,7 @@ const reviewKey = '@review_time_key'
 
 // IOS下的日期格式处理
 const convertDateIOS = target => {
-  console.log('target', target)
-  const output = moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-  console.log('output', output)
-  return output
+  return moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 }
 
 class Store {
@@ -132,7 +129,6 @@ class Store {
    * 保存到本机存储
    */
   saveHistory = () => {
-    console.log('save history', this.historyList)
     AsyncStorage.setItem(historyKey, JSON.stringify(toJS(this.historyList)))
   }
   /**
@@ -216,7 +212,6 @@ class Store {
   @action
   initialReviewTime = async () => {
     const str = await AsyncStorage.getItem(reviewKey)
-    console.log('async str', str)
     if (str && str.length > 10) {
       const dateStr = convertDateIOS(str)
       if (dateStr && dateStr !== 'Invalid date') {

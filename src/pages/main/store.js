@@ -9,11 +9,6 @@ class Store {
     this.isScrollCard = value
   }
 
-  // 左滑右滑卡片时禁止scroll
-  // @observable
-  // preventScroll = false
-  // @action
-  // updatePreventScroll = value => this.preventScroll = value
 }
 
 export default new Store()

@@ -1,15 +1,7 @@
-/*
- * @Descripttion :
- * @Author       : lizhaokang
- * @Date         : 2020-03-25 10:15:01
- */
-/**
- * 待办项卡片item
- */
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, Fragment } from 'react';
 import CardExpandModal from './cardExpandModal'
 import { correctGreen, wrongRed, setting } from 'src/assets/image'
-import { StyleSheet, TouchableOpacity, View, Animated, PanResponder, Image, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, Dimensions, View, Animated, PanResponder, Image, Text } from 'react-native';
 import { observer } from 'mobx-react';
 import srcStore from 'src/store'
 import { fromNow, elipsis, vibrate } from 'src/utils'
@@ -17,208 +9,266 @@ import nativeCalendar from 'src/utils/nativeCalendar'
 import themeContext from 'src/themeContext'
 import mainStore from './store'
 import calStore from 'src/components/calendar/store'
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { TapGestureHandler, State } from 'react-native-gesture-handler'
 
+const { width } = Dimensions.get('window')
 
-
-// 全局唯一定时器
-let pressTimeout = null
-// 唯二1
-let timeout1
 function TodoCard({ info, navigation }) {
-  useEffect(() => {
-    return () => {
-      // component will unmount
-      clearTimeout(timeout1)
-    }
-  }, [])
-  const [ ScaleValue ] = useState(new Animated.Value(1))
-  const ScaleAnimation = Animated.timing(ScaleValue, {
-    toValue: 0,
-    duration: 2000
-  })
-  const ScaleBackAnimation = Animated.timing(ScaleValue, {
-    toValue: 1,
-    duration: 200
-  })
-  const [ expand, setExpand ] = useState(false)
-  const [ isHold, setIsHold ] = useState(false)
 
+  const theme = useContext(themeContext)
 
-  // 因为useState的异步性,需要额外使用一个控制变量
-  const handlePressIn = () => {
-    setIsHold(true)
-    ScaleAnimation.start()
-    clearTimeout(pressTimeout)
-    pressTimeout = setTimeout(() => {
-      vibrate()
-      ScaleAnimation.stop()
-      ScaleBackAnimation.start(() => {
-        srcStore.preventOtherHandler = true
-        setExpand(true)
-        setIsHold(false)
-      })
-    }, 400)
-  }
-  // 点击展开卡片的完成按钮
-  const handleExpandFinish = () => {
-    setExpand(false)
-    setFinish(true)
-    Promise.all([
-      new Promise(resolve => {
-        opacityAnimation.start(() => resolve())
-      }),
-      new Promise(resolve => {
-        // 第二个参数传false,因为一般只完成当次
-        nativeCalendar.removeEvent(info, false)
-          .then(() => resolve())
-      })
-    ]).finally(() => {
-      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-    })
-  }
-  // 点击展开卡片的删除按钮
-  const handleExpandAbandon = () => {
-    setExpand(false)
-    setFinish(false)
-    Promise.all([
-      new Promise(resolve => {
-        opacityAnimation.start(() => resolve())
-      }),
-      new Promise(resolve => {
-        // 第二个参数传true, 全部删除
-        nativeCalendar.removeEvent(info, true)
-          .then(() => resolve())
-      })
-    ]).finally(() => {
-      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-    })
-  }
-
-  useEffect(() => {
-    if (!isHold) {
-      clearTimeout(pressTimeout)
-    }
-  }, [ isHold ])
-  const handlePressOut = () => {
-    setIsHold(false)
-    ScaleAnimation.stop()
-    ScaleBackAnimation.start()
-  }
-  const handlePressEdit = () => {
-    TranslateXAnimationCenter.start()
-    navigation.navigate('Add', {
-      info
-    })
-    setIsLeft('center')
-  }
-  // 点击卡片右侧的完成按钮
-  const handlePressFinish = () => {
-    setFinish(true)
-    TranslateToCenter(() => {
-      srcStore.updateFocusCardId('')
-      Promise.all([
-        new Promise(resolve => {
-          opacityAnimation.start(() => resolve())
-        }),
-        new Promise(resolve => {
-          // 第二个参数传false,因为一般只完成当次
-          nativeCalendar.removeEvent(info, false)
-            .then(() => resolve())
-        })
-      ]).finally(() => {
-        srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-      })
-    })
-  }
-  // 点击卡片右侧的删除按钮
-  const handlePressAbandon = () => {
-    setFinish(false)
-    TranslateToCenter(() => {
-      Promise.all([
-        new Promise(resolve => {
-          opacityAnimation.start(() => resolve())
-        }),
-        new Promise(resolve => {
-          // 第二个参数传true,因为删除一般是针对整个事件而言
-          nativeCalendar.removeEvent(info, true)
-            .then(() => resolve())
-        })
-      ]).finally(() => {
-        srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-      })
-    })
-  }
-  // 控制左右滑动效果
-  const [ moveY ] = useState(new Animated.Value(0))
-  const [ AnimatedIconOpacity ] = useState(new Animated.Value(0))
-  const AnimatedIconOpacityReverse = AnimatedIconOpacity.interpolate({
+  const [ animatedOpacity ] = useState(new Animated.Value(1))
+  const animatedOpacityReverse = animatedOpacity.interpolate({
     inputRange: [ 0, 1 ],
     outputRange: [ 1, 0 ]
   })
-  const [ finish, setFinish ] = useState(true)
-  const opacityAnimation = Animated.timing(AnimatedIconOpacity, {
-    toValue: 1,
-    duration: 500
-  })
-  const TranslateXAnimationLeft = Animated.timing(moveY, {
-    toValue: -140,
-    duration: 300
-  })
-  const TranslateXAnimationRight = Animated.timing(moveY, {
-    toValue: 70,
-    duration: 300
-  })
-  const TranslateXAnimationCenter = Animated.timing(moveY, {
-    toValue: 0,
-    duration: 300
-  })
-  const TranslateToLeft = (endHandler) => {
-    Animated.timing(moveY, {
-      toValue: isLeft === 'left' ? 0 : -140,
-      duration: 300
-    }).start(() => {
-      if (typeof endHandler === 'function') {
-        endHandler()
-      }
-    })
-  }
-  const TranslateToRight = endHandler => {
-    Animated.timing(moveY, {
-      toValue: isLeft === 'right' ? 0 : 70,
-      duration: 300
-    }).start(() => {
-      if (typeof endHandler === 'function') {
-        endHandler()
-      }
-    })
-  }
-  const TranslateToCenter = (endHandler) => {
-    if (isLeft === 'left') {
-      Animated.timing(moveY, {
-        toValue: 140,
-        duration: 300
-      }).start(() => {
-        setIsLeft('center')
-        moveY.setValue(0)
-        if (typeof endHandler === 'function') {
-          endHandler()
-        }
-      })
-    } else if (isLeft === 'right') {
-      Animated.timing(moveY, {
-        toValue: -70,
-        duration: 300
-      }).start(() => {
-        setIsLeft('center')
-        moveY.setValue(0)
-        if (typeof endHandler === 'function') {
-          endHandler()
-        }
-      })
+
+  const [ expand, setExpand ] = useState(false)
+
+  const [ finishStatus, setFinishStatus ] = useState(0)
+  // 当前活跃的卡片
+  const activeCardId = srcStore.focusCardId
+
+  useEffect(() => {
+    if (activeCardId !== info.id) {
+      swipeRef.current.close()
     }
+  }, [ activeCardId ])
+
+  // 卡片主体
+  const RenderCard = (progress, dragX) => {
+    const fromNowTime = fromNow(info)
+
+    const [ animatedScale ] = useState(new Animated.Value(1))
+
+    const _handleStateChange = ({ nativeEvent }) => {
+      if (nativeEvent.state === State.BEGAN) {
+        srcStore.updateFocusCardId(info.id)
+        Animated.spring(animatedScale, {
+          toValue: 0.90
+        }).start(() => {
+          Animated.timing(animatedScale, {
+            toValue: 1,
+            duration: 200
+          }).start()
+        })
+      }
+      if (nativeEvent.state === State.END) {
+        vibrate(1)
+        setExpand(true)
+      }
+    }
+    return (
+      <TapGestureHandler
+        onHandlerStateChange={ _handleStateChange }
+      >
+        <Animated.View style={ [ styles.card, {
+          backgroundColor: theme.mainColor,
+          transform: [ { scale: animatedScale } ]
+        } ] }
+        >
+          <Animated.View style={ {
+            opacity: animatedOpacity
+          } }
+          >
+            <View style={ styles.cardHeader }>
+              <View style={ [ styles.cardCircle, {
+                backgroundColor: info.calendar.color
+              } ] }
+              />
+              <Text
+                numberOfLines={ 2 }
+                style={ [
+                  styles.cardTitle,
+                  {
+                    color: theme.pureText
+                  }
+                ] }
+              >{ info.title }</Text>
+            </View>
+            <Text style={ [ styles.timeLeft, {
+              color: theme.subText
+            } ] }
+            >{ fromNowTime }</Text>
+          </Animated.View>
+          {
+            finishStatus === 1 && (
+              <View style={ styles.absoluteWrapper }>
+                <Animated.Image source={ correctGreen }
+                  style={ [ styles.handleIcon, {
+                    opacity: animatedOpacityReverse
+                  } ] }
+                />
+              </View>
+            )
+          }
+          {
+            finishStatus === 2 && (
+              <View style={ styles.absoluteWrapper }>
+                <Animated.Image source={ wrongRed }
+                  style={ [ styles.handleIcon, {
+                    opacity: animatedOpacityReverse
+                  } ] }
+                />
+              </View>
+            )
+          }
+        </Animated.View>
+      </TapGestureHandler>
+    )
   }
 
-  // 点击展开卡片的编辑功能
+  // 左侧操作按钮
+  const RenderLeft = (progress, dragX) => {
+    const animatedX = dragX.interpolate({
+      inputRange: [ 0, width - 60 ],
+      outputRange: [ 30 - width / 2, 0 ]
+    })
+    const animatedOpacity = dragX.interpolate({
+      inputRange: [ 0, width - 60 ],
+      outputRange: [ 0, 1 ]
+    })
+    const handlePressEdit = () => {
+      swipeRef.current.close()
+      setTimeout(() => {
+        navigation.navigate('Add', {
+          info
+        })
+      }, 300)
+    }
+    return (
+      <Animated.View style={ [ styles.leftContainer, {
+        transform: [ { translateX: animatedX } ],
+        opacity: animatedOpacity
+      } ] }
+      >
+        <TouchableOpacity
+          onPress={ handlePressEdit }
+          style={ {
+            padding: 10
+          } }
+        >
+          <Image
+            source={ setting }
+            style={ styles.editIcon }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    )
+  }
+
+  // 右侧操作按钮
+  const RenderRight = (progress, dragX) => {
+    // 点击完成
+    const handlePressFinish = () => {
+      swipeRef.current.close()
+      srcStore.updateFocusCardId('')
+      setTimeout(() => {
+        Promise.all([
+          nativeCalendar.removeEvent(info, false),
+          new Promise((resolve) => {
+            setFinishStatus(1)
+            Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
+              resolve()
+            })
+          })
+        ]).then(() => {
+          setTimeout(() => {
+            srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+          }, 400)
+        }).catch(err => {
+          srcStore.globalNotify(err)
+        })
+      }, 400)
+    }
+    // 点击删除
+    const handlePressAbandon = () => {
+      swipeRef.current.close()
+      srcStore.updateFocusCardId('')
+      setTimeout(() => {
+        Promise.all([
+          nativeCalendar.removeEvent(info, true),
+          new Promise((resolve) => {
+            setFinishStatus(2)
+            Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
+              resolve()
+            })
+          })
+        ]).then(() => {
+          setTimeout(() => {
+            srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+          }, 400)
+        }).catch(err => {
+          srcStore.globalNotify(err)
+        })
+      }, 400)
+    }
+    return (
+      <Animated.View style={ [ styles.rightContainer, {
+
+      } ] }
+      >
+        <TouchableOpacity onPress={ handlePressFinish }>
+          <Image source={ correctGreen }
+            style={ styles.handleIcon }
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={ handlePressAbandon }>
+          <Image source={ wrongRed }
+            style={ styles.handleIcon }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    )
+  }
+
+  const handleExpandFinish = () => {
+    setExpand(false)
+    swipeRef.current.close()
+    srcStore.updateFocusCardId('')
+    setTimeout(() => {
+      Promise.all([
+        nativeCalendar.removeEvent(info, false),
+        new Promise((resolve) => {
+          setFinishStatus(1)
+          Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
+            resolve()
+          })
+        })
+      ]).then(() => {
+        setTimeout(() => {
+          srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+        }, 400)
+      }).catch(err => {
+        srcStore.globalNotify(err)
+      })
+    }, 400)
+  }
+
+  const handleExpandAbandon = () => {
+    setExpand(false)
+    swipeRef.current.close()
+    srcStore.updateFocusCardId('')
+    setTimeout(() => {
+      Promise.all([
+        nativeCalendar.removeEvent(info, true),
+        new Promise((resolve) => {
+          setFinishStatus(2)
+          Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
+            resolve()
+          })
+        })
+      ]).then(() => {
+        setTimeout(() => {
+          srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+        }, 400)
+      }).catch(err => {
+        srcStore.globalNotify(err)
+      })
+    }, 400)
+  }
+
   const handleExpandSetting = () => {
     setExpand(false)
     navigation.navigate('Add', {
@@ -226,202 +276,49 @@ function TodoCard({ info, navigation }) {
     })
   }
 
-  const AnimatedTranslateX = moveY.interpolate({
-    inputRange: [ -211, -210, -140, 0, 70, 140, 141 ],
-    outputRange: [ -210, -210, -140, 0, 70, 140, 140 ]
-  })
+  const swipeRef = useRef()
 
-  const AnimatedTranslateX_left = moveY.interpolate({
-    inputRange: [ -140, -70, 0, 140, 210, 211 ],
-    outputRange: [ -245, -210, -140, 0, 30, 30 ]
-  })
-  const AnimatedTranslateX_right = moveY.interpolate({
-    inputRange: [ -141, -140, -70, 0, 70, 210, 211 ],
-    outputRange: [ -30, -30, 0, 70, 140, 210, 210 ]
-  })
-
-  const [ isLeft, setIsLeft ] = useState('center')
-  const _handleMoveEnd = (eve, gesture) => {
-    mainStore.updatePreventScroll(false)
-    mainStore.updateIsScroll(false)
-    handlePressOut()
-    const { dx } = gesture
-    if (isLeft === 'left') {
-      if (dx > 10) {
-        TranslateToCenter(() => srcStore.updateFocusCardId(''))
-      } else {
-        TranslateToLeft()
-      }
-    } else if (isLeft === 'right') {
-      if (dx < -10) {
-        TranslateToCenter(() => srcStore.updateFocusCardId(''))
-      } else {
-        TranslateToRight()
-      }
-    } else if (isLeft === 'center') {
-      if (dx > 50) {
-        srcStore.updateFocusCardId(info.id)
-        TranslateXAnimationRight.start(() => {
-          setIsLeft('right')
-          moveY.setValue(0)
-        })
-      } else if (dx < -50) {
-        srcStore.updateFocusCardId(info.id)
-        TranslateXAnimationLeft.start(() => {
-          setIsLeft('left')
-          moveY.setValue(0)
-        })
-      } else {
-        TranslateXAnimationCenter.start()
-      }
-    }
+  const _handleLeftOpen = () => {
+    navigation.navigate('Add', {
+      info
+    })
+    setTimeout(() => {
+      srcStore.updateFocusCardId('@not_any_one')
+    }, 300)
   }
 
-  // 检测是否有其他卡片被操作了,恢复当前卡片为center状态
-  const focusCardId = srcStore.focusCardId
-
-  useEffect(() => {
-    if (srcStore.focusCardId !== info.id) {
-      if (isLeft === 'left') {
-        Animated.timing(moveY, {
-          toValue: 140,
-          duration: 300
-        }).start(() => {
-          setIsLeft('center')
-          moveY.setValue(0)
-        })
-      } else if (isLeft === 'right') {
-        Animated.timing(moveY, {
-          toValue: -70,
-          duration: 300
-        }).start(() => {
-          setIsLeft('center')
-          moveY.setValue(0)
-        })
-      }
-    }
-  }, [ focusCardId ])
-
-  const _panHandlers = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onStartShouldSetPanResponderCapture: () => true,
-    onPanResponderGrant: () => {
-      // mainStore.updatePreventScroll(false)
-      mainStore.updateIsScroll(true)
-      if (isLeft === 'center') {
-        handlePressIn()
-      }
-    },
-    onPanResponderMove: (eve, gesture) => {
-      const { dx } = gesture
-      // 当出现左滑/右滑动作时,展开动作结束
-      if (Math.abs(dx) > 2) {
-        handlePressOut()
-        // mainStore.updatePreventScroll(true)
-      }
-      moveY.setValue(dx)
-    },
-    onPanResponderTerminate: _handleMoveEnd,
-    onPanResponderRelease: _handleMoveEnd
-  })
-
-  const fromNowTime = fromNow(info)
-
-  const theme = useContext(themeContext)
-
-
+  const _handleRightOpen = () => {
+    srcStore.updateFocusCardId(info.id)
+  }
   return (
-    <View>
-      <Animated.View style={ {
-        transform: [
-          { translateX: isLeft === 'center' ? AnimatedTranslateX : ( isLeft === 'left' ? AnimatedTranslateX_left : AnimatedTranslateX_right) }
-        ]
-      } }
+    <Fragment>
+      <Swipeable
+        friction={ 1 }
+        leftThreshold={ 200 }
+        onSwipeableLeftWillOpen={ _handleLeftOpen }
+        onSwipeableRightOpen={ _handleRightOpen }
+        // onHandlerStateChange={ _handleSwipeStateChange }
+        overshootFriction={ 1 }
+        ref={ swipeRef }
+        renderLeftActions={ RenderLeft }
+        renderRightActions={ RenderRight }
+        rightThreshold={ 40 }
       >
-        <Animated.View
-          { ..._panHandlers.panHandlers }
-          style={ [ styles.card,{
-            backgroundColor: theme.mainColor,
-            opacity: isHold ? 0.6 : 1,
-            transform: [
-              { scale: ScaleValue }
-            ]
-          } ] }
-        >
-          <View style={ styles.cardHeader }>
-            <Animated.View style={ [ styles.cardCircle, {
-              backgroundColor: info.calendar.color,
-              // transform: [ { translateX: AnimatedTextTranslateX } ],
-              opacity: AnimatedIconOpacityReverse
-            } ] }
-            />
-            <Animated.Text style={ [
-              styles.cardTitle, {
-                maxWidth: 200,
-                color: theme.pureText,
-                // transform: [ { translateX: AnimatedTextTranslateX } ],
-                opacity: AnimatedIconOpacityReverse
-              }
-            ] }
-            >{ elipsis(info.title, 50) }</Animated.Text>
-          </View>
-          <Animated.Text style={ [ styles.timeLeft, {
-            color: theme.subText,
-            // transform: [ { translateX: AnimatedTextTranslateX } ],
-            opacity: AnimatedIconOpacityReverse
-          } ] }
-          >{ fromNowTime }</Animated.Text>
-          <View style={ styles.absoluteWrapper }>
-            <Animated.Image source={ finish ? correctGreen : wrongRed }
-              style={ [ styles.handleIcon, {
-                opacity: AnimatedIconOpacity
-              } ] }
-            />
-          </View>
-        </Animated.View>
-        <View style={ styles.handleContainer }>
-          <TouchableOpacity onPress={ handlePressFinish }>
-            <View style={ styles.iconItem }>
-              <Image source={ correctGreen }
-                style={ styles.handleIcon }
-              ></Image>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={ handlePressAbandon }>
-            <View style={ styles.iconItem }>
-              <Image source={ wrongRed }
-                style={ styles.handleIcon }
-              ></Image>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={ styles.editContainer }>
-          <TouchableOpacity
-            onPress={ handlePressEdit }
-            style={ {
-              height: 60,
-              width: 60,
-              justifyContent: 'center',
-              alignItems: 'center'
-            } }
-          >
-            <Image source={ setting }
-              style={ styles.editIcon }
-            ></Image>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
-      { expand &&
-      <CardExpandModal
-        handleAbandon={ handleExpandAbandon }
-        handleFinish={ handleExpandFinish }
-        handleSetting={ handleExpandSetting }
-        info={ info }
-        setVisible={ setExpand }
-      /> }
-    </View>
+        <RenderCard info={ info } />
+      </Swipeable>
+      {
+        expand && (
+          <CardExpandModal
+            handleAbandon={ handleExpandAbandon }
+            handleFinish={ handleExpandFinish }
+            handleSetting={ handleExpandSetting }
+            info={ info }
+            setVisible={ setExpand }
+          />
+        )
+      }
+    </Fragment>
   )
-
 }
 
 export default observer(TodoCard)
@@ -435,13 +332,13 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
     marginBottom: 10,
-    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    shadowOffset: { width: 4, height: 4 }
+    shadowOffset: { width: 4, height: 4 },
+    minHeight: 80
   },
   cardHeader: {
     flexDirection: 'row',
@@ -450,7 +347,7 @@ const styles = StyleSheet.create({
   },
   // 卡片标题
   cardTitle: {
-    // color: '#FFF',
+    maxWidth: 200,
     textAlign: 'center',
     fontSize: 16,
     lineHeight: 18
@@ -463,32 +360,27 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 6
   },
-  handleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 80,
-    position: 'absolute',
-    top: 0,
-    right: -140
+  timeLeft: {
+    fontSize: 14,
+    marginTop: 6,
+    textAlign: 'center'
   },
-  editContainer: {
+  leftContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 80,
-    position: 'absolute',
-    top: 0,
-    left: -70
+    flex: 1
+  },
+  rightContainer: {
+    width: 160,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10
   },
   editIcon: {
     height: 30,
     width: 30
-  },
-  iconItem: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 60,
-    height: 60
   },
   handleIcon: {
     height: 30,
@@ -501,14 +393,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
     bottom: 0,
+    right: 0,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  timeLeft: {
-    // color: '#999',
-    fontSize: 14,
-    marginTop: 6
   }
 })

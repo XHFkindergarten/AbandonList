@@ -22,8 +22,6 @@ function HistoryList({ monthTime }) {
   }
   hisList.reverse()
 
-  console.log('list', hisList)
-
   const ref = useRef()
   useMemo(() => {
     if (ref.current) {

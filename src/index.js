@@ -13,6 +13,7 @@ import Notification from 'src/utils/Notification'
 import { isFirstOpen } from 'src/utils'
 import finishStore from 'src/pages/finish/store'
 import { observer } from 'mobx-react';
+import Test from 'src/pages/test'
 
 // 创建栈路由
 const Stack = createStackNavigator()
@@ -96,6 +97,7 @@ function App() {
           <Stack.Navigator
             headerMode="none"
             initialRouteName="Main"
+            // initialRouteName="Test"
             mode="screen"
           >
             <Stack.Screen component={ Main }
@@ -137,6 +139,14 @@ function App() {
             <Stack.Screen
               component={ Guide }
               name="Guide"
+              options={ {
+                gestureEnabled: false,
+                cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+              } }
+            />
+            <Stack.Screen
+              component={ Test }
+              name="Test"
               options={ {
                 gestureEnabled: false,
                 cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid

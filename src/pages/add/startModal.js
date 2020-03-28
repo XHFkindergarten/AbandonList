@@ -4,7 +4,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { down } from 'src/assets/image'
 function StartModal({ visible, handleClose, startTime, setStartTime }) {
   const onDateChange = (event, newDate) => {
-    console.log(newDate)
     setStartTime(newDate)
   }
   return (

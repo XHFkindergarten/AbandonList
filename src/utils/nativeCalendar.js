@@ -87,7 +87,6 @@ class NativeCalendar {
 
   withAuth = () => new Promise((resolve, reject) => {
     RNCalendarEvents.authorizationStatus().then(res => {
-      console.log('res', res)
       if (res === 'authorized' || res === 'undetermined') {
         resolve()
       } else {
@@ -190,7 +189,6 @@ class NativeCalendar {
    * 移除事件，futureEvents决定是否删除同一series的后续事件
    */
   removeEvent = (event, futureEvents = true) => {
-    console.log('remove event', event)
     if (!futureEvents) {
       // 如果是完成，更新当天的日志
       // const todayKey = moment(new Date()).format('YYYY-MM-DD')
@@ -312,7 +310,6 @@ class NativeCalendar {
         this.groupStorage = [ ...res.filter(item => item.allowsModifications) ]
         // 初始化的时候做一个小备份
         finishStore.updateGroupStorage([ ...this.groupStorage ])
-        console.log('获取本机日历分组', res)
         // 如果没有可见的
         if (!this.visibleGroupIds.length) {
           this.visibleGroupIds = this.groupStorage.filter(p => p.isPrimary).map(item => item.id)
@@ -372,7 +369,6 @@ class NativeCalendar {
   getWeekEvents = async (start, end) => {
     const monthStart = new Date(start)
     const monthEnd = new Date(end)
-    console.log(monthStart, monthEnd)
     monthStart.setDate(1)
     monthEnd.setMonth(monthEnd.getMonth() + 1)
     monthEnd.setDate(1)
@@ -380,8 +376,6 @@ class NativeCalendar {
     monthStart.setHours(0,0,0,0)
     monthEnd.setHours(23, 59, 59, 999)
     return new Promise((resolve, reject) => {
-      console.log('start', new Date(monthStart))
-      console.log('end', new Date(monthEnd))
       RNCalendarEvents.fetchAllEvents(convertDateIOS(new Date(monthStart)), convertDateIOS(new Date(monthEnd)), this.visibleGroupIds)
         .then(res => {
           // Alert.alert(res.length.toString())

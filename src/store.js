@@ -59,7 +59,6 @@ class Store {
       })
       startDay.setDate(startDay.getDate() + 1)
     }
-    console.log('更新事件列表', res)
     this.todoList = res
   }
   // 更新todoList不出现闪动动画

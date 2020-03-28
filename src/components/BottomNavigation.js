@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, View, Image, Animated } from 'react-native';
-import { finish, type, center, correct, wrong, settingDaily } from 'src/assets/image'
+import { finish, mainActive, type, correct, wrong, settingDaily } from 'src/assets/image'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import store from 'src/store'
 import { observer } from 'mobx-react';
@@ -13,22 +13,20 @@ import themeContext from 'src/themeContext'
 let isConfirmAvailable = true
 
 function BottomNavigation() {
-  const [ AnimatedScale1 ] = useState(new Animated.Value(1))
-  const [ AnimatedScale2 ] = useState(new Animated.Value(1))
-  const [ AnimatedScale3 ] = useState(new Animated.Value(1))
-  const AnimatedScale = [ AnimatedScale1, AnimatedScale2, AnimatedScale3 ]
-  const navNames = [ 'Daily', 'Main', 'Finish' ]
-  const focusStackName = store.bottomNavName
-  const select = navNames.indexOf(focusStackName)
-  const [ isDaily, setIsDaily ] = useState(false)
-  const pressHandler = index => {
-    store.nav.navigate(navNames[index])
-  }
+  const [ AnimatedScale ] = useState(new Animated.Value(1))
 
-  const [ isFinish, setIsFinish ] = useState(false)
+  const [ animateY ] = useState(new Animated.Value(-40))
+
+  const [ animateMainY ] = useState(new Animated.Value(-40))
+
+  const [ animateFinishY ] = useState(new Animated.Value(-40))
+
+
+  const focusStackName = store.bottomNavName
 
   const isDailySet = dailyStore.isSet
 
+  // 控制daily图标旋转
   const [ setRotate ] = useState(new Animated.Value(0))
   const setRotateDeg = setRotate.interpolate({
     inputRange: [ 0, 90 ],
@@ -40,6 +38,7 @@ function BottomNavigation() {
   const rotateAnimationBack = Animated.spring(setRotate, {
     toValue: 0
   })
+
   useEffect(() => {
     if (isDailySet) {
       rotateAnimation.start()
@@ -48,55 +47,36 @@ function BottomNavigation() {
     }
   }, [ isDailySet ])
 
+  const onDailyPage = focusStackName === 'Daily'
+  const onMainPage = focusStackName === 'Main'
+  const onFinishPage = focusStackName === 'Finish'
 
-  // 路由发生改变时执行
+
+  // 跳转到daily页面时
   useEffect(() => {
-    // 判断是否是daily页面,不是的话重置dailyStore
-    if (select !== 0) {
-      setIsDaily(false)
-      dailyStore.setIsSet(false)
+    if (onDailyPage) {
+      onEnterDaily()
+    } else {
+      onLeaveDaily()
     }
-    if (select !== 2) {
-      setIsFinish(false)
+  }, [ onDailyPage ])
+
+  // 跳转到main页面时
+  useEffect(() => {
+    if (onMainPage) {
+      onEnterMain()
+    } else {
+      onLeaveMain()
     }
-    // 恢复图标尺寸
-    for(let i = 0;i < 3;i++) {
-      if (AnimatedScale[i]._value !== 1) {
-        AnimatedScale[i].setValue(1)
-      }
+  }, [ onMainPage ])
+  useEffect(() => {
+    if (onFinishPage) {
+      onEnterFinish()
+    } else {
+      onLeaveFinish()
     }
-    setTimeout(() => {
-      Animated.timing(AnimatedScale[select], {
-        toValue: 1.2,
-        duration: 400
-      }).start(() => {
-        // 在日常页面时修改图标和功能
-        if (select === 0) {
-          Animated.timing(AnimatedScale[0], {
-            toValue: 0,
-            duration: 200
-          }).start(() => {
-            setIsDaily(true)
-            Animated.timing(AnimatedScale[0], {
-              toValue: 1,
-              duration: 200
-            }).start()
-          })
-        } else if (select === 2) {
-          Animated.timing(AnimatedScale[2], {
-            toValue: 0,
-            duration: 200
-          }).start(() => {
-            setIsFinish(true)
-            Animated.timing(AnimatedScale[2], {
-              toValue: 1,
-              duration: 200
-            }).start()
-          })
-        }
-      })
-    })
-  }, [ focusStackName ])
+  })
+
   // 添加/修改日历事件
   const isAddPage = store.isAddPage
   const isAddDaily = store.isAddDaily
@@ -105,12 +85,15 @@ function BottomNavigation() {
     // 每次点击√之后取消防误触
     isConfirmAvailable = true
   }, [ showHandler ])
+
   const keyboardHeight = store.keyboardHeight
+  // 点击取消
   const handelCancelClick = useCallback(() => {
     // 重置页面的表单数据
     store.resetAddFormData()
     store.nav.navigate( isAddPage ? 'Main' : 'Daily')
   }, [ isAddPage, isAddDaily ])
+  // 点击确定
   const handleConfirmClick = useCallback(() => {
     if (!isConfirmAvailable) {
       return
@@ -134,26 +117,70 @@ function BottomNavigation() {
       })
     }
   }, [ isAddPage, isAddDaily ])
-  const handleClickDaily = useCallback(() => {
-    if (isDaily) {
-      vibrate(0)
-      dailyStore.toggleIsSet()
-    } else {
-      store.nav.navigate('Daily')
-    }
-  }, [ isDaily ])
-  const handleClickFinish = useCallback(() => {
-    if (isFinish) {
-      vibrate(0)
-      finishStore.toggleSet()
-    } else {
-      store.nav.navigate('Finish')
-    }
-  }, [ isFinish ])
+
+  const onEnterDaily = () => {
+    Animated.spring(animateY, {
+      toValue: 0
+    }).start()
+  }
+
+  // 还原daily图标
+  const onLeaveDaily = () => {
+    Animated.spring(animateY, {
+      toValue: -40
+    }).start()
+  }
+
+  const onEnterMain = () => {
+    Animated.spring(animateMainY, {
+      toValue: 0
+    }).start()
+  }
+
+  const onLeaveMain = () => {
+    Animated.spring(animateMainY, {
+      toValue: -40
+    }).start()
+  }
+
+  const onEnterFinish = () => {
+    Animated.spring(animateFinishY, {
+      toValue: 0
+    }).start()
+  }
+
+  const onLeaveFinish = () => {
+
+    Animated.spring(animateFinishY, {
+      toValue: -40
+    }).start()
+  }
+
+  const handleToDaily = () => {
+    store.nav.navigate('Daily')
+  }
+  const handleSetDaily = () => {
+    vibrate(0)
+    dailyStore.toggleIsSet()
+  }
+
+  const handleToMain = () => {
+    store.nav.navigate('Main')
+  }
+
+  const handleToFinish = () => {
+    store.nav.navigate('Finish')
+  }
+
+  const handleSetFinish = () => {
+    vibrate(0)
+    finishStore.toggleSet()
+  }
   // 是否是刘海屏iPhone,底部安全距离处理
   const newIPhone = isNewIPhone()
 
   const theme = useContext(themeContext)
+
   return (
     <View
       style={ [ styles.container, {
@@ -165,68 +192,123 @@ function BottomNavigation() {
     >
       { !showHandler ?
         (
+
           <Fragment>
-            <TouchableOpacity
-              onPress={ handleClickDaily }
-              style={ styles.iconContainer }
+            <View style={ {
+              height: 40,
+              overflow:'hidden'
+            } }
             >
-              {
-                isDaily ? (
+              <Animated.View style={ {
+                transform: [ { translateY: animateY } ]
+              } }
+              >
+                <TouchableOpacity
+                  onPress={ handleSetDaily }
+                  style={ styles.iconContainer }
+                >
                   <Animated.Image
                     source={ settingDaily }
                     style={ [ {
                       height: 32,
                       width: 32
-                    }, select === 0 && {
-                      transform: [ { scale: AnimatedScale[0] }, { rotate: setRotateDeg } ]
+                    }, onDailyPage && {
+                      transform: [
+                        { rotate: setRotateDeg }
+                      ]
                     } ] }
                   />
-                ) : (
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={ handleToDaily }
+                  style={ styles.iconContainer }
+                >
                   <Animated.Image
                     source={ finish }
-                    style={ [ styles.icon, select === 0 && {
-                      transform: [ { scale: AnimatedScale[0] } ]
-                    } ] }
+                    style={ styles.icon }
                   />
-                )
-              }
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={ () => pressHandler(1) }
-              style={ styles.iconContainer }
+
+                </TouchableOpacity>
+              </Animated.View>
+
+            </View>
+
+            <View style={ {
+              height: 40,
+              overflow:'hidden'
+            } }
             >
-              <Animated.Image
-                source={ center }
-                style={ [ styles.icon, select === 1 && {
-                  transform: [ { scale: AnimatedScale[1] } ]
-                } ] }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={ handleClickFinish }
-              style={ styles.iconContainer }
+              <Animated.View style={ {
+                transform: [ { translateY: animateMainY } ]
+              } }
+              >
+                <TouchableOpacity
+                  style={ styles.iconContainer }
+                >
+                  <Animated.View
+                    source={ mainActive }
+                    style={ {
+                      height: 28,
+                      width: 28,
+                      borderRadius: 14,
+                      backgroundColor: theme.themeColor
+                    } }
+                  />
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={ handleToMain }
+                  style={ styles.iconContainer }
+                >
+                  <Animated.View
+                    style={ {
+                      height: 20,
+                      width: 20,
+                      borderRadius: 10,
+                      backgroundColor: '#FFF'
+                    } }
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+
+            </View>
+
+
+            <View style={ {
+              height: 40,
+              overflow:'hidden'
+            } }
             >
-              {
-                isFinish ? (
+              <Animated.View style={ {
+                transform: [ { translateY: animateFinishY } ]
+              } }
+              >
+                <TouchableOpacity
+                  onPress={ handleSetFinish }
+                  style={ styles.iconContainer }
+                >
                   <Animated.Image
                     source={ settingDaily }
                     style={ [ {
                       height: 32,
                       width: 32
-                    }, select === 2 && {
-                      transform: [ { scale: AnimatedScale[2] } ]
                     } ] }
                   />
-                ) : (
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={ handleToFinish }
+                  style={ styles.iconContainer }
+                >
                   <Animated.Image
                     source={ type }
-                    style={ [ styles.icon, select === 2 && {
-                      transform: [ { scale: AnimatedScale[2] } ]
-                    } ] }
+                    style={ [ styles.icon ] }
                   />
-                )
-              }
-            </TouchableOpacity>
+                </TouchableOpacity>
+              </Animated.View>
+
+            </View>
           </Fragment>
         )
         : (

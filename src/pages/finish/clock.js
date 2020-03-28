@@ -10,7 +10,6 @@ import Notification from 'src/utils/Notification'
 moment.locale('zh-cn');
 
 export function SelectReviewTime({ route }) {
-  console.log('scrollRef', route.params.scrollRef)
   useFocusEffect(
     useCallback(() => {
       // Do something when the screen is focused

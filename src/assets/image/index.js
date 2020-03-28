@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 export const calendar = require('./calendar.png')
-export const center = require('./center.png')
 export const type = require('./type.png')
 export const finish = require('./finish.png')
 export const down = require('./down.png')

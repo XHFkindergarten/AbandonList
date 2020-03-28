@@ -1,7 +1,7 @@
 /**
  * 待办项卡片item
  */
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, Fragment, useEffect, useContext, useRef } from 'react';
 import CardExpandModal from './cardExpandModal'
 import { wallpaper, wrongRed, setting } from 'src/assets/image'
 import { StyleSheet, Dimensions, ImageBackground, TouchableOpacity, View, Animated, PanResponder, Image, Text } from 'react-native';
@@ -13,6 +13,7 @@ import themeContext from 'src/themeContext'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import calStore from 'src/components/calendar/store'
 import moment from 'moment'
+import { TapGestureHandler, State } from 'react-native-gesture-handler'
 
 const { width } = Dimensions.get('window')
 
@@ -60,11 +61,6 @@ function TodoCard({ info, monthTime }) {
     }
   }, [ isHold ])
 
-  const handlePressOut = () => {
-    setIsHold(false)
-    ScaleAnimation.stop()
-    ScaleBackAnimation.start()
-  }
 
   // 点击卡片右侧的恢复按钮
   const handleExpandAbandon = () => {
@@ -90,71 +86,79 @@ function TodoCard({ info, monthTime }) {
       console.error(err)
     })
   }
-
-  const _panHandlers = PanResponder.create({
-    onStartShouldSetPanResponderCapture: () => true,
-    onPanResponderGrant: () => {
-      handlePressIn()
-    },
-    onPanResponderMove: (eve, gesture) => {
-      const { dx } = gesture
-      // 当出现左滑/右滑动作时,展开动作结束
-      if (Math.abs(dx) > 2) {
-        handlePressOut()
-      }
-    },
-    onPanResponderTerminate: handlePressOut,
-    onPanResponderRelease: handlePressOut
-  })
   const theme = useContext(themeContext)
 
   const { isDelete } = info
+
+  const [ animatedScale ] = useState(new Animated.Value(1))
+
+  const _handleStateChange = ({ nativeEvent }) => {
+    if (nativeEvent.state === State.BEGAN) {
+      Animated.spring(animatedScale, {
+        toValue: 0.90
+      }).start(() => {
+        Animated.timing(animatedScale, {
+          toValue: 1,
+          duration: 200
+        }).start()
+      })
+    }
+    if (nativeEvent.state === State.END) {
+      vibrate(1)
+      setExpand(true)
+    }
+  }
+
   return (
-    <View>
-      <Animated.View style={ {
-        transform: [
-          { scaleY: AnimatedScaleX }
-        ],
-        maxHeight: AnimatedHeightY
-      } }
+    <Fragment>
+      <TapGestureHandler
+        onHandlerStateChange={ _handleStateChange }
       >
-        <Animated.View
-          { ..._panHandlers.panHandlers }
-          style={ {
-            transform: [
-              { scale: ScaleValue }
-            ]
-          } }
+        <Animated.View style={ {
+          transform: [
+            { scaleY: AnimatedScaleX }
+          ],
+          maxHeight: AnimatedHeightY
+        } }
         >
-          <ImageBackground
-            imageStyle={ { borderRadius: 6 } }
-            source={ wallpaper }
-            style={ styles.card, {
-              marginBottom: 6,
-              height: 78,
-              width: width - 60,
-              justifyContent: 'center',
-              alignItems: 'center',
-              opacity: isDelete ? 0.6 : 1
+          <Animated.View
+            style={ {
+              transform: [
+                { scale: animatedScale }
+              ]
             } }
           >
-            <View style={ styles.cardHeader }>
-              <View style={ [ styles.cardCircle, {
-                backgroundColor: info.calendar.color
-              } ] }
-              />
-              <Text style={ [
-                styles.cardTitle, {
-                  maxWidth: 200,
-                  color: theme.pureText,
-                  textDecorationLine: isDelete ? 'line-through' : 'none'
-                }
-              ] }
-              >{ elipsis(info.title, 20) }</Text>
-            </View>
-          </ImageBackground>
+            <ImageBackground
+              imageStyle={ { borderRadius: 6 } }
+              source={ wallpaper }
+              style={ styles.card, {
+                marginBottom: 6,
+                height: 78,
+                width: width - 60,
+                justifyContent: 'center',
+                alignItems: 'center',
+                opacity: isDelete ? 0.6 : 1
+              } }
+            >
+              <View style={ styles.cardHeader }>
+                <View style={ [ styles.cardCircle, {
+                  backgroundColor: info.calendar.color
+                } ] }
+                />
+                <Text style={ [
+                  styles.cardTitle, {
+                    maxWidth: 200,
+                    color: theme.pureText,
+                    textDecorationLine: isDelete ? 'line-through' : 'none'
+                  }
+                ] }
+                >{ elipsis(info.title, 20) }</Text>
+              </View>
+            </ImageBackground>
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+
+      </TapGestureHandler>
       { expand &&
       <CardExpandModal
         handleAbandon={ handleExpandAbandon }
@@ -162,7 +166,7 @@ function TodoCard({ info, monthTime }) {
         info={ info }
         setVisible={ setExpand }
       /> }
-    </View>
+    </Fragment>
   )
 
 }

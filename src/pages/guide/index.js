@@ -6,7 +6,7 @@ import { StyleSheet, SafeAreaView, Text, Animated, TouchableOpacity } from 'reac
 import ThemeContext from 'src/themeContext'
 import store from 'src/store'
 import { useFocusEffect } from '@react-navigation/native';
-import { correct, calendar, notification } from 'src/assets/image'
+import { correct, calendar, down, notification } from 'src/assets/image'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import Notification from 'src/utils/Notification'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -186,20 +186,39 @@ function SecondScreen({ handleEnd }) {
       })
   }
 
+
+  const animatedY = word2Progress.interpolate({
+    inputRange: [ 0, 1 ],
+    outputRange: [ -200, 0 ]
+  })
+
+
   const onPressNoti = () => {
     Notification.initialNotification().then(() => {
       Notification.initialListener()
     }).finally(() => {
-      if (typeof handleEnd === 'function') {
-        handleEnd()
-      }
+      Animated.timing(word2Progress, {
+        toValue: 0
+      }).start()
+      Animated.timing(btnProgress, {
+        toValue: 0
+      }).start(() => {
+        setTimeout(() => {
+          if (typeof handleEnd === 'function') {
+            handleEnd()
+          }
+        }, 500)
+      })
     })
   }
 
   return (
     <Fragment>
       <Animated.View style={ [  {
-        opacity: word2Progress
+        opacity: word2Progress,
+        transform: [
+          { translateY: animatedY }
+        ]
       } ] }
       >
         {
@@ -234,7 +253,8 @@ function SecondScreen({ handleEnd }) {
       >
         <Animated.View style={ [ styles.dot, {
           backgroundColor: theme.themeColor,
-          transform: [ { scale: btnProgress }, { scale: logoScale }  ],
+          opacity: btnProgress,
+          transform: [ { scale: logoScale }  ],
           shadowColor: theme.themeColor,
           shadowOpacity: 0.6,
           shadowRadius: 4,
@@ -252,6 +272,119 @@ function SecondScreen({ handleEnd }) {
   )
 
 }
+
+function ThirdScreen( { handleEnd }) {
+  const theme = useContext(ThemeContext)
+  const [ titleProgress ] = useState(new Animated.Value(0))
+  const [ subtitleProgress ] = useState(new Animated.Value(0))
+  const [ fadeBtn ] = useState(new Animated.Value(0))
+  const [ titleLeft ] = useState(new Animated.Value(0))
+  const [ subtitleLeft ] = useState(new Animated.Value(0))
+  const [ logoFade ] = useState(new Animated.Value(1))
+  const [ btnScale ] = useState(new Animated.Value(1))
+  useEffect(() => {
+    Animated.spring(titleProgress, {
+      toValue: 1,
+      delay: 300
+    }).start()
+    Animated.spring(subtitleProgress, {
+      toValue: 1
+    }).start()
+    Animated.spring(fadeBtn, {
+      toValue: 1
+    }).start()
+  }, [])
+  const downProgress1 = titleProgress.interpolate({
+    inputRange: [ 0, 1 ],
+    outputRange: [ -300, 0 ]
+  })
+  const downProgress2 = subtitleProgress.interpolate({
+    inputRange: [ 0, 1 ],
+    outputRange: [ -300, 0 ]
+  })
+
+  const handlePress = () => {
+    Animated.timing(titleLeft, {
+      toValue: -400,
+      duration: 500,
+      delay: 200
+    }).start()
+    Animated.timing(subtitleLeft, {
+      toValue: -400,
+      duration: 500
+    }).start()
+    Animated.timing(logoFade, {
+      toValue: 0
+    }).start(() => {
+      Animated.timing(btnScale, {
+        toValue: 20
+      }).start(() => {
+        Animated.timing(fadeBtn, {
+          toValue: 0,
+          duration: 600
+        }).start(() => {
+          if (typeof handleEnd === 'function') {
+            handleEnd()
+          }
+        })
+      })
+    })
+  }
+
+
+
+  return (
+    <Fragment>
+      <Animated.Text style={ [ styles.thirdTitle, {
+        transform: [
+          { translateY: downProgress1 },
+          { translateX: titleLeft }
+        ]
+      } ] }
+      >
+        AbandonList
+      </Animated.Text>
+      <Animated.View style={ {
+        transform: [
+          { translateY: downProgress2 },
+          { translateX: subtitleLeft }
+        ]
+      } }
+      >
+        <Text style={ styles.thirdSubtitle }>
+        尽可能将每一项工作安排在准确的时间。
+        </Text>
+        <Text style={ styles.thirdSubtitle }>
+        详细且可执行的计划才是有效的计划
+        </Text>
+      </Animated.View>
+      <TouchableOpacity
+        onPress={ handlePress }
+        style={ {
+          marginTop: 200
+        } }
+      >
+        <Animated.View style={ [ styles.dot, {
+          opacity: fadeBtn,
+          backgroundColor: theme.themeColor,
+          transform: [ { scale: btnScale } ]
+        } ] }
+        >
+          <Animated.Image source={ down }
+            style={ [ styles.icon, {
+              opacity: logoFade,
+              transform: [
+                { rotate: '270deg' }
+              ]
+            } ] }
+          />
+        </Animated.View>
+      </TouchableOpacity>
+    </Fragment>
+  )
+}
+
+
 
 
 
@@ -278,6 +411,10 @@ export default function Guide({ navigation }) {
   const handleFirstEnd = () => setIndex(1)
 
   const handleSecondEnd = () => {
+    setIndex(2)
+  }
+
+  const handleThirdEnd = () => {
     AsyncStorage.setItem(firstLaunchKey, '@&^(!whatever_string_it_is')
     navigation.navigate('Main')
   }
@@ -297,6 +434,11 @@ export default function Guide({ navigation }) {
       {
         screenIndex === 1 && (
           <SecondScreen handleEnd={ handleSecondEnd } />
+        )
+      }
+      {
+        screenIndex === 2 && (
+          <ThirdScreen handleEnd={ handleThirdEnd } />
         )
       }
     </SafeAreaView>
@@ -341,5 +483,20 @@ const styles = StyleSheet.create({
   icon: {
     height: 30,
     width: 30
+  },
+  thirdTitle: {
+    fontFamily: 'ADAM.CG PRO',
+    fontSize: 32,
+    color: '#FFF',
+    textAlign: 'center',
+    marginBottom: 20
+  },
+  thirdSubtitle: {
+    width: 300,
+    textAlign: 'center',
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '300',
+    lineHeight: 24
   }
 })

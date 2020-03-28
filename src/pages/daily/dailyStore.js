@@ -78,7 +78,6 @@ class DailyStore {
   }
   // 提交每日任务表单
   submitDailyForm = () => new Promise(async (resolve) => {
-    console.log('add daily item', this.addDailyForm)
     if (!this.addDailyForm.name) {
       resolve()
       return
@@ -170,7 +169,6 @@ class DailyStore {
   }
   // 标记完成次数+1
   handleFinish = info => {
-    console.log('handle finish')
     const dayKey = moment(new Date()).format('YYYY-MM-DD')
     const target = {
       ...info,
@@ -211,7 +209,6 @@ class DailyStore {
   }
   // 取消完成
   handleCancel = info => {
-    console.log('handle cancel')
     const dayKey = moment(new Date()).format('YYYY-MM-DD')
     const target = {
       ...info,
@@ -330,7 +327,6 @@ class DailyStore {
         finishItems: 0
       }
     }
-    console.log('daily log get', logData)
     this.updateDailyLog(logData)
   }
   // 计算数据总览所需要的数据[各个月份完成次数][总完成次数]
@@ -345,7 +341,6 @@ class DailyStore {
       const item = log[i]
       // 累加总完成天数
       res.allFinishTimes += item.finishItems
-      console.log('item', item)
       const tempArr = i.split('-')
       const monthKey = `${tempArr[0]}-${tempArr[1]}`
       if (!res.monthList[monthKey]) {
@@ -379,7 +374,6 @@ class DailyStore {
         listData[i].finishLog[monthKey] = 0
       }
     }
-    console.log('每日待办 get', listData)
     this.updateDailyList(listData)
   }
   initialDailyStore = async () => {

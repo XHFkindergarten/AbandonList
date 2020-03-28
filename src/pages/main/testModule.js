@@ -12,8 +12,6 @@ import mainStore from './store'
 
 export default observer(function TestModule() {
   const onPress = () => {
-    mainStore.updatePreventScroll(!mainStore.preventScroll)
-    // mainStore.updatePreventScroll(!m)
   }
   return (
     <View>

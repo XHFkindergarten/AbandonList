@@ -75,7 +75,6 @@ function Add({ route }) {
   const [ isMounted, setIsMounted ] = useState(false)
   // component did mount
   useEffect(() => {
-    console.log(info)
     if (info) {
       // 上传ID,同时也是编辑页面的标识信息
       handleIdInit(info.id)
