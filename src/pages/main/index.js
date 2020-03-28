@@ -27,6 +27,7 @@ const Main = ({ navigation }) => {
   }, [])
   useFocusEffect(
     useCallback(() => {
+      moveX.setValue(0)
       // 主页活跃时，清空角标
       if (AppState.currentState === 'active') {
         // 清空应用角标数
@@ -43,7 +44,10 @@ const Main = ({ navigation }) => {
       return () => {
         // Do something when the screen is unfocused
         store.updateFocusCardId('')
-        moveX.setValue(0)
+        Animated.timing(moveX, {
+          toValue: 0,
+          duration: 400
+        }).start()
       }
     }, [])
   )
