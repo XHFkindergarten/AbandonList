@@ -12,8 +12,7 @@ import ThemeContext, { theme as themeValue } from './themeContext'
 import Notification from 'src/utils/Notification'
 import { isFirstOpen } from 'src/utils'
 import finishStore from 'src/pages/finish/store'
-import { observer } from 'mobx-react';
-import Test from 'src/pages/test'
+import { Toast } from 'src/components'
 
 // 创建栈路由
 const Stack = createStackNavigator()
@@ -57,6 +56,8 @@ function App() {
     // 更新全局通知方法
     store.globalNotify = globalNotify
 
+    // 更新全局提示方法
+    store.toast = sendToast
 
     return () => {
       // App will unmount
@@ -74,6 +75,15 @@ function App() {
   //     setThemeValue(theme.darkTheme)
   //   }
   // }
+
+  // 全局toast
+  const [ showToast, setShowToast ] = useState(false)
+  const [ toastMsg, setToastMsg ] = useState('')
+
+  const sendToast = msg => {
+    setToastMsg(msg)
+    setShowToast(true)
+  }
 
   const [ showGlobalModal, setShowModal ] = useState(false)
   const [ modalContent, setModalContent ] = useState('')
@@ -97,7 +107,6 @@ function App() {
           <Stack.Navigator
             headerMode="none"
             initialRouteName="Main"
-            // initialRouteName="Test"
             mode="screen"
           >
             <Stack.Screen component={ Main }
@@ -144,14 +153,6 @@ function App() {
                 cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
               } }
             />
-            <Stack.Screen
-              component={ Test }
-              name="Test"
-              options={ {
-                gestureEnabled: false,
-                cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-              } }
-            />
           </Stack.Navigator>
         </NavigationContainer>
       </View>
@@ -163,6 +164,12 @@ function App() {
       {
         showBottom && <BottomNavigation />
       }
+
+      <Toast
+        message={ toastMsg }
+        setVisible={ setShowToast }
+        visible={ showToast }
+      />
 
     </ThemeContext.Provider>
 

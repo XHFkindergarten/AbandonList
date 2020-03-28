@@ -156,6 +156,9 @@ class Store {
   // 发送全局通知的方法
   globalNotify = () => {}
 
+  // 全局提示方法
+  toast = () => {}
+
   // 控制底部导航栏显示
   setShowBottom = () => {}
 

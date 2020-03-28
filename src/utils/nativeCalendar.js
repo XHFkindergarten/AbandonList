@@ -190,12 +190,6 @@ class NativeCalendar {
    */
   removeEvent = (event, futureEvents = true) => {
     if (!futureEvents) {
-      // 如果是完成，更新当天的日志
-      // const todayKey = moment(new Date()).format('YYYY-MM-DD')
-      // dailyStore.updateDailyLogItem({
-      //   date: new Date(),
-      //   finishItems: dailyStore.dailyLog[todayKey].finishItems + 1
-      // })
       dailyStore.handleCalendarItemFinish()
     }
     return new Promise((resolve, reject) => {
@@ -378,7 +372,6 @@ class NativeCalendar {
     return new Promise((resolve, reject) => {
       RNCalendarEvents.fetchAllEvents(convertDateIOS(new Date(monthStart)), convertDateIOS(new Date(monthEnd)), this.visibleGroupIds)
         .then(res => {
-          // Alert.alert(res.length.toString())
           const tempObj = {}
           res.forEach(item => {
             const key = moment(item.startDate).format('YYYY-MM-DD')

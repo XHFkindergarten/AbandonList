@@ -202,7 +202,7 @@ function TodoCard({ info, navigation }) {
         }).catch(err => {
           srcStore.globalNotify(err)
         })
-      }, 400)
+      }, 600)
     }
     return (
       <Animated.View style={ [ styles.rightContainer, {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment, useContext, useMemo } from 'react';
-import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
+import { Modal, Text, Clipboard, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
 import { info_, setting, ring, correctGreen, wrongRed, shalou } from 'src/assets/image'
 import moment from 'moment/min/moment-with-locales'
@@ -7,6 +7,7 @@ import srcStore from 'src/store'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Notification from 'src/utils/Notification'
 import ThemeContext from 'src/themeContext'
+import { Toast } from 'src/components'
 
 moment.locale('zh-cn');
 const { width, height } = Dimensions.get('window')
@@ -52,6 +53,22 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handle
 
   const theme = useContext(ThemeContext)
 
+  // 复制备注内容
+  const clipDesc = () => {
+    if (info.notes) {
+      Clipboard.setString(info.notes)
+      toast('复制成功')
+    }
+  }
+
+  const [ showToast, setShowToast ] = useState(false)
+  const [ toastMsg, setToastMsg ] = useState('')
+
+  const toast = msg => {
+    setToastMsg(msg)
+    setShowToast(true)
+  }
+
   return (
     <Modal
       animationType="fade"
@@ -91,12 +108,15 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handle
             } }
             >{ info.calendar.title }</Text>
           </View>
-          <View style={ styles.row }>
-            <Image source={ info_ }
-              style={ styles.icon }
-            ></Image>
-            <Text style={ styles.content }>{ info.notes ? info.notes : '暂无备注' }</Text>
-          </View>
+          <TouchableWithoutFeedback onPress={ clipDesc }>
+            <View style={ styles.row }>
+              <Image source={ info_ }
+                style={ styles.icon }
+              ></Image>
+              <Text style={ styles.content }>{ info.notes ? info.notes : '暂无备注' }</Text>
+            </View>
+          </TouchableWithoutFeedback>
+
           {
             info.allDay ? (
               <View style={ styles.row }>
@@ -173,6 +193,12 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish, handle
           </TouchableOpacity>
         </View>
       </Animated.View>
+      <Toast
+        message={ toastMsg }
+        setVisible={ setShowToast }
+        visible={ showToast }
+      />
+
     </Modal>
   )
 }

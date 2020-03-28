@@ -6,7 +6,6 @@ import nativeCalendar from 'src/utils/nativeCalendar'
 import GroupModal from './groupModal'
 import StartModal from './startModal'
 import EndModal from './endModal'
-import { Toast } from 'src/components'
 import RepeatModal from './repeatModal'
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
@@ -114,20 +113,19 @@ function Add({ route }) {
   /**
    * 判断某个分组是否处于可见状态
    */
+  // 可见分组
+  const visibleGroupIds = nativeCalendar.visibleGroupIds
   const judgeGroupVisible = targetId => {
-    // 可见分组
-    const visibleGroupIds = nativeCalendar.visibleGroupIds
     // 判断分组是否可见
     if (!visibleGroupIds.includes(targetId)) {
       groupModalClose()
       srcStore.globalNotify('当前所选择的分组处于不显示状态,请在【数据总览】->【设置】->【日历分组】中勾选目标分组，或直接新建一个分组')
     }
   }
-
   // 初始化分组
   const groups = nativeCalendar.groupStorage
   // 默认分组
-  const defaultGroup = groups.find(item => item.isPrimary) || groups[0]
+  const defaultGroup = groups.find(item => visibleGroupIds.includes(item.id)) || groups[0]
   const defaultGroupId = defaultGroup.id
   /* =================== 表单数据管理 =================== */
 
@@ -192,7 +190,7 @@ function Add({ route }) {
     updateFormData({ allDay: newValue })
     if (flag) {
       if (newValue && RAB) {
-        toast('提醒时间被设置在当天早晨8:00')
+        srcStore.toast('将会在当天早晨8:00提醒')
       }
     }
   }
@@ -200,9 +198,9 @@ function Add({ route }) {
     setRAE(newValue)
     updateFormData({ RAE: newValue })
     if (newValue && RAB) {
-      toast('将会在事件开始和结束时设置提醒')
+      srcStore.toast('将会在事件开始和结束时设置提醒')
     } else if (newValue) {
-      toast('将会在事件结束时设置提醒')
+      srcStore.toast('将会在事件结束时设置提醒')
     }
   }
   const handleRABChange = newValue => {
@@ -212,11 +210,11 @@ function Add({ route }) {
       updateFormData({ RAB: newValue })
       if (isMounted) {
         if (allDay && newValue) {
-          toast('将会在当天早晨8:00提醒')
+          srcStore.toast('将会在当天早晨8:00提醒')
         } else if (newValue && RAE ) {
-          toast('将会在事件开始和结束时设置提醒')
+          srcStore.toast('将会在事件开始和结束时设置提醒')
         } else if (newValue) {
-          toast('将会在事件开始时提醒')
+          srcStore.toast('将会在事件开始时提醒')
         }
       }
     }).catch(() => {
@@ -260,15 +258,6 @@ function Add({ route }) {
   const repeatModalClose = () => setRepeatModalVisible(false)
   /* ================================================== */
 
-
-  // 控制toast显示
-  const [ showToast, setShowToast ] = useState(false)
-  const [ toastMsg, setToastMsg ] = useState('')
-  // 显示toast信息
-  const toast = msg => {
-    setToastMsg(msg)
-    setShowToast(true)
-  }
 
   const repeatMap = [
     {
@@ -365,6 +354,7 @@ function Add({ route }) {
                 clearButtonMode="while-editing"
                 defaultValue={ description }
                 keyboardAppearance="dark"
+                multiline
                 onChangeText={ handleDescriptionChange }
                 placeholder="备注"
                 placeholderTextColor="#2F2F2F"
@@ -503,11 +493,6 @@ function Add({ route }) {
           />
         </ScrollView>
       </View>
-      <Toast
-        message={ toastMsg }
-        setVisible={ setShowToast }
-        visible={ showToast }
-      />
     </View>
   )
 }
