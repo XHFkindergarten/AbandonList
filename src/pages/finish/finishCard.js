@@ -40,21 +40,6 @@ function TodoCard({ info, monthTime }) {
   const disappearY = Animated.spring(AnimatedHeightY, { toValue: 0 })
 
 
-  // 因为useState的异步性,需要额外使用一个控制变量
-  const handlePressIn = () => {
-    setIsHold(true)
-    ScaleAnimation.start()
-    clearTimeout(pressTimeout)
-    pressTimeout = setTimeout(() => {
-      vibrate()
-      ScaleAnimation.stop()
-      ScaleBackAnimation.start(() => {
-        setExpand(true)
-        setIsHold(false)
-      })
-    }, 400)
-  }
-
   useEffect(() => {
     if (!isHold) {
       clearTimeout(pressTimeout)
@@ -110,7 +95,7 @@ function TodoCard({ info, monthTime }) {
   }
 
   return (
-    <Fragment>
+    <View>
       <TapGestureHandler
         onHandlerStateChange={ _handleStateChange }
       >
@@ -145,14 +130,16 @@ function TodoCard({ info, monthTime }) {
                   backgroundColor: info.calendar.color
                 } ] }
                 />
-                <Text style={ [
-                  styles.cardTitle, {
-                    maxWidth: 200,
-                    color: theme.pureText,
-                    textDecorationLine: isDelete ? 'line-through' : 'none'
-                  }
-                ] }
-                >{ elipsis(info.title, 20) }</Text>
+                <Text
+                  numberOfLines={ 2 }
+                  style={ [
+                    styles.cardTitle, {
+                      maxWidth: 200,
+                      color: theme.pureText,
+                      textDecorationLine: isDelete ? 'line-through' : 'none'
+                    }
+                  ] }
+                >{ info.title }</Text>
               </View>
             </ImageBackground>
           </Animated.View>
@@ -160,13 +147,13 @@ function TodoCard({ info, monthTime }) {
 
       </TapGestureHandler>
       { expand &&
-      <CardExpandModal
-        handleAbandon={ handleExpandAbandon }
-        handleFinish={ handleExpandFinish }
-        info={ info }
-        setVisible={ setExpand }
-      /> }
-    </Fragment>
+        <CardExpandModal
+          handleAbandon={ handleExpandAbandon }
+          handleFinish={ handleExpandFinish }
+          info={ info }
+          setVisible={ setExpand }
+        /> }
+    </View>
   )
 
 }

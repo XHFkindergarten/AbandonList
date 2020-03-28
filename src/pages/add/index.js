@@ -317,7 +317,6 @@ function Add({ route }) {
         <TextInput
           defaultValue={ title }
           keyboardAppearance="dark"
-          maxLength={ 18 }
           onChangeText={ handleTitleChange }
           placeholder="请输入事件名"
           placeholderTextColor="#666"

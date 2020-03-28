@@ -9,9 +9,9 @@ export const colorList = [
   // 黄色系
   [ '#f7ca18', '#e9d460', '#f5e51b', '#f5d76e' ],
   // 绿色系
-  [ '#2abb9b', '#23cba7', '#4daf7c', '#019875' ],
+  [ '#2abb9b', '#019875' ],
   // 橙色系
-  [ '#eb9532', '#f39c12', '#f2784b', '#f15a22' ]
+  [ '#eb9532', '#f2784b', '#f15a22' ]
 ]
 
 export const flatColorList = [

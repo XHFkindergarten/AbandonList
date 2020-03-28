@@ -133,7 +133,6 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
     >
       <View style={ styles.leftContent }>
         <Text style={ styles.title }>{ elipsis(info.name, 50) }</Text>
-        { /* <Text style={ styles.subTitle }>{ elipsis(info.des, 32) }</Text> */ }
       </View>
       <View style={ styles.rightContent }>
         {
