@@ -43,25 +43,29 @@ function TodoCard({ info, navigation }) {
     const [ animatedScale ] = useState(new Animated.Value(1))
 
     const _handleStateChange = ({ nativeEvent }) => {
-      if (nativeEvent.state === State.BEGAN) {
-        srcStore.updateFocusCardId(info.id)
-        Animated.spring(animatedScale, {
-          toValue: 0.90
-        }).start(() => {
-          Animated.timing(animatedScale, {
-            toValue: 1,
-            duration: 200
-          }).start()
-        })
-      }
-      if (nativeEvent.state === State.END) {
-        vibrate(1)
-        setExpand(true)
-      }
+
+      vibrate(1)
+      setExpand(true)
+      // if (nativeEvent.state === State.BEGAN) {
+      //   srcStore.updateFocusCardId(info.id)
+      //   Animated.spring(animatedScale, {
+      //     toValue: 0.90
+      //   }).start(() => {
+      //     Animated.timing(animatedScale, {
+      //       toValue: 1,
+      //       duration: 200
+      //     }).start()
+      //   })
+      // }
+      // if (nativeEvent.state === State.END) {
+      //   vibrate(1)
+      //   setExpand(true)
+      // }
     }
     return (
-      <TapGestureHandler
-        onHandlerStateChange={ _handleStateChange }
+      <TouchableOpacity
+        activeOpacity={ 0.8 }
+        onPress={ _handleStateChange }
       >
         <Animated.View style={ [ styles.card, {
           backgroundColor: theme.mainColor,
@@ -129,7 +133,7 @@ function TodoCard({ info, navigation }) {
             )
           }
         </Animated.View>
-      </TapGestureHandler>
+      </TouchableOpacity>
     )
   }
 

@@ -60,6 +60,7 @@ function Finish({ navigation }) {
       }
     }, [])
   )
+
   const dataOverView = dailyStore.dataOverView
   const dailyMap = dailyStore.dailyList
   const dailyList = []
