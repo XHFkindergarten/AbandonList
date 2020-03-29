@@ -187,11 +187,6 @@ function SecondScreen({ handleEnd }) {
   }
 
 
-  const animatedY = word2Progress.interpolate({
-    inputRange: [ 0, 1 ],
-    outputRange: [ -200, 0 ]
-  })
-
 
   const onPressNoti = () => {
     Notification.initialNotification().then(() => {
@@ -215,10 +210,7 @@ function SecondScreen({ handleEnd }) {
   return (
     <Fragment>
       <Animated.View style={ [  {
-        opacity: word2Progress,
-        transform: [
-          { translateY: animatedY }
-        ]
+        opacity: word2Progress
       } ] }
       >
         {
@@ -352,10 +344,10 @@ function ThirdScreen( { handleEnd }) {
       } }
       >
         <Text style={ styles.thirdSubtitle }>
-        尽可能将每一项工作安排在准确的时间。
+          将每一项工作安排在可执行的时间。
         </Text>
         <Text style={ styles.thirdSubtitle }>
-        详细且可执行的计划才是有效的计划
+          养成良好的学习生活习惯
         </Text>
       </Animated.View>
       <TouchableOpacity
