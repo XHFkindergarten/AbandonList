@@ -67,9 +67,10 @@ function Finish({ navigation }) {
   for(let key of Object.keys(dailyMap)) {
     dailyList.push(dailyMap[key])
   }
+  const overViewId = '@data_over_view'
   // 第一项设置为数据总览
   dailyList.unshift({
-    id: '@data_over_view',
+    id: overViewId,
     name: '数据总览',
     data: dataOverView
   })
@@ -121,8 +122,10 @@ function Finish({ navigation }) {
   const [ toggleCards, setToggle ] = useState(false)
 
   const handlePressMonthName = () => {
-    ref.current.animateNextTransition()
-    setToggle(!toggleCards)
+    if (curItem.id === overViewId) {
+      ref.current.animateNextTransition()
+      setToggle(!toggleCards)
+    }
   }
 
   const ref = useRef()
