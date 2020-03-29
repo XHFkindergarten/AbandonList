@@ -34,14 +34,14 @@ function CalendarBody ({ AnimatedExpand }){
     store.shift = true
     if (store.isExpanded) {
       miniAnimation.start(() => {
-        store.isExpanded = false
+        // store.isExpanded = false
         // 展开时上划收起
         store.updateIsExpand(false)
         store.shift = false
       })
     } else {
       expandAnimation.start(() => {
-        store.isExpanded = true
+        // store.isExpanded = true
         store.updateIsExpand(true)
         store.shift = false
       })

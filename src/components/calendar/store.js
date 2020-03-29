@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx'
 import srcStore from 'src/store'
 import { getMonthDay } from 'src/utils'
+import moment from 'moment'
 
 // 月份name map
 const monthMap = [
@@ -62,18 +63,20 @@ class Store {
     return this.getSunday(today)
   }
   // 当前选中的月份,用来控制点击第一行和最后一行时的特殊效果
-  controlMonth = null
+  controlMonth = new Date().getMonth()
   // 获取指定日期那一周的周日
   getSunday = day => {
     const sunday = new Date(day)
     sunday.setDate(sunday.getDate() - sunday.getDay())
     return sunday
   }
+  // 一个迫不得已，用来逃避我逻辑已经彻底混乱的方法
   clearMonthHeader = () => {
     if (this.centerWeekList[6].getDate() < 7) {
       const newCenterSunday = new Date(this.centerWeekList[6])
       newCenterSunday.setDate(newCenterSunday.getDate() + 1)
       this.updateCenterSunday(newCenterSunday)
+      this.controlMonth = newCenterSunday.getMonth()
     }
   }
   // 视图核心日期date
@@ -133,15 +136,6 @@ class Store {
     })
     const array = Array.from(set)
     return [ monthMap[array[0]], array.length > 1 ? monthMap[array[1]] : null ]
-    // const saturday = this.centerWeekList[6]
-    // if (saturday.getDate() < 7) {
-    //   const month1 = monthMap[this.centerWeekList[0].getMonth()]
-    //   const month2 = monthMap[saturday.getMonth()]
-    //   return [ month1, month2 ]
-    // } else {
-    //   const month1 = monthMap[saturday.getMonth()]
-    //   return [ month1, null ]
-    // }
   }
   // 获取扁平化3周的日历
   @computed get flatWeekList() {
@@ -233,6 +227,7 @@ class Store {
     if (Saturday.getDate() <= 7 && Saturday.getMonth() === flagSunday.getMonth()) {
       return res
     }
+
     // 计算向上还有几周
     const prevWeekNum = Math.ceil((currentSundayDate - 1) / 7)
     // 计算顶部需要几个占位符
@@ -257,19 +252,13 @@ class Store {
   }
   // 生成下旬月历工厂函数
   generateNextMonthData = centerSunday => {
-    // 如果已经是月底，返回空数组
-    // const tempDate = new Date(centerSunday)
-    // tempDate.setDate(centerSunday.getDate() + 6)
-    // if (tempDate.getMonth() !== centerSunday.getMonth()) {
-    //   return []
-    // }
     if (!centerSunday) {
       return []
     }
+
     // 输出结果
     const res = []
     const startSaturday = new Date(centerSunday)
-    // startSaturday.setDate(startSaturday.getDate() + 6)
     // 获取本月有多少天
     const monthDay = getMonthDay(startSaturday)
     // 下旬开始日期
@@ -291,6 +280,6 @@ class Store {
   // 是否正在执行展开/收回动画
   shift = false
   // 是展开还是关闭状态
-  isExpanded = false
+  // isExpanded = false
 }
 export default new Store()
