@@ -347,7 +347,7 @@ function ThirdScreen( { handleEnd }) {
           将每一项工作安排在可执行的时间。
         </Text>
         <Text style={ styles.thirdSubtitle }>
-          养成良好的学习生活习惯
+          科学管理日程
         </Text>
       </Animated.View>
       <TouchableOpacity
