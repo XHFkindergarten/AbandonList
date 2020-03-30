@@ -5,6 +5,7 @@ import TodoCard from './todoCard'
 import { vibrate } from 'src/utils'
 import themeContext from 'src/themeContext'
 import AllDayCard from './allDayCard'
+import nativeCalendar from 'src/utils/nativeCalendar'
 
 
 const weekdayMap = [
@@ -22,10 +23,14 @@ const weekdayMap = [
  */
 const ItemHeader = ({ date }) => {
   const pressHandler = () => {
-    vibrate(0)
-    store.nav.navigate('Add', {
-      date
-    })
+    if (nativeCalendar.visibleGroupIds.length === 0 ) {
+      store.globalNotify('暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组')
+    } else {
+      vibrate(0)
+      store.nav.navigate('Add', {
+        date
+      })
+    }
   }
   const today = new Date()
   // 是否是今天
@@ -58,10 +63,14 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
     todoList.push(todo[i])
   }
   const addItem = () => {
-    vibrate(0)
-    store.nav.navigate('Add', {
-      date
-    })
+    if (nativeCalendar.visibleGroupIds.length === 0 ) {
+      store.globalNotify('暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组')
+    } else {
+      vibrate(0)
+      store.nav.navigate('Add', {
+        date
+      })
+    }
   }
 
   // useEffect(() => {

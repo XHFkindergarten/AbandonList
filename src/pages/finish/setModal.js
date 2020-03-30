@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useCallback, useEffect, useRef } from 'react';
-import { View, Modal,Text, StyleSheet, Image, Animated, TouchableOpacity, Dimensions, PanResponder, ActionSheetIOS } from 'react-native';
+import { View, Modal,Text, StyleSheet, Image, Animated, TouchableOpacity, Dimensions, ActionSheetIOS } from 'react-native';
 import { down, addThin, correctGreen } from 'src/assets/image'
 import finishStore from './store'
 import { vibrate, isNewIPhone } from 'src/utils'
@@ -45,6 +45,8 @@ function CalendarItem({ item }) {
       },
       async index => {
         if (index === 0) {
+          // 将日历置为不可见状态
+          nativeCalendar.toggleVisibleGroupIds(item.id)
           // 点击删除
           await finishStore.deleteCalendar(item.id)
 

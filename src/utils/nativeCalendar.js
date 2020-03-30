@@ -310,9 +310,10 @@ class NativeCalendar {
           finishStore.updateVisibleGroupIds(this.visibleGroupIds)
           this.saveVisibleGroup()
           // 如果可见日历数依然为0,提示用户去创建日历
-          if (this.visibleGroupIds.length === 0) {
-            // TODO: 唤起全局提示框
-          }
+          // if (this.visibleGroupIds.length === 0) {
+          //   // TODO: 唤起全局提示框
+
+          // }
         }
         resolve()
       }).catch(() => {
@@ -370,21 +371,28 @@ class NativeCalendar {
     monthStart.setHours(0,0,0,0)
     monthEnd.setHours(23, 59, 59, 999)
     return new Promise((resolve, reject) => {
-      RNCalendarEvents.fetchAllEvents(convertDateIOS(new Date(monthStart)), convertDateIOS(new Date(monthEnd)), this.visibleGroupIds)
-        .then(res => {
-          const tempObj = {}
-          res.forEach(item => {
-            const key = moment(item.startDate).format('YYYY-MM-DD')
-            if (!tempObj[key]) {
-              tempObj[key] = {}
-            }
-            tempObj[key][item.id] = item
+      if (this.visibleGroupIds.length === 0) {
+        // 没有可见分组时，直接不显示所有事件
+        this.eventStorage = {}
+        resolve([])
+      } else {
+        RNCalendarEvents.fetchAllEvents(convertDateIOS(new Date(monthStart)), convertDateIOS(new Date(monthEnd)), this.visibleGroupIds)
+          .then(res => {
+            const tempObj = {}
+            res.forEach(item => {
+              const key = moment(item.startDate).format('YYYY-MM-DD')
+              if (!tempObj[key]) {
+                tempObj[key] = {}
+              }
+              tempObj[key][item.id] = item
+            })
+            this.eventStorage = Object.assign({}, tempObj)
+            // this.eventStorage = Object.assign({}, this.eventStorage, tempObj)
+            resolve(res)
           })
-          this.eventStorage = Object.assign({}, tempObj)
-          // this.eventStorage = Object.assign({}, this.eventStorage, tempObj)
-          resolve(res)
-        })
-        .catch(err => reject(err))
+          .catch(err => reject(err))
+      }
+
     })
   }
 }
