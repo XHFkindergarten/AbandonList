@@ -315,6 +315,8 @@ function TodoCard({ info, navigation }) {
     const scheduleList = res.filter(item => item.userInfo.id === info.id)
     if (scheduleList.length) {
       setHasNoti(true)
+    } else {
+      setHasNoti(false)
     }
   })
 
