@@ -30,14 +30,19 @@ export const fromNow = info => {
   const endTime = new Date(info.endDate).getTime()
   let outputTime
   if (nowTime < startTime) {
-    if (startTime - nowTime < 1000 * 60 * 60 * 24) {
+    if (startTime - nowTime < 1000 * 60 * 60) {
+      // 一小时之内开始
+      outputTime = moment(info.startDate).endOf('minute').fromNow() + '开始'
+    } else if (startTime - nowTime < 1000 * 60 * 60 * 24) {
       // 一天之内开始
       outputTime = moment(info.startDate).endOf('hour').fromNow() + '开始'
     } else {
       outputTime = moment(info.startDate).endOf('day').fromNow() + '开始'
     }
   } else if (nowTime < endTime) {
-    if (endTime - nowTime < 1000 * 60 * 60 * 24) {
+    if (endTime - nowTime < 1000 * 60 * 60) {
+      outputTime = moment(info.endDate).endOf('minute').fromNow() + '结束'
+    } else if (endTime - nowTime < 1000 * 60 * 60 * 24) {
       // 一天之内结束
       outputTime = moment(info.endDate).endOf('hour').fromNow() + '结束'
     } else {

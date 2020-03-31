@@ -46,21 +46,14 @@ function TodoCard({ info, navigation }) {
 
       vibrate(1)
       setExpand(true)
-      // if (nativeEvent.state === State.BEGAN) {
-      //   srcStore.updateFocusCardId(info.id)
-      //   Animated.spring(animatedScale, {
-      //     toValue: 0.90
-      //   }).start(() => {
-      //     Animated.timing(animatedScale, {
-      //       toValue: 1,
-      //       duration: 200
-      //     }).start()
-      //   })
-      // }
-      // if (nativeEvent.state === State.END) {
-      //   vibrate(1)
-      //   setExpand(true)
-      // }
+      Animated.spring(animatedScale, {
+        toValue: 0.98
+      }).start(() => {
+        Animated.timing(animatedScale, {
+          toValue: 1,
+          duration: 200
+        }).start()
+      })
     }
     return (
       <TouchableOpacity
@@ -180,9 +173,9 @@ function TodoCard({ info, navigation }) {
   const RenderRight = (progress, dragX) => {
     // 点击完成
     const handlePressFinish = () => {
-      swipeRef.current.close()
       srcStore.updateFocusCardId('')
       setTimeout(() => {
+        swipeRef.current.close()
         Promise.all([
           nativeCalendar.removeEvent(info, false),
           new Promise((resolve) => {
@@ -202,9 +195,9 @@ function TodoCard({ info, navigation }) {
     }
     // 点击删除
     const handlePressAbandon = () => {
-      swipeRef.current.close()
       srcStore.updateFocusCardId('')
       setTimeout(() => {
+        swipeRef.current.close()
         Promise.all([
           nativeCalendar.removeEvent(info, true),
           new Promise((resolve) => {
@@ -243,9 +236,9 @@ function TodoCard({ info, navigation }) {
 
   const handleExpandFinish = () => {
     setExpand(false)
-    swipeRef.current.close()
     srcStore.updateFocusCardId('')
     setTimeout(() => {
+      swipeRef.current.close()
       Promise.all([
         nativeCalendar.removeEvent(info, false),
         new Promise((resolve) => {
@@ -266,9 +259,9 @@ function TodoCard({ info, navigation }) {
 
   const handleExpandAbandon = () => {
     setExpand(false)
-    swipeRef.current.close()
     srcStore.updateFocusCardId('')
     setTimeout(() => {
+      swipeRef.current.close()
       Promise.all([
         nativeCalendar.removeEvent(info, true),
         new Promise((resolve) => {

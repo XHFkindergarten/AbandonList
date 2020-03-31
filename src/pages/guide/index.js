@@ -230,7 +230,7 @@ function SecondScreen({ handleEnd }) {
                 为了提供日程提醒服务
               </Text>
               <Text style={ styles.subLabel_2 }>
-                需要获得本机的通知权限^ ^
+                需要获得本机的通知权限.^ ^
               </Text>
             </Fragment>
           )

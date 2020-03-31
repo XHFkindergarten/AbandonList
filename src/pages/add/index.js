@@ -67,7 +67,7 @@ function Add({ route }) {
   const defaultStartTime = date ? new Date(date) : new Date()
   defaultStartTime.setHours(8,0,0,0)
   const defaultEndTime = date ? new Date(date) : new Date()
-  defaultEndTime.setHours(20,0,0,0)
+  defaultEndTime.setHours(9,0,0,0)
 
   // 是否已挂载
   const [ isMounted, setIsMounted ] = useState(false)
@@ -194,6 +194,7 @@ function Add({ route }) {
     }
   }
   const handleRAEChange = newValue => {
+    contentRef.current.animateNextTransition()
     setRAE(newValue)
     updateFormData({ RAE: newValue })
     if (newValue && RAB) {
@@ -302,7 +303,7 @@ function Add({ route }) {
       />
       <Transition.Change interpolation="easeInOut" />
       <Transition.In interpolation="easeInOut"
-        type="scale"
+        type="fade"
       ></Transition.In>
     </Transition.Sequence>
   )
@@ -444,7 +445,7 @@ function Add({ route }) {
               backgroundColor: '#2F2F2F'
             } }
             />
-            { (RAB && !allDay) && (
+            { ((RAB && !allDay) || RAE) && (
               <Fragment>
                 <View style={ styles.itemRow }>
                   <Text style={ styles.itemLabel }>结束时提醒</Text>

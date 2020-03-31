@@ -80,7 +80,7 @@ function TodoCard({ info, monthTime }) {
   const _handleStateChange = ({ nativeEvent }) => {
     if (nativeEvent.state === State.BEGAN) {
       Animated.spring(animatedScale, {
-        toValue: 0.90
+        toValue: 0.98
       }).start(() => {
         Animated.timing(animatedScale, {
           toValue: 1,
