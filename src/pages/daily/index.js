@@ -9,7 +9,7 @@ import DailyItem from './dailyItem'
 import srcStore from 'src/store'
 import themeContext from 'src/themeContext'
 import AsyncStorage from '@react-native-community/async-storage';
-
+let notifyTimeout
 function Daily({ navigation }) {
   useFocusEffect(
     useCallback(() => {
@@ -26,10 +26,15 @@ function Daily({ navigation }) {
     dailyStore.initialDailyStore()
     AsyncStorage.getItem('@ever_daily_tip').then(res => {
       if (!res) {
-        srcStore.globalNotify('点击右上方按钮创建你的第一张每日待办卡片吧,每天长按卡片。将其标记为完成^ ^.')
+        notifyTimeout = setTimeout(() => {
+          srcStore.globalNotify('点击右上方按钮创建你的第一张每日待办卡片吧,每天长按卡片。将其标记为完成^ ^.')
+        }, 600)
         AsyncStorage.setItem('@ever_daily_tip', 'whatever')
       }
     })
+    return () => {
+      clearTimeout(notifyTimeout)
+    }
   }, [])
 
   // 选中要删除的itemid

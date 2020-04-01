@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const { width, height } = Dimensions.get('window')
 
+let notifyTimeout
 
 const MonthNameMap = [
   'Jan.',
@@ -42,12 +43,16 @@ function Finish({ navigation }) {
     _setIsMount(true)
     AsyncStorage.getItem('@ever_finish_tip_show').then(res => {
       if (!res) {
-        srcStore.globalNotify('滑动上方蓝色区域可以查看不同事项每个月的完成情况^ ^.')
+        notifyTimeout = setTimeout(() => {
+          srcStore.globalNotify('滑动上方蓝色区域可以查看不同事项每个月的完成情况^ ^.')
+        }, 600)
+
         AsyncStorage.setItem('@ever_finish_tip_show', 'whatever')
       }
     })
     return () => {
       _setIsMount(false)
+      clearTimeout(notifyTimeout)
     }
   }, [])
   // 控制底部路由

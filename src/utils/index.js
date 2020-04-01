@@ -61,6 +61,7 @@ export const fromNow = info => {
 // 获取当月天数
 export const getMonthDay = day => {
   const newDay = new Date(day)
+  newDay.setDate(28) // 防止日期溢出到下下个月
   newDay.setMonth(newDay.getMonth() + 1)
   newDay.setDate(0)
   return newDay.getDate()
