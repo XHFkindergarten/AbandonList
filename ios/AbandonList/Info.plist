@@ -40,7 +40,7 @@
 		</dict>
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>请求获取日历权限</string>
+	<string>为了更科学的进行日程管理，AbandonList日程将会被写入本机日历</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UIAppFonts</key>

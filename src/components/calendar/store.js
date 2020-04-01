@@ -1,7 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import srcStore from 'src/store'
 import { getMonthDay } from 'src/utils'
-import moment from 'moment'
 
 // 月份name map
 const monthMap = [
