@@ -1,16 +1,6 @@
+<img src="./readMeImage/title.png" style="width:200px">
 
-<h1 class="title">
-AbandonList
-</h1>
-<style>
-@font-face {
-  font-family: ADAM;
-  src: url('./assets/fonts/ADAM.ttf')
-}
-.title {
-  font-family: ADAM;
-}
-</style>
+****
 
 [![Travis](https://img.shields.io/badge/language-JavaScript-yellow.svg)]()
 
@@ -18,15 +8,16 @@ AbandonList是一款运行在IOS端的日程待办管理App。
 
 > 之所以这样说是因为它的数据源直接取自手机的日历数据。无需导入也无需备份，下载App后日历里的日程也可以直接显示,非常的方便
 
-![首页图片](./readMeImage/main_min.png)
-![首页图片](./readMeImage/main_max.png)
-![首页图片](./readMeImage/add.png)
-![首页图片](./readMeImage/daily.png)
-![首页图片](./readMeImage/itemView.png)
-![首页图片](./readMeImage/overView.png)
-
-
-
+<div style="width:100%;display:flex;justify-content:space-around;margin-top: 40px;align-items:center;">
+  <img style="width:33%;" src="./readMeImage/main_min.png" />
+  <img style="width:33%;" src="./readMeImage/main_max.png" />
+  <img style="width:33%;" src="./readMeImage/add.png" />
+</div>
+<div style="width:100%;display:flex;justify-content:space-around;margin-top: 40px;align-items:center;">
+  <img style="width:33%;" src="./readMeImage/daily.png" />
+  <img style="width:33%;" src="./readMeImage/itemView.png" />
+  <img style="width:33%;" src="./readMeImage/overView.png" />
+</div>
 
 ### 配置运行环境
 
