@@ -1,4 +1,4 @@
-<img src="./readMeImage/title.png" style="width:200px">
+<img src="./readMeImage/title.png" width="200">
 
 ****
 
