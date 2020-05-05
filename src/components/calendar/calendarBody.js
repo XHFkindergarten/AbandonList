@@ -1,7 +1,7 @@
 /**
  * 日历组件
  */
-import React, { useState, useRef, Fragment, useCallback } from 'react';
+import React, { useState, useRef, Fragment, useCallback, useEffect, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, Image, Animated } from 'react-native'
 import WeekTitle from './weekTitle'
 import WeekList from './weekList'
@@ -26,7 +26,7 @@ function CalendarBody ({ AnimatedExpand }){
   }
 
   const toggleExpand = useCallback(() => {
-    // 展开状态时点击无效
+    // 执行动画时点击无效
     if (store.shift) {
       return
     }
@@ -81,6 +81,24 @@ function CalendarBody ({ AnimatedExpand }){
     outputRange: [ 1, -1 ]
   })
 
+
+  const prevData = store.beginMonthListData
+  const nextData = store.endMonthListData
+
+
+  const translateAnimationList = useMemo(() => {
+    return prevData.map(item => {
+      return AnimatedExpand.interpolate({
+        inputRange: [ 0, 1 ],
+        outputRange: [ -itemHeight * item.length, 0 ]
+      })
+    })
+  }, [ prevData ])
+
+  const forceRender = useRef(0)
+
+  forceRender.current++
+
   return (
     <View style={ styles.container }>
       <WeekTitle width={ width } />
@@ -95,28 +113,32 @@ function CalendarBody ({ AnimatedExpand }){
         showsVerticalScrollIndicator={ false }
       >
         { store.flatWeekList.map((item, index) => {
-          const prevRows = store.beginMonthListData[index].length
-          const needGap = prevRows + store.endMonthListData[index].length < 5
-          const translateAnimation = AnimatedExpand.interpolate({
-            inputRange: [ 0, 1 ],
-            outputRange: [ -itemHeight * prevRows, 0 ]
-          })
+          const prevRows = prevData[index].length
+          const needGap = prevRows + nextData[index].length < 5
+          // const translateAnimation = AnimatedExpand.interpolate({
+          //   inputRange: [ 0, 1 ],
+          //   outputRange: [ -itemHeight * prevRows, 0 ]
+          // })
+          const key = index === 1 ?
+            forceRender.current :
+            (item[0] ? item[0].getTime() : item[6].getTime())
           return (
             <Animated.View
-              key={ item[0] ? item[0].getTime() : item[6].getTime() }
+              key={ key }
+              // key={ Math.random() }
               style={ {
                 width: width - 60,
                 height: animatedHeight,
-                transform: [ { translateY: translateAnimation } ]
+                transform: [ { translateY: translateAnimationList[index] } ]
               } }
             >
               <Animated.View
                 style={ {
-                  opacity: AnimatedExpand
+                  // opacity: AnimatedExpand
                 } }
               >
                 {
-                  store.beginMonthListData[index].map(list => (
+                  prevData[index].map(list => (
                     <WeekList
                       index={ index }
                       key={ list[6] }
@@ -131,11 +153,11 @@ function CalendarBody ({ AnimatedExpand }){
               ></WeekList>
               <Animated.View
                 style={ {
-                  opacity: AnimatedExpand
+                  // opacity: AnimatedExpand
                 } }
               >
                 {
-                  store.endMonthListData[index].map(list => (
+                  nextData[index].map(list => (
                     <WeekList
                       index={ index }
                       key={ list[6] }

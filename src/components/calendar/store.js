@@ -191,7 +191,11 @@ class Store {
     const Saturday = new Date(centerSunday)
     Saturday.setDate(Saturday.getDate() + 6)
     if (Saturday.getDate() <= 7) {
-      return res
+      if (!srcStore.targetDate) {
+        return res
+      } else if (srcStore.targetDate.getMonth() === Saturday.getMonth()) {
+        return res
+      }
     }
 
     // 计算向上还有几周

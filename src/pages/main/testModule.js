@@ -8,17 +8,15 @@ import { toJS } from 'mobx';
 import srcStore from 'src/store'
 import { observer } from 'mobx-react';
 import mainStore from './store'
+import calStore from 'src/components/calendar/store'
 
 
 export default observer(function TestModule() {
   const onPress = () => {
+    calStore.updateIsExpand(calStore.isExpanded)
   }
   return (
     <View>
-      <Text style={ {
-        color: '#FFF'
-      } }
-      >{ mainStore.preventScroll.toString() }</Text>
       <TouchableOpacity onPress={ onPress }>
         <View style={ {
           height: 100
