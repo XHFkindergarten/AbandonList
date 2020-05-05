@@ -27,6 +27,9 @@ function Calendar() {
   // 控制高度展开动画
   const [ AnimatedExpand ] = useState(new Animated.Value(0))
 
+  // eslint-disable-next-line
+  const needRefresh = srcStore.lzk
+
   return (
     <View style={ [ styles.container, {
       backgroundColor: theme.mainColor

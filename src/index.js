@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { CardStyleInterpolators } from '@react-navigation/stack'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import store from 'src/store';
-import { View } from 'react-native';
+import { View, AppState } from 'react-native';
 import { BottomNavigation, GlobalModal } from 'src/components'
 import dailyStore from 'src/pages/daily/dailyStore'
 import ThemeContext, { theme as themeValue } from './themeContext'
@@ -18,9 +18,10 @@ import { Toast } from 'src/components'
 const Stack = createStackNavigator()
 
 function App() {
+
   // App did mount
   useEffect(() => {
-
+    // 是否是初次打开App
     isFirstOpen().then(ifFirst => {
       if (!ifFirst) {
         try {
@@ -58,6 +59,16 @@ function App() {
 
     // 更新全局提示方法
     store.toast = sendToast
+
+    // 监听App状态
+    AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        // 当App从后台切回前台时通过mobx强制刷新某些需要刷新的组件
+        store.refreshWhatever()
+        // 更新每日待办的数据
+        dailyStore.initialDailyStore()
+      }
+    })
 
     return () => {
       // App will unmount

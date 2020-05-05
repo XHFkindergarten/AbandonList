@@ -16,14 +16,6 @@ class Store {
     sunday.setDate(sunday.getDate() - sunday.getDay())
     return sunday
   }
-  // 一个迫不得已，用来逃避我逻辑已经彻底混乱的方法
-  clearMonthHeader = () => {
-    if (this.centerWeekList[6].getDate() < 7) {
-      const newCenterSunday = new Date(this.centerWeekList[6])
-      newCenterSunday.setDate(newCenterSunday.getDate() + 1)
-      this.updateCenterSunday(newCenterSunday)
-    }
-  }
   // 视图核心日期date
   @observable
   centerSunday = this.getCurrentSunday()

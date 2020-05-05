@@ -38,6 +38,11 @@ const MonthNameMap = [
 
 
 function Finish({ navigation }) {
+  // 植入强制刷新
+  // eslint-disable-next-line
+  const needRefresh = srcStore.lzk
+
+  // eslint-disable-next-line
   const [ _isMount, _setIsMount ] = useState(false)
   useEffect(() => {
     _setIsMount(true)

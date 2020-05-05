@@ -162,6 +162,16 @@ class Store {
   // 控制底部导航栏显示
   setShowBottom = () => {}
 
+  // 用于强制刷新某些组件的全局变量
+  @observable
+  lzk = false
+  @action
+  updateLzk = value => this.lzk = value
+  // 强制刷新
+  refreshWhatever = () => {
+    this.updateLzk(!this.lzk)
+  }
+
 
 }
 
