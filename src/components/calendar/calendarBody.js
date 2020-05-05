@@ -45,7 +45,7 @@ function CalendarBody ({ AnimatedExpand }){
         store.updateIsExpand(true)
         store.shift = false
       })
-      store.clearMonthHeader()
+      // store.clearMonthHeader()
     }
   })
   const scrollEndHandler = (event) => {

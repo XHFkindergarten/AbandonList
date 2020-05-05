@@ -1,4 +1,59 @@
 /**
+ * 月份英文名称
+ */
+export const monthMap = [
+  {
+    cn: '一月',
+    en: 'Jan.'
+  },
+  {
+    cn: '二月',
+    en: 'Feb.'
+  },
+  {
+    cn: '三月',
+    en: 'Mar.'
+  },
+  {
+    cn: '四月',
+    en: 'Apr.'
+  },
+  {
+    cn: '五月',
+    en: 'May.'
+  },
+  {
+    cn: '六月',
+    en: 'Jun.'
+  },
+  {
+    cn: '七月',
+    en: 'Jul.'
+  },
+  {
+    cn: '八月',
+    en: 'Aug.'
+  },
+  {
+    cn: '九月',
+    en: 'Sep.'
+  },
+  {
+    cn: '十月',
+    en: 'Oct.'
+  },
+  {
+    cn: '十一月',
+    en: 'Nov.'
+  },
+  {
+    cn: '十二月',
+    en: 'Dec.'
+  }
+]
+
+
+/**
  * 一些通用的数据
  */
 export const colorList = [

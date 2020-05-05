@@ -2,7 +2,7 @@ import { observable, action, computed } from 'mobx'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import moment from 'moment'
 
-let timeoutId = ''
+// let timeoutId = ''
 class Store {
   // 顶层路由获取
   @observable nav = null

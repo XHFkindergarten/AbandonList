@@ -1,9 +1,9 @@
 /**
  * 待办项卡片item
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import CardExpandModal from './cardExpandModal'
-import { StyleSheet, TouchableOpacity, View, Text, Dimensions, Animated } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Dimensions } from 'react-native';
 import { observer } from 'mobx-react';
 import srcStore from 'src/store'
 import { elipsis } from 'src/utils'
@@ -30,6 +30,7 @@ function AllDayCard({ info, navigation }) {
   const handleExpandAbandon = () => {
     setExpand(false)
     nativeCalendar.removeEvent(info, true).then(() => {
+      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
     })
   }
 

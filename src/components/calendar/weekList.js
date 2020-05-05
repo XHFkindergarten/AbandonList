@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useRef, useMemo } from 'react';
 import { View, Dimensions, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types'
+import { Transition, Transitioning } from 'react-native-reanimated'
 import CircleItem, { EmptyItem } from './circleItem'
 const { width } = Dimensions.get('window')
 export default function WeekList({ weekArray, index }) {
   const withColor = index === 1
+  const transition = (
+    <Transition.Together>
+      <Transition.In type="fade" />
+      <Transition.Change interpolation="easeInOut" />
+      <Transition.Out type="fade" />
+    </Transition.Together>
+  )
+  const animateRef = useRef()
+  useMemo(() => {
+    if (animateRef.current) {
+      animateRef.current.animateNextTransition()
+    }
+  })
   return (
-    <View
+    <Transitioning.View
+      ref={ animateRef }
       style={ styles.container }
+      transition={ transition }
     >
       { weekArray.map((item, index) => {
         if (item) {
@@ -24,7 +40,7 @@ export default function WeekList({ weekArray, index }) {
           )
         }
       }) }
-    </View>
+    </Transitioning.View>
   )
 }
 WeekList.propTypes = {

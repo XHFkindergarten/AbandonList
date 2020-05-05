@@ -1,68 +1,15 @@
 import { observable, action, computed } from 'mobx'
 import srcStore from 'src/store'
 import { getMonthDay } from 'src/utils'
+import { monthMap } from 'src/common'
 
-// 月份name map
-const monthMap = [
-  {
-    cn: '一月',
-    en: 'Jan.'
-  },
-  {
-    cn: '二月',
-    en: 'Feb.'
-  },
-  {
-    cn: '三月',
-    en: 'Mar.'
-  },
-  {
-    cn: '四月',
-    en: 'Apr.'
-  },
-  {
-    cn: '五月',
-    en: 'May.'
-  },
-  {
-    cn: '六月',
-    en: 'Jun.'
-  },
-  {
-    cn: '七月',
-    en: 'Jul.'
-  },
-  {
-    cn: '八月',
-    en: 'Aug.'
-  },
-  {
-    cn: '九月',
-    en: 'Sep.'
-  },
-  {
-    cn: '十月',
-    en: 'Oct.'
-  },
-  {
-    cn: '十一月',
-    en: 'Nov.'
-  },
-  {
-    cn: '十二月',
-    en: 'Dec.'
-  }
-]
+
 class Store {
   // 获取本周周日date
   getCurrentSunday = () => {
     const today = new Date()
-    // today.setMonth(1)
-    // today.setDate(1)
     return this.getSunday(today)
   }
-  // 当前选中的月份,用来控制点击第一行和最后一行时的特殊效果
-  controlMonth = new Date().getMonth()
   // 获取指定日期那一周的周日
   getSunday = day => {
     const sunday = new Date(day)
@@ -75,7 +22,6 @@ class Store {
       const newCenterSunday = new Date(this.centerWeekList[6])
       newCenterSunday.setDate(newCenterSunday.getDate() + 1)
       this.updateCenterSunday(newCenterSunday)
-      this.controlMonth = newCenterSunday.getMonth()
     }
   }
   // 视图核心日期date
@@ -97,30 +43,39 @@ class Store {
     return res
   }
   // 生成不完整的周历[只有当月]
-  generateWeekArrayBeta = sunday => {
-    if (!this.isExpanded || !this.controlMonth) {
-      return this.generateWeekArray(sunday)
+  generateWeekArrayBeta = (sunday, targetMonth) => {
+    if (typeof targetMonth !== 'number') {
+      if (srcStore.targetDate) {
+        targetMonth = srcStore.targetDate.getMonth()
+      } else {
+        const temp = new Date(sunday)
+        temp.setDate(temp.getDate() + 6)
+        targetMonth = temp.getMonth()
+      }
     }
-    if (this.controlMonth) {
+    if (this.isExpanded) {
       const res = []
       const tempDate = new Date(sunday)
       for(let i = 0;i < 7;i++) {
         const temp = new Date(tempDate)
         temp.setDate(temp.getDate() + i)
-        if (temp.getMonth() === this.controlMonth) {
+        if (temp.getMonth() === targetMonth) {
           res.push(temp)
         } else {
           res.push(null)
         }
       }
       return res
+    } else {
+      return this.generateWeekArray(sunday)
     }
   }
   // 获取当前核心周list [ date * 7 ]
   @computed get centerWeekList() {
     if (!this.centerSunday) return []
-    if (this.controlMonth) {
-      return this.generateWeekArrayBeta(this.getSunday(this.centerSunday))
+    if (srcStore.targetDate) {
+      const targetMonth = srcStore.targetDate.getMonth()
+      return this.generateWeekArrayBeta(this.getSunday(this.centerSunday), targetMonth)
     }
     return this.generateWeekArray(this.getSunday(this.centerSunday))
   }
@@ -144,9 +99,10 @@ class Store {
     if (this.isExpanded) {
       prevSunday.setDate(7)
       nextSunday.setDate(7)
-      if (this.controlMonth) {
-        prevSunday.setMonth(this.controlMonth - 1)
-        nextSunday.setMonth(this.controlMonth + 1)
+      if (srcStore.targetDate) {
+        const targetMonth = srcStore.targetDate.getMonth()
+        prevSunday.setMonth(targetMonth - 1)
+        nextSunday.setMonth(targetMonth + 1)
       } else {
         prevSunday.setMonth(prevSunday.getMonth() - 1)
         nextSunday.setMonth(nextSunday.getMonth() + 1)
@@ -165,12 +121,11 @@ class Store {
   // 周历向前翻页
   scrollBackward = () => {
     let prevCenterDay
-    if (this.controlMonth) {
+    if (srcStore.targetDate) {
       prevCenterDay = this.centerWeekList[0] || this.centerWeekList[6]
     } else {
       prevCenterDay = new Date(this.centerSunday)
     }
-    this.controlMonth = null
     if (this.isExpanded) {
       prevCenterDay.setDate(7)
       prevCenterDay.setMonth(prevCenterDay.getMonth() - 1)
@@ -184,12 +139,11 @@ class Store {
   // 周历向后翻页
   scrollForward = () => {
     let nextCenterDay
-    if (this.controlMonth) {
+    if (srcStore.targetDate) {
       nextCenterDay = this.centerWeekList[0] || this.centerWeekList[6]
     } else {
       nextCenterDay = new Date(this.centerSunday)
     }
-    this.controlMonth = null
     if (this.isExpanded) {
       nextCenterDay.setDate(7)
       nextCenterDay.setMonth(nextCenterDay.getMonth() + 1)
@@ -202,28 +156,41 @@ class Store {
   }
   // 生成上旬月历
   @computed get beginMonthListData() {
-    return this.flatWeekList.map(item => {
-      return this.generatePrevMonthData(item[0])
+    return this.flatWeekList.map((item, index) => {
+      return this.generatePrevMonthData(item[0], index)
     })
   }
   // 生成下旬月历
   @computed get endMonthListData() {
-    return this.flatWeekList.map(item => {
-      return this.generateNextMonthData(item[6])
+    return this.flatWeekList.map((item, index) => {
+      return this.generateNextMonthData(item[6], index)
     })
   }
-  // 生成上旬月历工厂函数
-  generatePrevMonthData = flagSunday => {
+  /**
+   * 生成上旬月历工厂函数
+   * @params {Date} 中心周的周日
+   */
+  generatePrevMonthData = (centerSunday, i) => {
     const res = []
-    if (!flagSunday) {
+    if (!centerSunday) {
       return res
     }
-    const currentSundayDate = flagSunday.getDate()
+    // 如果某一天已经被选中，那么只会生成被选中月份的数据
+    if (
+      i === 1 &&
+        srcStore.targetDate &&
+        srcStore.targetDate instanceof Date &&
+        centerSunday instanceof Date &&
+        srcStore.targetDate.getMonth() !== centerSunday.getMonth()) {
+      return []
+    }
+
+    const currentSundayDate = centerSunday.getDate()
     // 判断是否上旬已经没有数据了
     // 即当前center周就是第一周
-    const Saturday = new Date(flagSunday)
+    const Saturday = new Date(centerSunday)
     Saturday.setDate(Saturday.getDate() + 6)
-    if (Saturday.getDate() <= 7 && Saturday.getMonth() === flagSunday.getMonth()) {
+    if (Saturday.getDate() <= 7) {
       return res
     }
 
@@ -235,7 +202,7 @@ class Store {
     const firstWeek = new Array(7).fill(null)
     let index = 1
     for(let i = prevEmptyNum;i < 7;i++) {
-      const tempDate = new Date(flagSunday)
+      const tempDate = new Date(centerSunday)
       tempDate.setDate(index++)
       firstWeek[i] = tempDate
     }
@@ -249,18 +216,30 @@ class Store {
     }
     return res
   }
-  // 生成下旬月历工厂函数
-  generateNextMonthData = centerSunday => {
-    if (!centerSunday) {
+  /**
+   * 生成下旬月历工厂函数
+   * @params {Date} 中心周的周六
+   */
+  generateNextMonthData = (centerSaturday, index) => {
+    if (!centerSaturday) {
       return []
     }
-
+    // 如果某一天已经被选中，那么只会生成被选中月份的数据
+    if (
+      index === 1 &&
+        srcStore.targetDate &&
+        srcStore.targetDate instanceof Date &&
+        centerSaturday instanceof Date &&
+        srcStore.targetDate.getMonth() !== centerSaturday.getMonth()) {
+      return []
+    }
     // 输出结果
     const res = []
-    const startSaturday = new Date(centerSunday)
+    // 计算数据的*标尺*是下一周
+    const startSaturday = new Date(centerSaturday)
     // 获取本月有多少天
     const monthDay = getMonthDay(startSaturday)
-    // 下旬开始日期
+    // 下旬开始日期[下一周的星期日]
     let startDate = startSaturday.getDate() + 1
     // 设定接下来还有几周
     while(startDate <= monthDay) {
@@ -278,7 +257,5 @@ class Store {
 
   // 是否正在执行展开/收回动画
   shift = false
-  // 是展开还是关闭状态
-  // isExpanded = false
 }
 export default new Store()
