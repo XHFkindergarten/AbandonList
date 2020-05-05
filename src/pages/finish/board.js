@@ -64,10 +64,27 @@ export default function Board({ item, monthTime }) {
     }
     const gapTime = 200 / Math.abs(target - cur)
     timer = setInterval(() => {
-      if (target > temp) {
-        temp++
-      } else {
-        temp--
+      const distance = target - temp
+      if (distance > 0) {
+        if (distance > 100) {
+          temp += 10
+        } else if (distance > 50) {
+          temp += 6
+        } else if (distance > 20) {
+          temp += 2
+        } else {
+          temp++
+        }
+      } else if (distance < 0) {
+        if (distance < -100) {
+          temp -= 10
+        } else if (distance < -50) {
+          temp -= 6
+        } else if (distance < -20) {
+          temp -= 2
+        } else {
+          temp--
+        }
       }
       setCur(temp)
       if (temp === target) {
