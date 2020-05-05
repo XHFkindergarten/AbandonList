@@ -1,10 +1,13 @@
 import RNCalendarEvents from 'react-native-calendar-events'
 import moment from 'moment'
-import { observable, action, toJS } from 'mobx'
-import AsyncStorage from '@react-native-community/async-storage'
+import { observable, action } from 'mobx'
 import finishStore from 'src/pages/finish/store'
 import Notification from './Notification'
 import dailyStore from 'src/pages/daily/dailyStore'
+import AsyncStorage from '@react-native-community/async-storage'
+
+const rememberGroupKey = '@remenber_group_key'
+
 /**
  * 原生日历模块
  */
@@ -157,6 +160,7 @@ class NativeCalendar {
           }
         }
         resolve(res)
+        AsyncStorage.setItem(rememberGroupKey, groupId)
       }).catch(err => {
         reject(err)
       })
@@ -185,6 +189,11 @@ class NativeCalendar {
     })
   }
 
+
+  // 维护一个队列，用来记录用户的*连续*操作，例如完成/删除
+  // 当队列为空时，再刷新数据
+  removeQueue = new Set()
+
   /**
    * 移除事件，futureEvents决定是否删除同一series的后续事件
    */
@@ -192,59 +201,60 @@ class NativeCalendar {
     if (!futureEvents) {
       dailyStore.handleCalendarItemFinish()
     }
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      // 加入处理队列代表正在处理
+      this.removeQueue.add(event.id)
+      console.log(this.removeQueue)
       // 原生模块resolve事件id
-      RNCalendarEvents.removeEvent(
+      const res = await RNCalendarEvents.removeEvent(
         event.id,
         {
           futureEvents,
           exceptionDate: convertDateIOS(new Date(event.startDate))
         }
-      )
-        .then(async res =>{
-          if (futureEvents) {
-            // 如果是删除动作，清除全部对应的推送
-            Notification.removeTarget(event.id)
-          } else if (event.recurrence) {
-            // 如果删除的是连续事件
-            // 获取这个事件的通知列表
-            const allSchedule = await Notification.getScheduleList()
-            // 寻找到所有属于该事件的通知
-            const eventSchedule = allSchedule.filter(item => item.userInfo.id === event.id)
-            // 清除已有通知事件
-            Notification.removeTarget(event.id)
-            for(let i = 0;i < eventSchedule.length;i++) {
-              // 为所有通知重新设定时间
-              const item = eventSchedule[i]
-              if (item.alertBody.endsWith(' 全天')) {
-                let time = new Date(event.startDate).getTime() + repeatGapTime[event.recurrence]
-                time = new Date(time).setHours(8, 0, 0, 0)
-                Notification.setScheduleNotification({
-                  ...item,
-                  fireDate: new Date(time)
-                })
-              } else if (item.alertBody.endsWith(' 开始')) {
-                let time = new Date(event.startDate).getTime() + repeatGapTime[event.recurrence]
-                Notification.setScheduleNotification({
-                  ...item,
-                  fireDate: new Date(time)
-                })
-              } else if (item.alertBody.endsWith(' 结束')) {
-                let time = new Date(event.endDate).getTime() + repeatGapTime[event.recurrence]
-                Notification.setScheduleNotification({
-                  ...item,
-                  fireDate: new Date(time)
-                })
-              }
-            }
+      ).catch(err => {
+        reject(err)
+      })
+      if (futureEvents) {
+        // 如果是删除动作，清除全部对应的推送
+        Notification.removeTarget(event.id)
+      } else if (event.recurrence) {
+        // 如果删除的是连续事件
+        // 获取这个事件的通知列表
+        const allSchedule = await Notification.getScheduleList()
+        // 寻找到所有属于该事件的通知
+        const eventSchedule = allSchedule.filter(item => item.userInfo.id === event.id)
+        // 清除已有通知事件
+        Notification.removeTarget(event.id)
+        for(let i = 0;i < eventSchedule.length;i++) {
+          // 为所有通知重新设定时间
+          const item = eventSchedule[i]
+          if (item.alertBody.endsWith(' 全天')) {
+            let time = new Date(event.startDate).getTime() + repeatGapTime[event.recurrence]
+            time = new Date(time).setHours(8, 0, 0, 0)
+            Notification.setScheduleNotification({
+              ...item,
+              fireDate: new Date(time)
+            })
+          } else if (item.alertBody.endsWith(' 开始')) {
+            let time = new Date(event.startDate).getTime() + repeatGapTime[event.recurrence]
+            Notification.setScheduleNotification({
+              ...item,
+              fireDate: new Date(time)
+            })
+          } else if (item.alertBody.endsWith(' 结束')) {
+            let time = new Date(event.endDate).getTime() + repeatGapTime[event.recurrence]
+            Notification.setScheduleNotification({
+              ...item,
+              fireDate: new Date(time)
+            })
           }
-          // 将该事件保存到历史记录中
-          finishStore.addHistoryItem(event, futureEvents)
-          resolve(res)
-        })
-        .catch(err => {
-          reject(err)
-        })
+        }
+      }
+      // 将该事件保存到历史记录中
+      finishStore.addHistoryItem(event, futureEvents)
+      // 事件完成，从处理队列中删除
+      resolve(res)
     })
   }
 

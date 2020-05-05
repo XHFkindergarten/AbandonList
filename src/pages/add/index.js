@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, Fragment, useCallback } from 'react';
 import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Alert, Linking, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
 import { Transitioning, Transition } from 'react-native-reanimated';
 import moment from 'moment/min/moment-with-locales'
 import nativeCalendar from 'src/utils/nativeCalendar'
@@ -13,7 +14,7 @@ import Notification from 'src/utils/Notification'
 
 moment.locale('zh-cn');
 
-
+// const rememberGroupKey = '@remenber_group_key'
 
 const { width } = Dimensions.get('window')
 function Add({ route }) {
@@ -126,6 +127,14 @@ function Add({ route }) {
   // 默认分组
   const defaultGroup = groups.find(item => visibleGroupIds.includes(item.id)) || groups[0]
   const defaultGroupId = defaultGroup.id
+  // useEffect(async () => {
+  //   // 检查是否在本地存储过上次使用的分组，如果有就使用
+  //   const key = await AsyncStorage.getItem(rememberGroupKey)
+  //   if (key && groups.some(item => item.id === key)) {
+  //     handleGroupIdChange(key)
+  //   }
+  // }, [])
+
   /* =================== 表单数据管理 =================== */
 
   const [ title, setTitle ] = useState('')

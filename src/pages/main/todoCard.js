@@ -9,7 +9,7 @@ import nativeCalendar from 'src/utils/nativeCalendar'
 import themeContext from 'src/themeContext'
 import calStore from 'src/components/calendar/store'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { TapGestureHandler, State } from 'react-native-gesture-handler'
+import MainStore from './store'
 import Notification from 'src/utils/Notification'
 
 const { width } = Dimensions.get('window')
@@ -32,7 +32,7 @@ function TodoCard({ info, navigation }) {
 
   useEffect(() => {
     if (activeCardId !== info.id) {
-      swipeRef.current.close()
+      closeSwipeItem()
     }
   }, [ activeCardId ])
 
@@ -130,6 +130,13 @@ function TodoCard({ info, navigation }) {
     )
   }
 
+  // 当前滑动卡片关闭
+  const closeSwipeItem = () => {
+    if (swipeRef.current) {
+      swipeRef.current.close()
+    }
+  }
+
   // 左侧操作按钮
   const RenderLeft = (progress, dragX) => {
     const animatedX = dragX.interpolate({
@@ -141,7 +148,7 @@ function TodoCard({ info, navigation }) {
       outputRange: [ 0, 1 ]
     })
     const handlePressEdit = () => {
-      swipeRef.current.close()
+      closeSwipeItem()
       setTimeout(() => {
         navigation.navigate('Add', {
           info
@@ -169,50 +176,51 @@ function TodoCard({ info, navigation }) {
     )
   }
 
+  /**
+   * 对完成和删除数据进行统一操作
+   * @param {Boolean} finish 是否是完成
+   */
+  const submitHandle = (finish = true) => {
+    Promise.all([
+      nativeCalendar.removeEvent(info, !finish),
+      new Promise((resolve) => {
+        setFinishStatus(finish ? 1 : 2)
+        Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
+          resolve()
+        })
+      })
+    ]).then(() => {
+      nativeCalendar.removeQueue.delete(info.id)
+      setTimeout(() => {
+        // 如果没有连续操作的话
+        if (nativeCalendar.removeQueue.size === 0) {
+          srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+        }
+      }, 600)
+    }).catch(err => {
+      srcStore.globalNotify(err)
+    })
+  }
+
   // 右侧操作按钮
   const RenderRight = (progress, dragX) => {
+    if (MainStore.isHandlingCard === true) {
+      return
+    }
     // 点击完成
     const handlePressFinish = () => {
       srcStore.updateFocusCardId('')
       setTimeout(() => {
-        swipeRef.current.close()
-        Promise.all([
-          nativeCalendar.removeEvent(info, false),
-          new Promise((resolve) => {
-            setFinishStatus(1)
-            Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
-              resolve()
-            })
-          })
-        ]).then(() => {
-          setTimeout(() => {
-            srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-          }, 400)
-        }).catch(err => {
-          srcStore.globalNotify(err)
-        })
-      }, 400)
+        closeSwipeItem()
+        submitHandle(true)
+      }, 600)
     }
     // 点击删除
     const handlePressAbandon = () => {
       srcStore.updateFocusCardId('')
       setTimeout(() => {
-        swipeRef.current.close()
-        Promise.all([
-          nativeCalendar.removeEvent(info, true),
-          new Promise((resolve) => {
-            setFinishStatus(2)
-            Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
-              resolve()
-            })
-          })
-        ]).then(() => {
-          setTimeout(() => {
-            srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-          }, 400)
-        }).catch(err => {
-          srcStore.globalNotify(err)
-        })
+        closeSwipeItem()
+        submitHandle(false)
       }, 600)
     }
     return (
@@ -238,46 +246,18 @@ function TodoCard({ info, navigation }) {
     setExpand(false)
     srcStore.updateFocusCardId('')
     setTimeout(() => {
-      swipeRef.current.close()
-      Promise.all([
-        nativeCalendar.removeEvent(info, false),
-        new Promise((resolve) => {
-          setFinishStatus(1)
-          Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
-            resolve()
-          })
-        })
-      ]).then(() => {
-        setTimeout(() => {
-          srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-        }, 400)
-      }).catch(err => {
-        srcStore.globalNotify(err)
-      })
-    }, 400)
+      closeSwipeItem()
+      submitHandle(true)
+    }, 600)
   }
 
   const handleExpandAbandon = () => {
     setExpand(false)
     srcStore.updateFocusCardId('')
     setTimeout(() => {
-      swipeRef.current.close()
-      Promise.all([
-        nativeCalendar.removeEvent(info, true),
-        new Promise((resolve) => {
-          setFinishStatus(2)
-          Animated.timing(animatedOpacity, { toValue: 0, duration: 600 }).start(() => {
-            resolve()
-          })
-        })
-      ]).then(() => {
-        setTimeout(() => {
-          srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
-        }, 400)
-      }).catch(err => {
-        srcStore.globalNotify(err)
-      })
-    }, 400)
+      closeSwipeItem()
+      submitHandle(false)
+    }, 600)
   }
 
   const handleExpandSetting = () => {

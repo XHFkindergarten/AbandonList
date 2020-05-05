@@ -1,14 +1,8 @@
 import { observable, action } from 'mobx'
 
 class Store {
-  // 是否在滑动卡片
-  // @observable
-  isScrollCard = false
-  // @action
-  updateIsScroll = value => {
-    this.isScrollCard = value
-  }
-
+  // 是否正在处理卡片状态
+  isHandlingCard = false
 }
 
 export default new Store()
