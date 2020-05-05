@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
-import { View, StyleSheet, Animated, PanResponder, Dimensions, SafeAreaView, StatusBar, AppState } from 'react-native';
+import { View, StyleSheet, Animated, Dimensions, SafeAreaView, StatusBar, AppState } from 'react-native';
 import TodoList from './todoList'
 import store from 'src/store'
 import { useFocusEffect } from '@react-navigation/native';
@@ -7,11 +7,9 @@ import { Calendar } from 'src/components'
 import themeContext from 'src/themeContext'
 import TestModule from './testModule'
 import Notification from 'src/utils/Notification'
-import mainStore from './store'
 import { isFirstOpen } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 
-const { width } = Dimensions.get('window')
 
 const Main = ({ navigation }) => {
 
@@ -70,7 +68,7 @@ const Main = ({ navigation }) => {
 
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
-      { /* <TestModule /> */ }
+      <TestModule />
       <View style={ {
         flex: 1,
         backgroundColor: theme.subColor

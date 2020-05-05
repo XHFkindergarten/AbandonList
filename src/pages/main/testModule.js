@@ -1,35 +1,25 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import AsyncStorage from '@react-native-community/async-storage'
-const historyKey = '@h1story_list_key'
-import finishStore from 'src/pages/finish/store'
-import { toJS } from 'mobx';
-import srcStore from 'src/store'
-import { observer } from 'mobx-react';
-import mainStore from './store'
-import calStore from 'src/components/calendar/store'
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native'
+import ColorPicker from 'src/components/colorPicker'
 
-
-export default observer(function TestModule() {
-  const onPress = () => {
-    calStore.updateIsExpand(calStore.isExpanded)
+export default function TestModule() {
+  const [ showSelect, setShowSelect ] = useState(false)
+  const handlePress = () => {
+    setShowSelect(true)
   }
   return (
-    <View>
-      <TouchableOpacity onPress={ onPress }>
-        <View style={ {
-          height: 100
+    <View style={ {
+      height: 100
+    } }
+    >
+      <TouchableOpacity onPress={ handlePress }>
+        <Text style={ {
+          color: '#FFF',
+          fontSize: 20
         } }
-        >
-          <Text style={ {
-            color: '#FFF'
-          } }
-          >
-          test
-          </Text>
-        </View>
+        >颜色选择器</Text>
       </TouchableOpacity>
+      <ColorPicker visible={ showSelect } />
     </View>
   )
-})
+}
