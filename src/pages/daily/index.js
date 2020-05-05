@@ -17,6 +17,8 @@ function Daily({ navigation }) {
       srcStore.updateBottomNavName('Daily')
       return () => {
         // Do something when the screen is unfocused
+        // 取消设置状态
+        dailyStore.setIsSet(false)
       }
     }, [])
   )

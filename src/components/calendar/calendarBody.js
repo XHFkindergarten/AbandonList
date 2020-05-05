@@ -115,17 +115,12 @@ function CalendarBody ({ AnimatedExpand }){
         { store.flatWeekList.map((item, index) => {
           const prevRows = prevData[index].length
           const needGap = prevRows + nextData[index].length < 5
-          // const translateAnimation = AnimatedExpand.interpolate({
-          //   inputRange: [ 0, 1 ],
-          //   outputRange: [ -itemHeight * prevRows, 0 ]
-          // })
           const key = index === 1 ?
             forceRender.current :
             (item[0] ? item[0].getTime() : item[6].getTime())
           return (
             <Animated.View
               key={ key }
-              // key={ Math.random() }
               style={ {
                 width: width - 60,
                 height: animatedHeight,
@@ -134,7 +129,7 @@ function CalendarBody ({ AnimatedExpand }){
             >
               <Animated.View
                 style={ {
-                  // opacity: AnimatedExpand
+                  opacity: AnimatedExpand
                 } }
               >
                 {
@@ -153,7 +148,7 @@ function CalendarBody ({ AnimatedExpand }){
               ></WeekList>
               <Animated.View
                 style={ {
-                  // opacity: AnimatedExpand
+                  opacity: AnimatedExpand
                 } }
               >
                 {

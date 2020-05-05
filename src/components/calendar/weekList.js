@@ -1,5 +1,5 @@
-import React, { useRef, useMemo } from 'react';
-import { View, Dimensions, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types'
 import { Transition, Transitioning } from 'react-native-reanimated'
 import CircleItem, { EmptyItem } from './circleItem'
@@ -14,11 +14,9 @@ export default function WeekList({ weekArray, index }) {
     </Transition.Together>
   )
   const animateRef = useRef()
-  useMemo(() => {
-    if (animateRef.current) {
-      animateRef.current.animateNextTransition()
-    }
-  })
+  if (animateRef.current) {
+    animateRef.current.animateNextTransition()
+  }
   return (
     <Transitioning.View
       ref={ animateRef }

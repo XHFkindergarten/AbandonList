@@ -51,7 +51,6 @@ function MonthName({ currentMonth, onPress, showCanlendar, showYear, AnimatedExp
         durationMs={ 300 }
         type="fade"
       />
-      { /* <Transition.Change interpolation /> */ }
       <Transition.Out durationMs={ 300 }
         type="fade"
       />
