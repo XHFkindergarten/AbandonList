@@ -5,7 +5,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Text, Dimensions, Animated } from 'react-native';
 import PropTypes from 'prop-types'
 import nativeCalendar from 'src/utils/nativeCalendar'
-import { isDarkColor } from 'src/utils'
 // import store from './store'
 // import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import srcStore from 'src/store';

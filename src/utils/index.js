@@ -122,21 +122,6 @@ export const vibrate = (index = 1) => {
 //   }
 // }
 
-// /**
-//  * 根据RGB色值判断颜色属于亮色还是暗色
-//  * 决定字体颜色
-//  */
-// export function isDarkColor(hex) {
-//   const rgb = HEX2RGB(hex)
-//   // 格式不规范默认属于暗色
-//   if (!rgb) {
-//     return true
-//   }
-//   const value = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114
-//   console.log(value)
-//   return value < 110
-// }
-
 const firstLaunchKey = '@first_launch_key'
 
 /**

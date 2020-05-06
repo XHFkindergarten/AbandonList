@@ -7,6 +7,13 @@ export default function TestModule() {
   const handlePress = () => {
     setShowSelect(true)
   }
+  const handleOk = color => {
+    console.log(color)
+    setShowSelect(false)
+  }
+  const handleCancel = () => {
+    setShowSelect(false)
+  }
   return (
     <View style={ {
       height: 100
@@ -19,7 +26,12 @@ export default function TestModule() {
         } }
         >颜色选择器</Text>
       </TouchableOpacity>
-      <ColorPicker visible={ showSelect } />
+      <ColorPicker
+        color="#FF0000"
+        onCancel={ handleCancel }
+        onOk={ handleOk }
+        visible={ showSelect }
+      />
     </View>
   )
 }

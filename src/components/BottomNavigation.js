@@ -9,11 +9,11 @@ import { isNewIPhone, vibrate } from 'src/utils'
 import dailyStore from 'src/pages/daily/dailyStore'
 import finishStore from 'src/pages/finish/store'
 import themeContext from 'src/themeContext'
+import TestSvg from './testsvg'
 
 let isConfirmAvailable = true
 
 function BottomNavigation() {
-  const [ AnimatedScale ] = useState(new Animated.Value(1))
 
   const [ animateY ] = useState(new Animated.Value(-40))
 
@@ -224,11 +224,11 @@ function BottomNavigation() {
                   onPress={ handleToDaily }
                   style={ styles.iconContainer }
                 >
-                  <Animated.Image
+                  { /* <Animated.Image
                     source={ finish }
                     style={ styles.icon }
-                  />
-
+                  /> */ }
+                  <TestSvg />
                 </TouchableOpacity>
               </Animated.View>
 
