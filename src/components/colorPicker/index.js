@@ -3,8 +3,8 @@
  * @Author       : lizhaokang
  * @Date         : 2020-05-05 21:48:33
  */
-import React, { useCallback, useState, useContext } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Image, Dimensions } from 'react-native'
+import React, { useCallback, useState, useContext, useRef, useMemo } from 'react';
+import { View, Text, StyleSheet, Modal, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
 import { isNewIPhone } from 'src/utils'
 import tinycolor from 'tinycolor2'
 import PropTypes from 'prop-types'
@@ -14,8 +14,14 @@ import HueSlider from './sliders/HueSlider';
 import SaturationSlider from './sliders/SaturationSlider';
 import LightnessSlider from './sliders/LightnessSlider';
 import { ScrollView } from 'react-native-gesture-handler';
+import { observer } from 'mobx-react';
+import store from './store'
 
-const btnWidth = (Dimensions.get('window').width - 60) / 4
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
+
+const blockSize = (screenWidth - 70) / 4
+
+const btnWidth = (screenWidth - 60) / 4
 
 
 const modes = {
@@ -37,9 +43,28 @@ const modes = {
   }
 };
 
+const entireColorReg = /#[0-9a-zA-Z]{6}/
 
 
-function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
+
+function ColorPicker({ visible, color, onOk, onCancel }) {
+
+  const theme = useContext(themeContext)
+
+  // 初始化usedcolor
+  const handleShow = () => {
+    store.initialColorList()
+  }
+
+  // 重置颜色
+  const resetColor = () => {
+    updateInputColor(theme.themeColor)
+  }
+
+  color = color || theme.themeColor
+
+  const [ inputColor, setInputColor ] = useState(color)
+
   // 颜色用HSL格式来存储
   const [ hslColor, setColor ] = useState(tinycolor(color).toHsl())
 
@@ -52,12 +77,22 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
 
   // 更新色值方法
   const updateHue = h => {
-    setColor({ ...hslColor, h })
+    updateHslColor({ ...hslColor, h })
   };
-  const updateSaturation = s => setColor({ ...hslColor, s });
-  const updateLightness = l => setColor({ ...hslColor, l });
+  const updateSaturation = s => updateHslColor({ ...hslColor, s });
+  const updateLightness = l => updateHslColor({ ...hslColor, l });
+
+  const updateInputColor = value => {
+    setInputColor(tinycolor(value).toHexString())
+    setColor(tinycolor(value).toHsl())
+  }
+  const updateHslColor = value => {
+    setInputColor(tinycolor(value).toHexString())
+    setColor(tinycolor(value).toHsl())
+  }
 
   const handleOk = () => {
+    store.saveColor(renderColor)
     onOk(renderColor)
   }
 
@@ -68,6 +103,9 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
 
   const ModeButton = ({ mode : m }) => {
     const handleClick = useCallback(() => {
+      if (!entireColorReg.test(inputColor)) {
+        updateHslColor(hslColor)
+      }
       setMode(m)
     }, [ m ])
     return (
@@ -79,7 +117,27 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
     )
   }
 
-  const theme = useContext(themeContext)
+  const showColorText = useMemo(() => {
+    return modes[mode].getString(inputColor)
+  }, [ mode, inputColor ])
+
+
+
+
+  const textInputRef = useRef(null)
+
+  const handleChangeText = value => {
+    setInputColor(value)
+    if (entireColorReg.test(value)) {
+      setColor(tinycolor(value).toHsl())
+    }
+  }
+
+  const handleBlur = value => {
+    if (!entireColorReg.test(value)) {
+      updateHslColor(hslColor)
+    }
+  }
 
   const renderColor = tinycolor(hslColor).toHexString()
 
@@ -90,9 +148,38 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
     }
   }
 
+  // 曾经创造过的颜色
+  const usedColorList = store.colorList.slice()
+  const matrixColorList = useMemo(() => {
+    const temp = []
+    while (usedColorList.length !== 0) {
+      temp.push(usedColorList.splice(0, 4))
+    }
+    return temp
+  }, [ usedColorList ])
+
+
+  const RenderBlock = ({ color, index }) => {
+    const handleClickItem = () => {
+      updateInputColor(color)
+    }
+    return (
+      <TouchableOpacity onPress={ handleClickItem }>
+        <View
+          style={ [ styles.colorBlock, {
+            marginRight: index === 3 ? 0 : 10,
+            backgroundColor: color
+          } ] }
+        />
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <Modal
       animationType="slide"
+      onDismiss={ resetColor }
+      onShow={ handleShow }
       transparent
       visible={ visible }
     >
@@ -121,6 +208,8 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
           </TouchableOpacity>
         </View>
         <ScrollView
+          bounces={ false }
+          keyboardDismissMode="interactive"
           onScroll={ handleOnScroll }
           scrollEventThrottle={ 1 }
           style={ styles.container }
@@ -131,11 +220,22 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
             marginBottom: 20
           } ] }
           >
-            <Text style={ {
-              color: isDark ? '#FFF' : '#000',
-              fontSize: 18
-            } }
-            >{ modes[mode].getString(hslColor) }</Text>
+            <TextInput
+              caretHidden
+              defaultValue={ mode !== 'hex' ? showColorText : inputColor }
+              editable={ mode === 'hex' }
+              keyboardAppearance="dark"
+              maxLength={ 7 }
+              onBlur={ handleBlur }
+              onChangeText={ handleChangeText }
+              ref={ textInputRef }
+              returnKeyType="done"
+              style={ [
+                styles.cardText,
+                { color: isDark ? '#FFF' : '#000' }
+              ] }
+              value={ mode !== 'hex' ? showColorText : inputColor }
+            />
           </View>
           <View style={ styles.row }>
             { Object.keys(modes).map(item => (
@@ -166,13 +266,38 @@ function ColorPicker({ visible, color = '#FF0000', onOk, onCancel }) {
               value={ hslColor.l }
             />
           </View>
+          <View style={ {
+            marginTop: 60
+          } }
+          >
+            {
+              matrixColorList.map((list) => {
+                return (
+                  <View key={ list[0] }
+                    style={ styles.colorList }
+                  >
+                    {
+                      list.map((color, index) => (
+                        <RenderBlock
+                          color={ color }
+                          index={ index }
+                          key={ color }
+                        />
+                      ))
+                    }
+                  </View>
+                )
+              })
+            }
+          </View>
+
         </ScrollView>
       </View>
     </Modal>
   )
 }
 
-export default ColorPicker
+export default observer(ColorPicker)
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -201,8 +326,9 @@ const styles = StyleSheet.create({
   },
   card: {
     height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
@@ -231,6 +357,23 @@ const styles = StyleSheet.create({
   },
   sliderRow: {
     marginTop: 16
+  },
+  cardText: {
+    fontSize: 18,
+    fontFamily: 'Century Gothic',
+    flex: 1,
+    textAlign: 'center'
+  },
+  colorList: {
+    marginBottom: 15,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  colorBlock: {
+    height: blockSize,
+    width: blockSize,
+    borderRadius: 6
   }
 })
 
@@ -238,5 +381,5 @@ ColorPicker.propTypes = {
   visible: PropTypes.bool.isRequired,
   color: PropTypes.string.isRequired,
   onOk: PropTypes.func.isRequired,
-  onCancle: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired
 }

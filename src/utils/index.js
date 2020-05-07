@@ -138,3 +138,16 @@ export function isFirstOpen() {
     })
   })
 }
+
+export function getStorage(key) {
+  return new Promise(async resolve => {
+    const value = await AsyncStorage.getItem(key)
+    resolve(value)
+  })
+}
+export function setStorage(key, value) {
+  return new Promise(async resolve => {
+    await AsyncStorage.setItem(key, value)
+    resolve(value)
+  })
+}

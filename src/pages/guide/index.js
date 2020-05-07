@@ -9,7 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { correct, calendar, down, notification } from 'src/assets/image'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import Notification from 'src/utils/Notification'
-import AsyncStorage from '@react-native-community/async-storage'
+import { setStorage } from 'src/utils'
 
 
 const firstLaunchKey = '@first_launch_key'
@@ -407,7 +407,7 @@ export default function Guide({ navigation }) {
   }
 
   const handleThirdEnd = () => {
-    AsyncStorage.setItem(firstLaunchKey, '@&^(!whatever_string_it_is')
+    setStorage(firstLaunchKey, '@&^(!whatever_string_it_is')
     navigation.navigate('Main')
   }
 

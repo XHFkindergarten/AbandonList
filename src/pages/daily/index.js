@@ -8,7 +8,7 @@ import DeleteModal from './deleteModal'
 import DailyItem from './dailyItem'
 import srcStore from 'src/store'
 import themeContext from 'src/themeContext'
-import AsyncStorage from '@react-native-community/async-storage';
+import { getStorage, setStorage } from 'src/utils'
 let notifyTimeout
 function Daily({ navigation }) {
   useFocusEffect(
@@ -26,12 +26,12 @@ function Daily({ navigation }) {
   useEffect(() => {
     // 以防万一,挂载时也初始化一下数据
     dailyStore.initialDailyStore()
-    AsyncStorage.getItem('@ever_daily_tip').then(res => {
+    getStorage('@ever_daily_tip').then(res => {
       if (!res) {
         notifyTimeout = setTimeout(() => {
           srcStore.globalNotify('点击右上方按钮创建你的第一张每日待办卡片吧,每天长按卡片。将其标记为完成^ ^.')
         }, 600)
-        AsyncStorage.setItem('@ever_daily_tip', 'whatever')
+        setStorage('@ever_daily_tip', 'whatever')
       }
     })
     return () => {

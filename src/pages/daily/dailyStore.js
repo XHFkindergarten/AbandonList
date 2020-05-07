@@ -1,5 +1,5 @@
 import { observable, action, toJS, computed } from 'mobx'
-import AsyncStorage from '@react-native-community/async-storage'
+import { getStorage, setStorage } from 'src/utils'
 import moment from 'moment'
 import { flatColorList } from 'src/common'
 import Notification from 'src/utils/Notification'
@@ -294,10 +294,10 @@ class DailyStore {
   }
 
   saveDailyListStorage = () => {
-    AsyncStorage.setItem(dailyListKey, JSON.stringify(toJS(this.dailyList)))
+    setStorage(dailyListKey, JSON.stringify(toJS(this.dailyList)))
   }
   saveDailyLogStorage = () => {
-    AsyncStorage.setItem(dailyLogKey, JSON.stringify(toJS(this.dailyLog)))
+    setStorage(dailyLogKey, JSON.stringify(toJS(this.dailyLog)))
   }
   /**
    * 每天的日志
@@ -318,7 +318,7 @@ class DailyStore {
   // 初始化日志
   initialDailyLog = async () => {
     // 从AsyncStorage中获取日志
-    const logStr = await AsyncStorage.getItem(dailyLogKey) || '{}'
+    const logStr = await getStorage(dailyLogKey) || '{}'
     const logData = JSON.parse(logStr)
     const todayKey = moment(new Date()).format('YYYY-MM-DD')
     if (!(todayKey in logData)) {
@@ -360,7 +360,7 @@ class DailyStore {
   // 初始化待办列表
   initialDailyList = async () => {
     // 从AsyncStorage中获取待办数据
-    const listStr = await AsyncStorage.getItem(dailyListKey)
+    const listStr = await getStorage(dailyListKey)
     const listData = JSON.parse(listStr) || {}
     const todayKey = moment(new Date()).format('YYYY-MM-DD')
     const monthKey = moment(new Date()).format('YYYY-MM')

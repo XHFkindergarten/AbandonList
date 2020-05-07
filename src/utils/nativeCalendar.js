@@ -4,8 +4,7 @@ import { observable, action } from 'mobx'
 import finishStore from 'src/pages/finish/store'
 import Notification from './Notification'
 import dailyStore from 'src/pages/daily/dailyStore'
-import AsyncStorage from '@react-native-community/async-storage'
-
+import { getStorage, setStorage } from 'src/utils'
 const rememberGroupKey = '@remenber_group_key'
 
 /**
@@ -160,7 +159,7 @@ class NativeCalendar {
           }
         }
         resolve(res)
-        AsyncStorage.setItem(rememberGroupKey, groupId)
+        setStorage(rememberGroupKey, groupId)
       }).catch(err => {
         reject(err)
       })
@@ -264,7 +263,7 @@ class NativeCalendar {
   initialVisibleGroup = () => {
     return new Promise(async (resolve, reject) => {
       // 读取本地存储中的数据
-      const res = await AsyncStorage.getItem(visibleGroupKey).catch(() => {
+      const res = await getStorage(visibleGroupKey).catch(() => {
         reject('get visible groups fail')
       })
       if (res) {
@@ -300,7 +299,7 @@ class NativeCalendar {
 
   // 存储可见分组数据到本地
   saveVisibleGroup = async () => {
-    await AsyncStorage.setItem(visibleGroupKey, JSON.stringify(this.visibleGroupIds))
+    await setStorage(visibleGroupKey, JSON.stringify(this.visibleGroupIds))
   }
 
 

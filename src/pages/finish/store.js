@@ -1,8 +1,8 @@
 import { observable, action, toJS } from 'mobx';
 import RNCalendarEvents from 'react-native-calendar-events'
 import nativeCalendar from 'src/utils/nativeCalendar'
-import AsyncStorage from '@react-native-community/async-storage'
 import moment from 'moment'
+import { getStorage, setStorage } from 'src/utils'
 import Notification from 'src/utils/Notification'
 import { Alert } from 'react-native';
 
@@ -129,7 +129,7 @@ class Store {
    * 保存到本机存储
    */
   saveHistory = () => {
-    AsyncStorage.setItem(historyKey, JSON.stringify(toJS(this.historyList)))
+    setStorage(historyKey, JSON.stringify(toJS(this.historyList)))
   }
   /**
    * 删除一条历史记录
@@ -147,7 +147,7 @@ class Store {
    * 初始化历史记录列表
    */
   initialHistoryList = async () => {
-    const hisStr = await AsyncStorage.getItem(historyKey)
+    const hisStr = await getStorage(historyKey)
     const hisData = JSON.parse(hisStr) || {}
     const monthKey = moment(new Date()).format('YYYY-MM')
     if (!(monthKey in hisData)) {
@@ -206,12 +206,12 @@ class Store {
   }
   // 保存到本地
   saveReviewTime = () => {
-    AsyncStorage.setItem(reviewKey, this.reviewTime)
+    setStorage(reviewKey, this.reviewTime)
   }
   // 初始化
   @action
   initialReviewTime = async () => {
-    const str = await AsyncStorage.getItem(reviewKey)
+    const str = await getStorage(reviewKey)
     if (str && str.length > 10) {
       const dateStr = convertDateIOS(str)
       if (dateStr && dateStr !== 'Invalid date') {

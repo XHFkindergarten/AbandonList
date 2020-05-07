@@ -14,8 +14,7 @@ import Chart from './chart'
 import themeContext from 'src/themeContext'
 import HistoryList from './historyList'
 import { Transitioning, Transition } from 'react-native-reanimated'
-import AsyncStorage from '@react-native-community/async-storage';
-
+import { getStorage, setStorage } from 'src/utils'
 
 const { width, height } = Dimensions.get('window')
 
@@ -46,13 +45,13 @@ function Finish({ navigation }) {
   const [ _isMount, _setIsMount ] = useState(false)
   useEffect(() => {
     _setIsMount(true)
-    AsyncStorage.getItem('@ever_finish_tip_show').then(res => {
+    getStorage('@ever_finish_tip_show').then(res => {
       if (!res) {
         notifyTimeout = setTimeout(() => {
           srcStore.globalNotify('滑动上方蓝色区域可以查看不同事项每个月的完成情况^ ^.')
         }, 600)
 
-        AsyncStorage.setItem('@ever_finish_tip_show', 'whatever')
+        setStorage('@ever_finish_tip_show', 'whatever')
       }
     })
     return () => {
