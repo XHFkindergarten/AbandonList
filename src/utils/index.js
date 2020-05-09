@@ -94,34 +94,6 @@ export const vibrate = (index = 1) => {
   Vibrate.vibrate(VibrateType[index])
 }
 
-/**
- * 将HEX色值转换成RGB色值
- */
-
-// function HEX2RGB(color) {
-//   // 接受#000和#000000格式的HEX色值
-//   const reg = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
-//   let sColor = color.toLowerCase()
-//   if (sColor && reg.test(sColor)) {
-//     if (sColor.length === 4) {
-//       // 将3位色值转换成6位
-//       let sColorNew = '#'
-//       for(let i = 1;i < 4;i++) {
-//         sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1))
-//       }
-//       sColor = sColorNew
-//     }
-//     // 处理6位色值
-//     const sColorChange = []
-//     for(let i = 1;i < 7;i += 2) {
-//       sColorChange.push(parseInt('0x' + sColor.slice(i, i + 2)))
-//     }
-//     return sColorChange
-//   } else {
-//     return false
-//   }
-// }
-
 const firstLaunchKey = '@first_launch_key'
 
 /**
@@ -149,5 +121,33 @@ export function setStorage(key, value) {
   return new Promise(async resolve => {
     await AsyncStorage.setItem(key, value)
     resolve(value)
+  })
+}
+
+/**
+ * 获取用户设置的全局主题色
+ */
+const themeColorKey = '@global_theme_color_set'
+export function getGlobalTheme() {
+  return new Promise(async (resolve, reject) => {
+    const setedColor = await getStorage(themeColorKey)
+    if (setedColor) {
+      resolve(setedColor)
+    } else {
+      reject()
+    }
+  })
+}
+
+/**
+ * 设置用户设置的全局主题色
+ */
+export function setGlobalTheme(color) {
+  return new Promise(async (resolve, reject) => {
+    setStorage(themeColorKey, color).then(res => {
+      resolve(res)
+    }).catch(err => {
+      reject(err)
+    })
   })
 }

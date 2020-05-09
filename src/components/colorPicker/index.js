@@ -3,7 +3,7 @@
  * @Author       : lizhaokang
  * @Date         : 2020-05-05 21:48:33
  */
-import React, { useCallback, useState, useContext, useRef, useMemo } from 'react';
+import React, { useCallback, useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, Modal, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
 import { isNewIPhone } from 'src/utils'
 import tinycolor from 'tinycolor2'
@@ -53,20 +53,27 @@ function ColorPicker({ visible, color, onOk, onCancel }) {
 
   // 初始化usedcolor
   const handleShow = () => {
+    updateInputColor(initialColor)
     store.initialColorList()
   }
 
   // 重置颜色
   const resetColor = () => {
-    updateInputColor(theme.themeColor)
+    if (!color) {
+      updateInputColor(theme.themeColor)
+    }
   }
 
-  color = color || theme.themeColor
+  const initialColor = color || theme.themeColor
 
-  const [ inputColor, setInputColor ] = useState(color)
+  useEffect(() => {
+    updateInputColor(initialColor)
+  }, [ initialColor ])
+
+  const [ inputColor, setInputColor ] = useState(initialColor)
 
   // 颜色用HSL格式来存储
-  const [ hslColor, setColor ] = useState(tinycolor(color).toHsl())
+  const [ hslColor, setColor ] = useState(tinycolor(initialColor).toHsl())
 
   // 选择查看的模式
   const [ mode, setMode ] = useState('hex')
@@ -120,9 +127,6 @@ function ColorPicker({ visible, color, onOk, onCancel }) {
   const showColorText = useMemo(() => {
     return modes[mode].getString(inputColor)
   }, [ mode, inputColor ])
-
-
-
 
   const textInputRef = useRef(null)
 

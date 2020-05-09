@@ -1,8 +1,8 @@
 /**
  * 类似Github的表格
  */
-import React, { useContext, useState, useRef, useMemo } from 'react';
-import { View, StyleSheet, Dimensions, Text, TouchableWithoutFeedback } from 'react-native';
+import React, { useContext, useState, useRef, useMemo, useEffect } from 'react';
+import { View, StyleSheet, Dimensions, Text, TouchableWithoutFeedback, Animated } from 'react-native';
 import dailyStore from '../daily/dailyStore';
 import { getMonthDay } from 'src/utils'
 import moment from 'moment/min/moment-with-locales'
@@ -45,23 +45,22 @@ const generateFlatList = date => {
   return output
 }
 
-
-const itemColorMap = [
-  '#082136',
-  '#00398e',
-  '#003c9d',
-  '#003fac',
-  '#0041bb',
-  '#0043c9',
-  '#0043d7',
-  '#0043e4',
-  '#0042f1',
-  '#1c3ffd'
-]
+// 计算当月提交最大值
+const useMax = () => {
+  const [ max, setMax ] = useState(0)
+  const updateMax = count => {
+    if (count > max) {
+      setMax(count)
+    }
+  }
+  return [ max, updateMax ]
+}
 
 
 
 export default function Chart({ monthTime, curItem }) {
+
+  const [ maxFinish, setMaxFinish ] = useMax(0)
 
   const dailyLog = dailyStore.dailyLog
 
@@ -75,6 +74,7 @@ export default function Chart({ monthTime, curItem }) {
       const temp = moment(item.date)
       const dayKey = temp.format('YYYY-MM-DD')
       const showDate = temp.format('MMMDo')
+      // 完成次数
       let finishTimes = 0
       if (curItem.id === '@data_over_view') {
         const dayLog = dailyLog[dayKey] || {}
@@ -82,7 +82,13 @@ export default function Chart({ monthTime, curItem }) {
       } else {
         finishTimes = curItem.finishLog[dayKey] || 0
       }
-      const itemColor = itemColorMap[finishTimes > 9 ? 9 : finishTimes]
+
+      setMaxFinish(finishTimes)
+
+      // 应该展示的透明度
+      const showOpacity = useMemo(() => {
+        return maxFinish ? (finishTimes / maxFinish) * 0.9 + 0.1 : 0.1
+      }, [ maxFinish ])
 
       const [ showPop, setPop ] = useState(false)
 
@@ -94,68 +100,72 @@ export default function Chart({ monthTime, curItem }) {
         setPop(false)
       }
 
+
       return (
-        <TouchableWithoutFeedback
-          onPressIn={ onPressIn }
-          onPressOut={ onPressOut }
-        >
-          <View style={ [ {
-            borderRadius: 6,
-            height: colWidth,
-            width: colWidth,
-            backgroundColor: itemColor,
-            marginBottom: gapWidth,
-            zIndex: 60
-          } ] }
+        <View>
+          <TouchableWithoutFeedback
+            onPressIn={ onPressIn }
+            onPressOut={ onPressOut }
           >
-            {
-              showPop && (
-                <View style={ [ {
-                  backgroundColor: '#4183d7',
-                  borderRadius: 6,
+            <Animated.View style={ [ {
+              borderRadius: 6,
+              height: colWidth,
+              width: colWidth,
+              backgroundColor: theme.themeColor,
+              opacity: showOpacity,
+              marginBottom: gapWidth,
+              zIndex: 60
+            } ] }
+            />
+          </TouchableWithoutFeedback>
+          {
+            showPop && (
+              <View style={ [ {
+                backgroundColor: theme.subColor,
+                borderRadius: 6,
+                position: 'absolute',
+                top: -90,
+                left: '50%',
+                marginLeft: -40,
+                width: 80,
+                padding: 10,
+                zIndex: 90
+              } ] }
+              >
+                <Text style={ {
+                  color: '#DBDBDB',
+                  fontSize: 12,
+                  textAlign: 'center'
+                } }
+                >{ showDate }</Text>
+                <Text style={ {
+                  color: '#FFF',
+                  fontSize: 16,
+                  textAlign: 'center',
+                  marginTop: 10,
+                  marginBottom: 10
+                } }
+                >{ finishTimes }</Text>
+                <View style={ {
                   position: 'absolute',
-                  top: -90,
+                  bottom: -8,
                   left: '50%',
-                  marginLeft: -40,
-                  width: 80,
-                  padding: 10,
-                  zIndex: 90
-                } ] }
-                >
-                  <Text style={ {
-                    color: '#DBDBDB',
-                    fontSize: 12,
-                    textAlign: 'center'
-                  } }
-                  >{ showDate }</Text>
-                  <Text style={ {
-                    color: '#FFF',
-                    fontSize: 16,
-                    textAlign: 'center',
-                    marginTop: 10,
-                    marginBottom: 10
-                  } }
-                  >{ finishTimes }</Text>
-                  <View style={ {
-                    position: 'absolute',
-                    bottom: -8,
-                    left: '50%',
-                    marginLeft: 8,
-                    height: 0,
-                    width: 0,
-                    borderTopColor: '#4183d7',
-                    borderTopWidth: 8,
-                    borderLeftColor: 'transparent',
-                    borderRightColor: 'transparent',
-                    borderLeftWidth: 8,
-                    borderRightWidth: 8
-                  } }
-                  />
-                </View>
-              )
-            }
-          </View>
-        </TouchableWithoutFeedback>
+                  marginLeft: 2,
+                  height: 0,
+                  width: 0,
+                  borderTopColor: theme.subColor,
+                  borderTopWidth: 8,
+                  borderLeftColor: 'transparent',
+                  borderRightColor: 'transparent',
+                  borderLeftWidth: 8,
+                  borderRightWidth: 8
+                } }
+                />
+              </View>
+            )
+          }
+        </View>
+
       )
     } else {
       return (

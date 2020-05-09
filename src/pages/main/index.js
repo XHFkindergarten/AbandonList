@@ -68,7 +68,7 @@ const Main = ({ navigation }) => {
 
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
-      <TestModule />
+      { /* <TestModule /> */ }
       <View style={ {
         flex: 1,
         backgroundColor: theme.subColor

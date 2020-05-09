@@ -10,11 +10,11 @@ import { observer } from 'mobx-react';
 import AddCalendar from './addCalendar'
 import StoreReview from './storeReview'
 import Clock, { SelectReviewTime } from './clock'
-
+import ThemeColor from './themeColor'
+import Wallpaper from './wallpaper'
 import { ScrollView } from 'react-native-gesture-handler';
 import srcStore from 'src/store'
 import calStore from 'src/components/calendar/store'
-import { Transitioning, Transition } from 'react-native-reanimated';
 
 const { height } = Dimensions.get('window')
 const newIphone = isNewIPhone()
@@ -137,17 +137,19 @@ function CalendarList ({ navigation }) {
 
 const CalendarList_ob = observer(CalendarList)
 
-function SetModal({ visible, navigation }) {
-
+function SetModal({ visible, navigation, onChangeTheme }) {
   function Set({ navigation }) {
     return (
       <Fragment>
         <CalendarList_ob navigation={ navigation } />
+        <ThemeColor onChangeTheme={ onChangeTheme } />
         <Clock navigation={ navigation } />
         <StoreReview />
+        <Wallpaper />
       </Fragment>
     )
   }
+
 
   const handleClose = ()=> {
     finishStore.toggleSet(false)

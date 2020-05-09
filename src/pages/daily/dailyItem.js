@@ -1,10 +1,14 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, PanResponder, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
 import { elipsis, vibrate } from 'src/utils'
 import dailyStore from './dailyStore';
 import moment from 'moment'
 import { edit } from 'src/assets/image'
 import { observer } from 'mobx-react';
+import CheckModal from './checkModal'
+import themeContext from 'src/themeContext'
+import tinycolor from 'tinycolor2'
+import { toJS } from 'mobx';
 
 let pressTimeout
 const { width } = Dimensions.get('window')
@@ -15,6 +19,8 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
       clearTimeout(pressTimeout)
     }
   }, [ isTouch ])
+
+  const theme = useContext(themeContext)
 
   useEffect(() => {
     if (isSet) {
@@ -29,6 +35,17 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
       })
     }
   }, [ isSet ])
+
+  // 是否展示补卡弹框
+  const [ showCheck, setShowCheck ] = useState(false)
+  const handleCheckYesterDay = () => {
+    markItem(info, true, true)
+    setShowCheck(false)
+  }
+  const handleCheckToday = () => {
+    markItem(info, false, true)
+    setShowCheck(false)
+  }
 
 
   const [ showOperator, setShowOperator ] = useState(false)
@@ -68,24 +85,40 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
   const [ finish, setFinish ] = useState(!!info.finish)
   // 按压足够时间，设置状态为完成
   const toggleFinish = () => {
-    const todayKey = moment(new Date()).format('YYYY-MM-DD')
     if (!finish) {
-      dailyStore.handleFinish(info)
-      // 更新当天的日志
-      dailyStore.updateDailyLogItem({
-        date: new Date(),
-        finishItems: dailyStore.dailyLog[todayKey].finishItems + 1
-      })
+      // 检查昨天是否完成了这项任务
+      const yesterdayFinish = dailyStore.checkYesterday(info)
+      if (!yesterdayFinish) {
+        // 如果昨天未完成，提示是否需要补卡
+        setShowCheck(true)
+        return
+      }
+      markItem(info, false, true)
     } else {
-      dailyStore.handleCancel(info)
-      // 更新当天的日志
-      dailyStore.updateDailyLogItem({
-        date: new Date(),
-        finishItems: dailyStore.dailyLog[todayKey].finishItems - 1
-      })
+      markItem(info, false, false)
     }
     setFinish(!finish)
   }
+
+  // 标记 今天/昨天 为 完成/未完成
+  const markItem = (info, yesterday = false, finish = true) => {
+    const day = new Date()
+    if (yesterday) {
+      day.setDate(day.getDate() - 1)
+    }
+    const dayKey = moment(day).format('YYYY-MM-DD')
+    finish ? dailyStore.handleFinish(info, dayKey) : dailyStore.handleCancel(info)
+    const temp = (dayKey in dailyStore.dailyLog) ? (
+      dailyStore.dailyLog[dayKey].finishItems + (finish ? 1 : -1)
+    ) : (
+      finish ? 1 : 0
+    )
+    dailyStore.updateDailyLogItem({
+      date: day,
+      finishItems: temp
+    })
+  }
+
   const _panResponder = PanResponder.create({
     onStartShouldSetPanResponderCapture: () => !isSet,
     onPanResponderGrant: () => {
@@ -122,65 +155,73 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
 
 
   return (
-    <Animated.View style={ [ styles.container, {
-      backgroundColor: info.color || '#23cba7',
-      transform: [ { scale: AnimatedScale } ]
-    }, isSelect && {
-      borderColor: '#FFF',
-      borderWidth: 4
-    } ] }
-    { ..._panResponder.panHandlers }
-    >
-      <View style={ styles.leftContent }>
-        <Text style={ styles.title }>{ elipsis(info.name, 50) }</Text>
-      </View>
-      <View style={ styles.rightContent }>
+    <View>
+      <Animated.View style={ [ styles.container, {
+        backgroundColor: info.color || theme.themeColor,
+        transform: [ { scale: AnimatedScale } ]
+      }, isSelect && {
+        borderColor: '#FFF',
+        borderWidth: 4
+      } ] }
+      { ..._panResponder.panHandlers }
+      >
+        <View style={ styles.leftContent }>
+          <Text style={  styles.title }>{ elipsis(info.name, 50) }</Text>
+        </View>
+        <View style={ styles.rightContent }>
+          {
+            !showOperator && (
+              <Fragment>
+                <Animated.Text style={ [ styles.count, {
+                  transform: [ { scale: AnimatedFinishScale } ]
+                } ] }
+                >{ info.finishTimes }</Animated.Text>
+                <Animated.View style={ [ styles.finishCircle , {
+                  transform: [ { scale: AnimatedFinishScale } ],
+                  shadowColor: '#000',
+                  shadowOpacity: 0.6,
+                  shadowOffset: { width: 3, height: 3 },
+                  shadowRadius: 3,
+                  backgroundColor: info.finish ? '#FFF' : 'transparent',
+                  borderColor: '#FFF',
+                  borderWidth: 2
+                } ] }
+                ></Animated.View>
+              </Fragment>
+            )
+          }
+        </View>
+        <View style={ styles.absoluteView }>
+          <TouchableWithoutFeedback onPress={ handlePressItem }>
+            <View style={ { flex: 1 } }></View>
+          </TouchableWithoutFeedback>
+        </View>
         {
-          !showOperator && (
-            <Fragment>
-              <Animated.Text style={ [ styles.count, {
-                transform: [ { scale: AnimatedFinishScale } ]
-              } ] }
-              >{ info.finishTimes }</Animated.Text>
-              <Animated.View style={ [ styles.finishCircle , {
-                transform: [ { scale: AnimatedFinishScale } ],
-                shadowColor: '#000',
-                shadowOpacity: 0.6,
-                shadowOffset: { width: 3, height: 3 },
-                shadowRadius: 3,
-                backgroundColor: info.finish ? '#FFF' : 'transparent',
-                borderColor: '#FFF',
-                borderWidth: 2
-              } ] }
-              ></Animated.View>
-            </Fragment>
+          showOperator && (
+            <Animated.View style={ {
+              transform: [ { scale: AnimatedOperatorScale } ],
+              position: 'absolute',
+              right: 5,
+              bottom: 5,
+              padding: 10
+            } }
+            >
+              <TouchableOpacity onPress={ handleEditItem }>
+                <Image source={ edit }
+                  style={ styles.edit }
+                />
+              </TouchableOpacity>
+            </Animated.View>
           )
         }
-      </View>
-      <View style={ styles.absoluteView }>
-        <TouchableWithoutFeedback onPress={ handlePressItem }>
-          <View style={ { flex: 1 } }></View>
-        </TouchableWithoutFeedback>
-      </View>
-      {
-        showOperator && (
-          <Animated.View style={ {
-            transform: [ { scale: AnimatedOperatorScale } ],
-            position: 'absolute',
-            right: 5,
-            bottom: 5,
-            padding: 10
-          } }
-          >
-            <TouchableOpacity onPress={ handleEditItem }>
-              <Image source={ edit }
-                style={ styles.edit }
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        )
-      }
-    </Animated.View>
+      </Animated.View>
+      <CheckModal onToday={ handleCheckToday }
+        onYesterday={ handleCheckYesterDay }
+        setVisible={ setShowCheck }
+        visible={ showCheck }
+      />
+    </View>
+
   )
 }
 

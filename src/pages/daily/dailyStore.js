@@ -167,36 +167,53 @@ class DailyStore {
       }
     })
   }
+
+  /**
+   * 检查昨天是否完成了这项任务
+   */
+  checkYesterday = info => {
+    const keysLen = Object.keys(info.finishLog).length
+    if ( keysLen === 0 || keysLen === 1) {
+      return true // 第一次完成任务也算作之前完成
+    }
+    const today = new Date()
+    const date = today.getDate()
+    today.setDate(date - 1)
+    const yesterdayKey = moment(today).format('YYYY-MM-DD')
+    return !!info.finishLog[yesterdayKey]
+  }
+
   // 标记完成次数+1
-  handleFinish = info => {
-    const dayKey = moment(new Date()).format('YYYY-MM-DD')
+  // daykey, 完成日的key
+  handleFinish = (info, daykey) => {
+    const todayKey = moment(new Date()).format('YYYY-MM-DD')
     const target = {
       ...info,
-      finish: true,
+      finish: todayKey === daykey ? true : false,
       finishTimes: info.finishTimes + 1,
       finishLog: Object.assign(info.finishLog, {
-        [dayKey]: info.finishLog[dayKey] ? info.finishLog[dayKey] + 1 : 1
+        [daykey]: info.finishLog[daykey] ? info.finishLog[daykey] + 1 : 1
       })
     }
     // 完成栈中没有记录
     if (!info.continueTimesStack.length || !info.lastFinishStack.length) {
       target.continueTimesStack = [ 1 ]
-      target.lastFinishStack = [ new Date() ]
+      target.lastFinishStack = [ new Date(daykey) ]
       target.maxContinueTimes = 1
     } else {
       // 防止两个栈长度不一致
       const sameLength = Math.max(info.continueTimesStack.length, info.lastFinishStack.length)
       const continueTimesStack = info.continueTimesStack.slice(0, sameLength)
       const lastFinishStack = info.lastFinishStack.slice(0, sameLength)
-      const lastDay = new Date()
+      const lastDay = new Date(daykey)
       lastDay.setDate(lastDay.getDate() - 1)
       const lastLog = lastFinishStack[lastFinishStack.length - 1]
       // 如果昨天也完成了该任务
       if (lastDay.setHours(0,0,0,0) === new Date(lastLog).setHours(0,0,0,0)) {
-        lastFinishStack.push(new Date())
+        lastFinishStack.push(new Date(daykey))
         continueTimesStack.push(continueTimesStack[continueTimesStack.length - 1] + 1)
       } else {
-        lastFinishStack.push(new Date())
+        lastFinishStack.push(new Date(daykey))
         continueTimesStack.push(1)
       }
       target.continueTimesStack = continueTimesStack
@@ -351,12 +368,14 @@ class DailyStore {
       } else {
         res.monthList[monthKey] = {
           finishItems: res.monthList[monthKey].finishItems + item.finishItems,
-          finishDays: res.monthList[monthKey].finishDays + 1
+          finishDays: res.monthList[monthKey].finishDays + item.finishItems ? 1 : 0
         }
       }
     }
     return res
   }
+
+
   // 初始化待办列表
   initialDailyList = async () => {
     // 从AsyncStorage中获取待办数据

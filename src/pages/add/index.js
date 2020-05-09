@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, Fragment, useCallback } from 'react';
+import React, { useRef, useEffect, useState, Fragment, useCallback, useContext } from 'react';
 import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Alert, Linking, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
 import { getStorage } from 'src/utils'
 import { Transitioning, Transition } from 'react-native-reanimated';
@@ -10,6 +10,7 @@ import EndModal from './endModal'
 import RepeatModal from './repeatModal'
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
+import themeContext from 'src/themeContext'
 import Notification from 'src/utils/Notification'
 
 moment.locale('zh-cn');
@@ -18,6 +19,9 @@ const rememberGroupKey = '@remenber_group_key'
 
 const { width } = Dimensions.get('window')
 function Add({ route }) {
+
+  const theme = useContext(themeContext)
+
   // 路由活跃和不活跃时控制底部栏状态
   useFocusEffect(
     useCallback(() => {
@@ -424,7 +428,7 @@ function Add({ route }) {
               <Text style={ styles.itemLabel }>提醒</Text>
               <Switch
                 onValueChange={ handleRABChange }
-                trackColor={ { false: '', true: '#4192D9' } }
+                trackColor={ { false: '', true: theme.themeColor } }
                 value={ RAB }
               />
             </View>
@@ -444,7 +448,7 @@ function Add({ route }) {
               <Text style={ styles.itemLabel }>全天</Text>
               <Switch
                 onValueChange={ handleAllDayChange }
-                trackColor={ { false: '', true: '#4192D9' } }
+                trackColor={ { false: '', true: theme.themeColor } }
                 value={ allDay }
               />
             </View>
@@ -461,7 +465,7 @@ function Add({ route }) {
                   <Text style={ styles.itemLabel }>结束时提醒</Text>
                   <Switch
                     onValueChange={ handleRAEChange }
-                    trackColor={ { false: '', true: '#4192D9' } }
+                    trackColor={ { false: '', true: theme.themeColor } }
                     value={ RAE }
                   />
                 </View>

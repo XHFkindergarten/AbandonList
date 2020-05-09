@@ -1,8 +1,11 @@
 import { observable, action, computed } from 'mobx'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import moment from 'moment'
+import { setStorage } from 'src/utils'
 
 // let timeoutId = ''
+
+const themeColorKey = '@global_theme_color_set'
 class Store {
   // 顶层路由获取
   @observable nav = null
@@ -172,7 +175,14 @@ class Store {
     this.updateLzk(!this.lzk)
   }
 
+  // 更新themeContext方法
+  setThemeColor = null
 
+  // 更新主题色方法
+  updateThemeColor = color => {
+    this.setThemeColor(color)
+    setStorage(themeColorKey, color)
+  }
 }
 
 const store = new Store()

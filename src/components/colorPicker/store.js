@@ -27,7 +27,7 @@ class Store {
   saveColor = color => {
     const newColorList = [
       color,
-      ...this.colorList.slice()
+      ...this.colorList.slice().filter(item => item !== color)
     ]
     if (newColorList.length > 8) {
       newColorList.pop()

@@ -1,11 +1,13 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, Alert, Linking, Text, Switch, Image } from 'react-native';
-import { clock, clockActive } from 'src/assets/image'
+import Svgs from 'src/assets/svg'
 import { useFocusEffect } from '@react-navigation/native'
 import finishStore from './store'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment/min/moment-with-locales'
 import Notification from 'src/utils/Notification'
+import themeContext from 'src/themeContext'
+
 
 moment.locale('zh-cn');
 
@@ -105,6 +107,8 @@ function StoreReview({ navigation }) {
     })
   }
   const { reviewTime } = finishStore
+
+  const theme = useContext(themeContext)
   return (
     <View style={ {
       paddingLeft: 20,
@@ -115,9 +119,14 @@ function StoreReview({ navigation }) {
       <TouchableOpacity onPress={ handlePress }>
         <View style={ styles.container }>
           <Text style={ styles.title }>回顾</Text>
-          <Image source={ reviewTime ? clockActive : clock }
-            style={ styles.addCircle }
+          <Svgs.Clock
+            fill={ reviewTime ? theme.themeColor : '#FFF' }
+            height={ 28 }
+            width={ 28 }
           />
+          { /* <Image source={ reviewTime ? clockActive : clock }
+            style={ styles.addCircle }
+          /> */ }
         </View>
       </TouchableOpacity>
       <View style={ {
@@ -134,7 +143,6 @@ function StoreReview({ navigation }) {
         justifyContent: 'space-between',
         alignItems: 'center',
         height: 40
-
       } }
       ></View>
     </View>
@@ -172,10 +180,7 @@ const styles = StyleSheet.create({
     color: '#8a8a8a',
     fontSize: 14
   },
-  addCircle: {
-    height: 24,
-    width: 24
-  },
+
   row: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, View, Image, Animated } from 'react-native';
-import { finish, mainActive, type, correct, wrong, settingDaily } from 'src/assets/image'
+import { finish, type, correct, wrong } from 'src/assets/image'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import store from 'src/store'
 import { observer } from 'mobx-react';
@@ -9,6 +9,7 @@ import { isNewIPhone, vibrate } from 'src/utils'
 import dailyStore from 'src/pages/daily/dailyStore'
 import finishStore from 'src/pages/finish/store'
 import themeContext from 'src/themeContext'
+import Svgs from 'src/assets/svg'
 
 let isConfirmAvailable = true
 
@@ -206,7 +207,7 @@ function BottomNavigation() {
                   onPress={ handleSetDaily }
                   style={ styles.iconContainer }
                 >
-                  <Animated.Image
+                  { /* <Animated.Image
                     source={ settingDaily }
                     style={ [ {
                       height: 32,
@@ -216,6 +217,10 @@ function BottomNavigation() {
                         { rotate: setRotateDeg }
                       ]
                     } ] }
+                  /> */ }
+                  <Svgs.DailyActive fill={ theme.themeColor }
+                    height={ 20 }
+                    width={ 20 }
                   />
 
                 </TouchableOpacity>
@@ -245,7 +250,6 @@ function BottomNavigation() {
                   style={ styles.iconContainer }
                 >
                   <Animated.View
-                    source={ mainActive }
                     style={ {
                       height: 28,
                       width: 28,
@@ -286,12 +290,16 @@ function BottomNavigation() {
                   onPress={ handleSetFinish }
                   style={ styles.iconContainer }
                 >
-                  <Animated.Image
+                  { /* <Animated.Image
                     source={ settingDaily }
                     style={ [ {
                       height: 32,
                       width: 32
                     } ] }
+                  /> */ }
+                  <Svgs.Set fill={ theme.themeColor }
+                    height={ 30 }
+                    width={ 30 }
                   />
 
                 </TouchableOpacity>

@@ -203,7 +203,6 @@ class NativeCalendar {
     return new Promise(async (resolve, reject) => {
       // 加入处理队列代表正在处理
       this.removeQueue.add(event.id)
-      console.log(this.removeQueue)
       // 原生模块resolve事件id
       const res = await RNCalendarEvents.removeEvent(
         event.id,

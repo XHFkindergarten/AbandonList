@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useEffect, useContext, useRef, Fragment } from 'react';
+import React, { useState, useCallback, useEffect, useContext, useMemo, useRef, Fragment } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, Animated, Dimensions, Image, SafeAreaView, Platform, ImageBackground, TouchableOpacity } from 'react-native';
 import srcStore from 'src/store'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { wallpaper, smallArrow, cards, chart } from 'src/assets/image'
+import { wallpaper1, wallpaper2, wallpaper3 } from 'src/assets/image'
+import Svgs from 'src/assets/svg'
 import { observer } from 'mobx-react';
 import Board from './board'
 import finishStore from './store'
@@ -15,6 +16,7 @@ import themeContext from 'src/themeContext'
 import HistoryList from './historyList'
 import { Transitioning, Transition } from 'react-native-reanimated'
 import { getStorage, setStorage } from 'src/utils'
+import ColorPicker from 'src/components/colorPicker'
 
 const { width, height } = Dimensions.get('window')
 
@@ -33,6 +35,13 @@ const MonthNameMap = [
   'Oct.',
   'Nov.',
   'Dec.'
+]
+
+const wallpaper = [
+  wallpaper1,
+  wallpaper1,
+  wallpaper2,
+  wallpaper3
 ]
 
 
@@ -188,10 +197,35 @@ function Finish({ navigation }) {
     }
   }
 
+  const [ showColorPicker, setShowColorPicker ] = useState(false)
+
+  const handleColorOk = (color) => {
+    srcStore.updateThemeColor(color)
+    setShowColorPicker(false)
+  }
+  const handleColorCancel = () => {
+    setShowColorPicker(false)
+  }
+
+  // 用户点击切换主题色
+  const handleChangeTheme = () => {
+    finishStore.toggleSet(false)
+    setShowColorPicker(true)
+  }
+
+  // 选中的壁纸
+  const selectWallpaper = wallpaper[finishStore.wallpaperIndex]
+
   return (
-    <Fragment>
+    <View style={ {
+      backgroundColor: theme.themeColor
+    } }
+    >
       <ImageBackground
-        source={ wallpaper }
+        imageStyle={ {
+          opacity: 0.4
+        } }
+        source={ selectWallpaper }
         style={ {
           paddingTop: newIPhone ? 44 : 0,
           width: width,
@@ -240,21 +274,33 @@ function Finish({ navigation }) {
                   padding: 20
                 } }
               >
-                <Image source={ smallArrow }
-                  style={ [ styles.smallArrow, {
-                    transform: [ { rotate: '180deg' } ]
-                  } ] }
+                <Svgs.SmallArrow
+                  fill={ theme.themeColor }
+                  height={ 40 }
+                  style={ {
+                    transform: [ { rotate: '90deg' } ]
+                  } }
+                  width={ 40 }
                 />
               </TouchableWithoutFeedback>
 
 
               <TouchableOpacity onPress={ handlePressMonthName }>
                 <View style={ [ styles.month, { backgroundColor: theme.themeColor } ] }>
-                  <Text style={ [ styles.monthLabel, { color: theme.mainText } ] }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
-
-                  <Image source={ !toggleCards ? chart : cards }
-                    style={ styles.toggleIcon }
-                  />
+                  <Text style={ [ styles.monthLabel, { color: theme.baseThemeText, marginRight: 5 } ] }>{ `${curMonthTime.getFullYear()} ${MonthNameMap[curMonthTime.getMonth()]}` }</Text>
+                  {
+                    !toggleCards ? (
+                      <Svgs.Chart fill={ theme.baseThemeText }
+                        height={ 22 }
+                        width={ 22 }
+                      />
+                    ) : (
+                      <Svgs.Cards fill={ theme.baseThemeText }
+                        height={ 22 }
+                        width={ 22 }
+                      />
+                    )
+                  }
                 </View>
               </TouchableOpacity>
 
@@ -264,9 +310,17 @@ function Finish({ navigation }) {
                   padding: 20
                 } }
               >
-                <Image source={ smallArrow }
-                  style={ styles.smallArrow }
+                <Svgs.SmallArrow
+                  fill={ theme.themeColor }
+                  height={ 40 }
+                  style={ {
+                    transform: [ { rotate: '270deg' } ]
+                  } }
+                  width={ 40 }
                 />
+                { /* <Image source={ smallArrow }
+                  style={ styles.smallArrow }
+                /> */ }
               </TouchableWithoutFeedback>
             </View>
             <Board item={ curItem }
@@ -313,7 +367,6 @@ function Finish({ navigation }) {
               >
                 <Animated.Text style={ [ styles.scrollItemName, {
                   opacity: titleOpacity,
-                  backgroundColor: theme.themeColor,
                   color: theme.mainText,
                   transform: [ { scale: AnimatedScale } ]
                 } ] }
@@ -323,8 +376,14 @@ function Finish({ navigation }) {
           }
         </ScrollView>
       </Animated.View>
-      <SetModal visible={ showSetting } />
-    </Fragment>
+      <SetModal onChangeTheme={ handleChangeTheme }
+        visible={ showSetting }
+      />
+      <ColorPicker onCancel={ handleColorCancel }
+        onOk={ handleColorOk }
+        visible={ showColorPicker }
+      />
+    </View>
   )
 }
 export default observer(Finish)
@@ -358,7 +417,6 @@ const styles = StyleSheet.create({
   },
   month: {
     height: 50,
-    // width: 140,
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 14,
@@ -370,11 +428,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 50,
     fontFamily: 'Century Gothic'
-  },
-  smallArrow: {
-    height: 40,
-    width: 40,
-    resizeMode: 'contain'
   },
   toggleIcon: {
     height: 22,

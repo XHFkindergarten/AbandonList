@@ -13,11 +13,15 @@ import Notification from 'src/utils/Notification'
 import { isFirstOpen } from 'src/utils'
 import finishStore from 'src/pages/finish/store'
 import { Toast } from 'src/components'
+import tinycolor from 'tinycolor2'
+import { getGlobalTheme } from 'src/utils'
 
 // 创建栈路由
 const Stack = createStackNavigator()
 
 function App() {
+
+
 
   // App did mount
   useEffect(() => {
@@ -46,6 +50,14 @@ function App() {
         }
       }
     })
+
+    // 初始化用户的主题色设置
+    getGlobalTheme().then(color => {
+      setThemeColor(color)
+    }).catch(() => {
+      // 用户没有设置过颜色,不作处理
+    })
+
     // 从AsyncStorage中初始化每日待办列表
     dailyStore.initialDailyStore()
     // 初始化历史记录
@@ -76,8 +88,26 @@ function App() {
     }
   }, [])
 
-  // const [ theme, setThemeValue ] = useState(themeValue.lightTheme)
+  // 全局主题，默认为暗色主题
   const [ theme, setThemeValue ] = useState(themeValue.darkTheme)
+
+  // 更新主题色方法
+  const setThemeColor = color => {
+    setThemeValue({
+      ...theme,
+      themeColor: color,
+      // 基于主题色偏暗还是偏亮来决定覆盖的文字颜色
+      baseThemeText: tinycolor(color).isDark() ? theme.mainText : '#000'
+    })
+  }
+
+  useEffect(() => {
+    // 更新store中的全局方法
+    store.setThemeColor = setThemeColor
+  }, [])
+
+
+
   // 切换主题方法,存储在全局store中
   // const toggleTheme = () => {
   //   if (themeValue.name === '@global_dark_theme') {

@@ -5,12 +5,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, PixelRatio, View, Text } from 'react-native';
 import moment from 'moment';
 import themeContext from 'src/themeContext'
+import { observer } from 'mobx-react';
 
 
 
 
 let timer1, timer2, timer3
-export default function Board({ item, monthTime }) {
+function Board({ item, monthTime }) {
   useEffect(() => {
     return () => {
       clearTimeout(timer1)
@@ -116,6 +117,8 @@ export default function Board({ item, monthTime }) {
     </View>
   )
 }
+
+export default observer(Board)
 
 const styles = StyleSheet.create({
 

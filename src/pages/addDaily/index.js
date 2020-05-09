@@ -1,17 +1,21 @@
 /**
  * 添加daily页面
  */
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useContext, useEffect, useMemo } from 'react';
 import { observer } from 'mobx-react';
-import { View, StyleSheet, Text, Keyboard, ScrollView, Alert, Linking, TextInput, TouchableWithoutFeedback, TouchableOpacity, Switch } from 'react-native';
+import { View, StyleSheet, Text, Keyboard, ScrollView, Image, Alert, Linking, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
 import { flatColorList } from 'src/common'
 import moment from 'moment'
+import { colors } from 'src/assets/image'
 import { TimePickModal } from 'src/components'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { toJS } from 'mobx';
+import themeContext from 'src/themeContext'
+import ColorPicker from 'src/components/colorPicker'
 import Notification from 'src/utils/Notification'
+import tinycolor from 'tinycolor2'
 
 const pickDay = [
   '星期日',
@@ -48,6 +52,8 @@ const DayItem = ({ name, index, handlePress, notiDay }) => {
 }
 
 function AddDaily ({ navigation, route }) {
+
+  const theme = useContext(themeContext)
   // 路由活跃和不活跃时控制底部栏状态
   useFocusEffect(
     useCallback(() => {
@@ -105,6 +111,7 @@ function AddDaily ({ navigation, route }) {
   const [ title, setTitle ] = useState('')
   const [ des, setDes ] = useState('')
   const [ color, setColor ] = useState('')
+  const [ selfMake, setSelfMake ] = useState(false)
   const [ noti, setNoti ] = useState(false)
   const [ notiTime, setNotiTime ] = useState(new Date())
   const [ notiDay, setNotiDay ] = useState(new Set())
@@ -123,6 +130,7 @@ function AddDaily ({ navigation, route }) {
   }
   const handleColorChange = value => {
     setColor(value)
+    setSelfMake(false)
     dailyStore.addDailyFormItem({
       color: value
     })
@@ -185,24 +193,62 @@ function AddDaily ({ navigation, route }) {
     setShowDatePick(false)
   }
 
+  const [ showColorPicker, setShowColorPicker ] = useState(false)
+
+  const handleAddColor = () => {
+    setShowColorPicker(true)
+  }
+  const handleColorOk = (color) => {
+    setSelfMake(true)
+    setColor(color)
+    setShowColorPicker(false)
+    dailyStore.addDailyFormItem({
+      color: color
+    })
+  }
+  const handleColorCancel = () => {
+    setShowColorPicker(false)
+  }
+
 
   const ColorItem = ({ color: itemColor }) => {
-    const onPress = () => {
-      handleColorChange(itemColor)
-    }
+    const isAdd = itemColor === '@add_color'
+    const onPress = useCallback(() => {
+      isAdd ? handleAddColor() : handleColorChange(itemColor)
+    }, [ isAdd ])
     const isSelect = color === itemColor
     return (
       <TouchableOpacity onPress={ onPress }>
-        <View style={ [ styles.colorItem , {
-          backgroundColor: itemColor,
-          borderWidth: 2,
-          borderColor: isSelect ? '#DBDBDB' : itemColor
-        } ] }
-        />
+        {
+          isAdd ? (
+            <Image source={ colors }
+              style={ {
+                width: 42,
+                height: 42,
+                margin: 10,
+                borderRadius: 21,
+                borderWidth: 4,
+                borderColor: selfMake ? color : 'transparent'
+              } }
+            />
+          ) : (
+            <View style={ [ styles.colorItem , {
+              backgroundColor: itemColor,
+              borderWidth: 2,
+              borderColor: (isSelect && !selfMake) ? '#DBDBDB' : itemColor
+            } ] }
+            />
+          )
+        }
+
       </TouchableOpacity>
     )
   }
 
+  const colorList = [
+    '@add_color',
+    ...flatColorList
+  ]
 
 
   return (
@@ -222,6 +268,8 @@ function AddDaily ({ navigation, route }) {
           returnKeyType="done"
           style={ [ styles.textInput, color && {
             backgroundColor: color
+          }, {
+            color: '#FFF'
           } ] }
         />
         <TextInput
@@ -243,7 +291,7 @@ function AddDaily ({ navigation, route }) {
           style={ styles.colorContainer }
         >
           {
-            flatColorList.map(color => (
+            colorList.map(color => (
               <ColorItem color={ color }
                 key={ color }
               />
@@ -254,7 +302,7 @@ function AddDaily ({ navigation, route }) {
           <Text style={ styles.rowLabel }>通知</Text>
           <Switch
             onValueChange={ handleNotiChange }
-            trackColor={ { false: '', true: '#4192D9' } }
+            trackColor={ { false: '', true: theme.themeColor } }
             value={ noti }
           />
         </View>
@@ -291,6 +339,12 @@ function AddDaily ({ navigation, route }) {
         mode="time"
         setTime={ handleNotiTimeChange }
         visible={ showDatePick }
+      />
+      <ColorPicker
+        color={ color }
+        onCancel={ handleColorCancel }
+        onOk={ handleColorOk }
+        visible={ showColorPicker }
       />
     </ScrollView>
   )
@@ -330,8 +384,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 15,
-    fontSize: 16,
-    color: '#DBDBDB'
+    fontSize: 16
   },
   colorContainer: {
     // marginTop: 20,

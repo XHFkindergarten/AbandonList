@@ -14,7 +14,14 @@ const convertDateIOS = target => {
   return moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 }
 
+const wallpaperKey = '@wall_paper_k1y'
+
 class Store {
+
+  constructor() {
+    this.initialWallPaper()
+  }
+
   // 设置弹框是否活跃
   @observable
   isSet = false
@@ -218,6 +225,33 @@ class Store {
         this.reviewTime = dateStr
       }
     }
+  }
+
+  @observable
+  wallpaperIndex = 0
+  @action updateWallPaper = value => {
+    if (value < 1 || value > 3) {
+      return
+    }
+    this.wallpaperIndex = value
+  }
+
+  // 更改壁纸
+  changeWallPaper = index => {
+    this.updateWallPaper(index)
+    setStorage(wallpaperKey, index + '')
+  }
+
+  initialWallPaper = () => {
+    return new Promise(async (resolve) => {
+      const index = await getStorage(wallpaperKey)
+      if (index) {
+        this.updateWallPaper(index)
+      } else {
+        this.updateWallPaper(1) // 默认1
+      }
+      resolve()
+    })
   }
 }
 

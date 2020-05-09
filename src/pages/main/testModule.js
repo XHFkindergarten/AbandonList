@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native'
 import ColorPicker from 'src/components/colorPicker'
-
+import dailyStore from 'src/pages/daily/dailyStore'
+import { toJS } from 'mobx';
 export default function TestModule() {
   const [ showColorPicker, setColorPicker ] = useState(false)
   const handleOk = () => {
@@ -11,7 +12,8 @@ export default function TestModule() {
     setColorPicker(false)
   }
   const handlePress = () => {
-    setColorPicker(true)
+    dailyStore.updateDailyList({})
+    dailyStore.updateDailyLog({})
   }
   return (
     <View style={ {

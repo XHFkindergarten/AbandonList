@@ -16,7 +16,8 @@ function StoreReview() {
   }
   return (
     <View style={ {
-      alignItems: 'center'
+      alignItems: 'center',
+      marginBottom: 60
     } }
     >
       <TouchableOpacity onPress={ handlePress }>
