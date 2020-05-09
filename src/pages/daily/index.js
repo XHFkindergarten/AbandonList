@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomColor: '#444',
     borderBottomWidth: 1 / PixelRatio.get(),
-    // borderBottomEndRadius: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

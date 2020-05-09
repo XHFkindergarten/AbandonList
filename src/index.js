@@ -1,4 +1,4 @@
-import { Add, Main, Finish, Daily, AddDaily, Guide } from './pages'
+import { Add, Main, Finish, Daily, AddDaily, Guide, Future } from './pages'
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -191,6 +191,14 @@ function App() {
               name="Guide"
               options={ {
                 gestureEnabled: false,
+                cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+              } }
+            />
+            <Stack.Screen
+              component={ Future }
+              name="Future"
+              options={ {
+                gestureEnabled: true,
                 cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
               } }
             />

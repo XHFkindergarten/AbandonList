@@ -5,6 +5,7 @@ import finishStore from 'src/pages/finish/store'
 import Notification from './Notification'
 import dailyStore from 'src/pages/daily/dailyStore'
 import { getStorage, setStorage } from 'src/utils'
+import srcStore from 'src/store'
 const rememberGroupKey = '@remenber_group_key'
 
 /**
@@ -103,9 +104,13 @@ class NativeCalendar {
    * @params details[ description, calendarId, startDate, endDate, allDay ]
    */
   saveEvent = props => {
-    const { id, title, description, start, end, allDay, groupId, repeat, RAE, RAB } = props
+    const { id, title, description, start, end, allDay, groupId, repeat, RAE, RAB, inFuture } = props
     if (!title) {
       return Promise.resolve()
+    }
+    // 如果是未来事件，通过另一种方式存储
+    if (inFuture) {
+      return srcStore.updateFutureListItem(props)
     }
     const idOption = id ? { id } : {}
     const repeatOption = repeat ? repeatMap.find(item => item.recurrence === repeat).value : {}
@@ -395,6 +400,7 @@ class NativeCalendar {
               tempObj[key][item.id] = item
             })
             this.eventStorage = Object.assign({}, tempObj)
+            console.log('event', this.eventStorage)
             // this.eventStorage = Object.assign({}, this.eventStorage, tempObj)
             resolve(res)
           })

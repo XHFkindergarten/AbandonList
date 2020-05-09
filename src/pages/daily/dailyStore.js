@@ -1,5 +1,5 @@
 import { observable, action, toJS, computed } from 'mobx'
-import { getStorage, setStorage } from 'src/utils'
+import { getStorage, setStorage, generateRandomId } from 'src/utils'
 import moment from 'moment'
 import { flatColorList } from 'src/common'
 import Notification from 'src/utils/Notification'
@@ -8,18 +8,6 @@ import Notification from 'src/utils/Notification'
 const dailyListKey = '@daily_item_list'
 const dailyLogKey = '@daily_log'
 
-/**
- * 生成随机字符串id
- */
-const labelDictionary = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('')
-const generateRandomId = () => {
-  let id = ''
-  for(let i = 0;i < 6;i++) {
-    const index = Math.floor(Math.random() * 36)
-    id += labelDictionary[index]
-  }
-  return id
-}
 
 
 

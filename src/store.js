@@ -1,12 +1,21 @@
 import { observable, action, computed } from 'mobx'
 import nativeCalendar from 'src/utils/nativeCalendar'
 import moment from 'moment'
-import { setStorage } from 'src/utils'
+import { setStorage, getStorage, generateRandomId } from 'src/utils'
 
 // let timeoutId = ''
 
 const themeColorKey = '@global_theme_color_set'
+
+const futureListKey = '@future_list_key'
+
+// IOS下的日期格式处理
+const convertDateIOS = target => moment.utc(target).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
 class Store {
+
+  constructor() {
+    this.initialFutureList()
+  }
   // 顶层路由获取
   @observable nav = null
   @action setNav = value => this.nav = value
@@ -101,6 +110,7 @@ class Store {
     id: '',
     title: '',
     description: '',
+    inFuture: false,
     start: null,
     end: null,
     allDay: false,
@@ -119,6 +129,7 @@ class Store {
       description: '',
       start: null,
       end: null,
+      inFuture: false,
       allDay: false,
       RAB: false,
       RAE: false,
@@ -148,6 +159,93 @@ class Store {
     }
   }
 
+
+  /**
+   * 未来的[不定时]任务
+   * 虽然叫list但是是map方便去重
+   */
+  @observable
+  _futureList = {}
+  @action
+  updateFutureList = value => this._futureList = value
+  // 用于输出的数组形式
+  @computed get futureList() {
+    const keys = Object.keys(this._futureList)
+    if (keys.length === 0) {
+      return []
+    }
+    const output = []
+    for(let key of keys) {
+      output.push(this._futureList[key])
+    }
+    return output
+  }
+
+  // 添加/修改 一个未来任务
+  updateFutureListItem = event => new Promise(async (resolve) => {
+    const selectedCalendar = nativeCalendar.groupStorage.find(item => item.id === event.groupId)
+    const id = event.id ? event.id : generateRandomId()
+    const formatedEvent = {
+      alarms: [],
+      allDay: false,
+      attendees: [],
+      availability: 'notSupported',
+      calendar: selectedCalendar || null,
+      endDate: '',
+      id, // 生成一个随机ID
+      isDetached: false,
+      location: '',
+      notes: '',
+      occurrenceDate: '',
+      recurrence: '',
+      recurrenceRule: {
+        endDate: '',
+        frequency: '',
+        interval: '',
+        occurrence: ''
+      },
+      startDate: convertDateIOS(new Date()),
+      title: event.title,
+      url: 'future',
+      createdAt: new Date() // 创建时间
+    }
+    this.updateFutureList({
+      ...this._futureList,
+      [id]: formatedEvent
+    })
+    // 保存
+    this.saveFutureList()
+    resolve()
+  })
+
+  // 删除一个未来任务
+  removeFutureListItem = event => {
+    if (event.id && event.id in this._futureList) {
+      const temp = {
+        ...this._futureList
+      }
+      delete temp[event.id]
+      this.updateFutureList(temp)
+      this.saveFutureList()
+    }
+  }
+
+  // 保存列表
+  saveFutureList = () => new Promise((resolve) => {
+    setStorage(futureListKey, JSON.stringify(this._futureList)).then(resolve)
+  })
+
+  initialFutureList = async () => {
+    const str = await getStorage(futureListKey)
+    let tempList
+    if (!str) {
+      tempList = {}
+    } else {
+      tempList = JSON.parse(str)
+    }
+    delete tempList.id
+    this.updateFutureList(tempList)
+  }
 
   // 控制阻止其他操作
   preventOtherHandler = false

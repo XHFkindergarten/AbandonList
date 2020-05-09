@@ -58,6 +58,28 @@ export const fromNow = info => {
   return outputTime
 }
 
+/**
+ * 获取某个Time(已发生)距离目前的时间
+ * @param {Number} time
+ */
+export function beforeNow(time) {
+  const nowTime = new Date().getTime()
+  const before = new Date(time)
+  const timeNum = before.getTime()
+  let output = ''
+  const gap = nowTime - timeNum
+  if (gap < 60000) {
+    output = '一分钟内'
+  } else if (gap < 60000 * 60) {
+    output = moment(before).startOf('minute').fromNow()
+  } else if (gap < 60000 * 60 * 24) {
+    output = moment(before).startOf('hour').fromNow()
+  } else {
+    output = moment(before).startOf('day').fromNow()
+  }
+  return output
+}
+
 // 获取当月天数
 export const getMonthDay = day => {
   const newDay = new Date(day)
@@ -150,4 +172,18 @@ export function setGlobalTheme(color) {
       reject(err)
     })
   })
+}
+
+
+/**
+ * 生成随机字符串id
+ */
+const labelDictionary = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('')
+export function generateRandomId () {
+  let id = ''
+  for(let i = 0;i < 6;i++) {
+    const index = Math.floor(Math.random() * 36)
+    id += labelDictionary[index]
+  }
+  return id
 }

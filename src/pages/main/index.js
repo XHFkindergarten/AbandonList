@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
-import { View, StyleSheet, Animated, Dimensions, SafeAreaView, StatusBar, AppState } from 'react-native';
+import { View, StyleSheet, Animated, SafeAreaView, StatusBar, AppState } from 'react-native';
 import TodoList from './todoList'
 import store from 'src/store'
 import { useFocusEffect } from '@react-navigation/native';
 import { Calendar } from 'src/components'
 import themeContext from 'src/themeContext'
-import TestModule from './testModule'
+// import TestModule from './testModule'
 import Notification from 'src/utils/Notification'
 import { isFirstOpen } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
@@ -64,10 +64,9 @@ const Main = ({ navigation }) => {
 
   const theme = useContext(themeContext)
 
-
-
   return (
     <SafeAreaView style={ { flex: 1, paddingBottom: 60, backgroundColor: theme.mainColor } }>
+      <StatusBar hidden></StatusBar>
       { /* <TestModule /> */ }
       <View style={ {
         flex: 1,
@@ -95,7 +94,6 @@ const Main = ({ navigation }) => {
           </View>
         </Animated.View>
       </View>
-      <StatusBar hidden></StatusBar>
     </SafeAreaView>
 
   )

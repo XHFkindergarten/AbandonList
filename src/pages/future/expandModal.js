@@ -1,16 +1,15 @@
 import React, { useState, useMemo, useEffect, Fragment, useContext } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
-import { info_, ring, refresh, circleWrong, shalou, type } from 'src/assets/image'
-import moment from 'moment/min/moment-with-locales'
 import srcStore from 'src/store'
+import { beforeNow } from 'src/utils'
+import finishStore from 'src/pages/finish/store'
+import { info_, correctGreen, wrongRed } from 'src/assets/image'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Notification from 'src/utils/Notification'
 import ThemeContext from 'src/themeContext'
 
-moment.locale('zh-cn');
 const { width, height } = Dimensions.get('window')
-const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
+const CardExpandModal = ({ setVisible, info }) => {
   const handleClose = () => {
     setVisible(false)
   }
@@ -21,34 +20,24 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
       toValue: 1
     }).start()
   }, [])
-  // const [ ringText, setRingText ] = useState('')
-  // Notification.getScheduleList().then(res => {
-  //   const scheduleList = res.filter(item => item.userInfo.id === info.id)
-  //   if (info.allDay && scheduleList.length) {
-  //     setRingText('将会在当日早晨8:00AM提醒')
-  //     return
-  //   }
-  //   if (scheduleList.length === 2) {
-  //     setRingText('将会在事件开始和结束时时提醒')
-  //   } else if (scheduleList.length === 1) {
-  //     if (scheduleList[0].alertBody.endsWith('开始')) {
-  //       setRingText('将会在事件开始时提醒')
-  //     } else if (scheduleList[0].alertBody.endsWith('结束')) {
-  //       setRingText('将会在事件结束时提醒')
-  //     }
-  //   } else {
-  //     setRingText('暂无提醒')
-  //   }
-  // })
 
-  // 是否显示结束时间
-  // const showEndTime = useMemo(() => {
-  //   return ringText === '将会在事件结束时提醒' || ringText === '将会在事件开始和结束时时提醒'
-  // }, [ ringText ])
 
   const theme = useContext(ThemeContext)
 
-  const finishDate = info.finishDate
+  const handleFinish = () => {
+    finishStore.addHistoryItem(info, false)
+    srcStore.removeFutureListItem(info)
+    setVisible(false)
+  }
+
+  // 点击删除
+  const handleRemove = () => {
+    finishStore.addHistoryItem(info, true)
+    srcStore.removeFutureListItem(info)
+    setVisible(false)
+  }
+
+  const fromNowTime = beforeNow(info.createdAt)
 
   return (
     <Modal
@@ -95,47 +84,12 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
             ></Image>
             <Text style={ styles.content }>{ info.notes ? info.notes : '暂无备注' }</Text>
           </View>
-          {
-            info.allDay ? (
-              <View style={ styles.row }>
-                <Image source={ shalou }
-                  style={ [ styles.icon, { transform: [ { rotate: '180deg' } ] } ] }
-                ></Image>
-                <Text style={ styles.content }>{ moment(info.startDate).format('LL') + '全天' }</Text>
-              </View>
-            ) : (
-              <Fragment>
-                <View style={ styles.row }>
-                  <Image source={ shalou }
-                    style={ [ styles.icon, { transform: [ { rotate: '180deg' } ] } ] }
-                  ></Image>
-                  <Text style={ styles.content }>{ moment(info.startDate).format('LLL') }</Text>
-                </View>
-                { /* {
-                  showEndTime && (
-                    <View style={ styles.row }>
-                      <Image source={ shalou }
-                        style={ styles.icon }
-                      ></Image>
-                      <Text style={ styles.content }>{ moment(info.endDate).format('LLL') }</Text>
-                    </View>
-                  )
-                } */ }
-              </Fragment>
-            )
-          }
           <View style={ styles.row }>
-            <Image source={ type }
+            <Image source={ info_ }
               style={ styles.icon }
             ></Image>
-            <Text style={ styles.content }>{ `${info.isDelete ? '删除' : '完成'}于${moment(finishDate).format('lll')}` }</Text>
+            <Text style={ styles.content }>{ `${fromNowTime} 创建` }</Text>
           </View>
-          { /* <View style={ styles.row }>
-            <Image source={ ring }
-              style={ styles.icon }
-            ></Image>
-            <Text style={ styles.content }>{ ringText }</Text>
-          </View> */ }
         </View>
         <View style={ {
           position: 'absolute',
@@ -151,17 +105,17 @@ const CardExpandModal = ({ setVisible, info, handleAbandon, handleFinish }) => {
               padding: 20
             } }
           >
-            <Image source={ refresh }
+            <Image source={ correctGreen }
               style={ styles.handleIcon }
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={ handleAbandon }
+            onPress={ handleRemove }
             style={ {
               padding: 20
             } }
           >
-            <Image source={ circleWrong }
+            <Image source={ wrongRed }
               style={ styles.handleIcon }
             />
           </TouchableOpacity>

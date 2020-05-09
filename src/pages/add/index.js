@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, Fragment, useCallback, useContext } from 'react';
 import { View, StyleSheet, ScrollView,  TextInput, Dimensions, Alert, Linking, Text, Switch, TouchableOpacity, Animated, Keyboard, PixelRatio } from 'react-native';
-import { getStorage } from 'src/utils'
 import { Transitioning, Transition } from 'react-native-reanimated';
 import moment from 'moment/min/moment-with-locales'
 import nativeCalendar from 'src/utils/nativeCalendar'
@@ -12,10 +11,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import srcStore from 'src/store'
 import themeContext from 'src/themeContext'
 import Notification from 'src/utils/Notification'
+import { setStorage, getStorage } from 'src/utils'
 
 moment.locale('zh-cn');
 
 const rememberGroupKey = '@remenber_group_key'
+
+const firstAddKey = '@is_first_add_key'
 
 const { width } = Dimensions.get('window')
 function Add({ route }) {
@@ -88,6 +90,7 @@ function Add({ route }) {
       handleStartChange(new Date(info.startDate))
       handleEndChange(new Date(info.endDate))
       handleAllDayChange(info.allDay, false)
+      handleInFutureChange(info.inFuture)
       handleRepeatChange(info.recurrence)
       Notification.getScheduleList().then(res => {
         const scheduleList = res.filter(item => item.userInfo.id === info.id)
@@ -131,11 +134,20 @@ function Add({ route }) {
   // 默认分组
   const defaultGroup = groups.find(item => visibleGroupIds.includes(item.id)) || groups[0]
   const defaultGroupId = defaultGroup.id
+
+  const [ showTip, setShowTip ] = useState(false)
   useEffect(() => {
     // 检查是否在本地存储过上次使用的分组，如果有就使用
     getStorage(rememberGroupKey).then(key => {
       if (key && groups.some(item => item.id === key)) {
         handleGroupIdChange(key)
+      }
+    })
+    // 检查是否是第一次打开add页面
+    getStorage(firstAddKey).then(key => {
+      if (!key) {
+        setShowTip(true)
+        setStorage(firstAddKey, firstAddKey)
       }
     })
   }, [])
@@ -145,6 +157,7 @@ function Add({ route }) {
   const [ title, setTitle ] = useState('')
   const [ description, setDescription ] = useState('')
   const [ allDay, setAllDay ] = useState(false)
+  const [ inFuture, setInFuture ] = useState(false)
   const [ groupId, setGroupId ] = useState(defaultGroupId)
   const [ start, setStart ] = useState(defaultStartTime)
   const [ end, setEnd ] = useState(defaultEndTime)
@@ -160,6 +173,13 @@ function Add({ route }) {
     setTitle(value)
     updateFormData({ title: value })
   }
+
+  const handleInFutureChange = (value = false) => {
+    contentRef.current.animateNextTransition()
+    setInFuture(value)
+    updateFormData({ inFuture: value })
+  }
+
   const handleDescriptionChange = value => {
     setDescription(value)
     updateFormData({ description: value })
@@ -424,42 +444,66 @@ function Add({ route }) {
                 )
               }
             </View>
-            <View style={ styles.itemRow } >
-              <Text style={ styles.itemLabel }>提醒</Text>
+            <View style={ styles.itemRow }>
+              <Text style={ styles.itemLabel }>
+                以后
+                {
+                  showTip && (
+                    <Text style={ [ styles.subItemLabel, { color: theme.subText } ] }>
+                      &ensp;对于当前重要程度不高的事项
+                    </Text>
+                  )
+                }
+              </Text>
               <Switch
-                onValueChange={ handleRABChange }
+                onValueChange={ handleInFutureChange }
                 trackColor={ { false: '', true: theme.themeColor } }
-                value={ RAB }
+                value={ inFuture }
               />
             </View>
-            <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>时间</Text>
-              <TouchableOpacity onPress={ startModalOpen }>
-                <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>重复</Text>
-              <TouchableOpacity onPress={ repeatModalOpen }>
-                <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={ styles.itemRow }>
-              <Text style={ styles.itemLabel }>全天</Text>
-              <Switch
-                onValueChange={ handleAllDayChange }
-                trackColor={ { false: '', true: theme.themeColor } }
-                value={ allDay }
-              />
-            </View>
-            <View style={ {
-              marginTop: 20,
-              marginBottom: 20,
-              height: 2 / PixelRatio.get(),
-              backgroundColor: '#2F2F2F'
-            } }
-            />
-            { ((RAB && !allDay) || RAE) && (
+            {
+              !inFuture && (
+                <Fragment>
+                  <View style={ styles.itemRow } >
+                    <Text style={ styles.itemLabel }>提醒</Text>
+                    <Switch
+                      onValueChange={ handleRABChange }
+                      trackColor={ { false: '', true: theme.themeColor } }
+                      value={ RAB }
+                    />
+                  </View>
+                  <View style={ styles.itemRow }>
+                    <Text style={ styles.itemLabel }>时间</Text>
+                    <TouchableOpacity onPress={ startModalOpen }>
+                      <Text style={ styles.itemValue }>{ moment(start).format('lll') }</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={ styles.itemRow }>
+                    <Text style={ styles.itemLabel }>重复</Text>
+                    <TouchableOpacity onPress={ repeatModalOpen }>
+                      <Text style={ styles.itemValue }>{ repeatMap.find(item => item.recurrence === repeat).label }</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={ styles.itemRow }>
+                    <Text style={ styles.itemLabel }>全天</Text>
+                    <Switch
+                      onValueChange={ handleAllDayChange }
+                      trackColor={ { false: '', true: theme.themeColor } }
+                      value={ allDay }
+                    />
+                  </View>
+                  <View style={ {
+                    marginTop: 20,
+                    marginBottom: 20,
+                    height: 2 / PixelRatio.get(),
+                    backgroundColor: '#2F2F2F'
+                  } }
+                  />
+                </Fragment>
+              )
+            }
+
+            { ((RAB && !allDay) || RAE) && !inFuture && (
               <Fragment>
                 <View style={ styles.itemRow }>
                   <Text style={ styles.itemLabel }>结束时提醒</Text>
@@ -555,6 +599,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingTop: 20,
     paddingBottom: 20
+  },
+  subItemLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginLeft: 10
   },
   selectContainer: {
     paddingTop: 40,

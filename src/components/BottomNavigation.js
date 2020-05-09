@@ -24,29 +24,6 @@ function BottomNavigation() {
 
   const focusStackName = store.bottomNavName
 
-  const isDailySet = dailyStore.isSet
-
-  // 控制daily图标旋转
-  const [ setRotate ] = useState(new Animated.Value(0))
-  const setRotateDeg = setRotate.interpolate({
-    inputRange: [ 0, 90 ],
-    outputRange: [ '0deg', '90deg' ]
-  })
-  const rotateAnimation = Animated.spring(setRotate, {
-    toValue: 30
-  })
-  const rotateAnimationBack = Animated.spring(setRotate, {
-    toValue: 0
-  })
-
-  useEffect(() => {
-    if (isDailySet) {
-      rotateAnimation.start()
-    } else {
-      rotateAnimationBack.start()
-    }
-  }, [ isDailySet ])
-
   const onDailyPage = focusStackName === 'Daily'
   const onMainPage = focusStackName === 'Main'
   const onFinishPage = focusStackName === 'Finish'
@@ -176,10 +153,17 @@ function BottomNavigation() {
     vibrate(0)
     finishStore.toggleSet()
   }
+
+  // 点击中心按钮
+  const handlePressMain = () => {
+    store.nav.navigate('Future')
+  }
   // 是否是刘海屏iPhone,底部安全距离处理
   const newIPhone = isNewIPhone()
 
   const theme = useContext(themeContext)
+
+  const futureLen = !!store.futureList.slice().length
 
   return (
     <View
@@ -207,17 +191,6 @@ function BottomNavigation() {
                   onPress={ handleSetDaily }
                   style={ styles.iconContainer }
                 >
-                  { /* <Animated.Image
-                    source={ settingDaily }
-                    style={ [ {
-                      height: 32,
-                      width: 32
-                    }, onDailyPage && {
-                      transform: [
-                        { rotate: setRotateDeg }
-                      ]
-                    } ] }
-                  /> */ }
                   <Svgs.DailyActive fill={ theme.themeColor }
                     height={ 20 }
                     width={ 20 }
@@ -247,23 +220,40 @@ function BottomNavigation() {
               } }
               >
                 <TouchableOpacity
+                  onPress={ handlePressMain }
                   style={ styles.iconContainer }
                 >
-                  <Animated.View
+                  <View
                     style={ {
                       height: 28,
                       width: 28,
                       borderRadius: 14,
                       backgroundColor: theme.themeColor
+
                     } }
-                  />
+                  >
+                    {
+                      futureLen && (
+                        <View style={ {
+                          height: 10,
+                          width: 10,
+                          borderRadius: 5,
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          backgroundColor: '#D40D12'
+                        } }
+                        />
+                      )
+                    }
+                  </View>
 
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={ handleToMain }
                   style={ styles.iconContainer }
                 >
-                  <Animated.View
+                  <View
                     style={ {
                       height: 20,
                       width: 20,
@@ -290,13 +280,6 @@ function BottomNavigation() {
                   onPress={ handleSetFinish }
                   style={ styles.iconContainer }
                 >
-                  { /* <Animated.Image
-                    source={ settingDaily }
-                    style={ [ {
-                      height: 32,
-                      width: 32
-                    } ] }
-                  /> */ }
                   <Svgs.Set fill={ theme.themeColor }
                     height={ 30 }
                     width={ 30 }
