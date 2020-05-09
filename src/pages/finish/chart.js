@@ -1,12 +1,13 @@
 /**
  * 类似Github的表格
  */
-import React, { useContext, useState, useRef, useMemo, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Text, TouchableWithoutFeedback, Animated } from 'react-native';
+import React, { useContext, useState, useRef, useMemo } from 'react';
+import { View, StyleSheet, Dimensions, Text, TouchableWithoutFeedback, Image } from 'react-native';
 import dailyStore from '../daily/dailyStore';
 import { getMonthDay } from 'src/utils'
 import moment from 'moment/min/moment-with-locales'
 import ThemeContext from 'src/themeContext'
+import { star } from 'src/assets/image'
 import { Transitioning, Transition } from 'react-native-reanimated';
 moment.locale()
 const { width } = Dimensions.get('window')
@@ -46,8 +47,15 @@ const generateFlatList = date => {
 }
 
 // 计算当月提交最大值
-const useMax = () => {
+const useMax = (initialCount, item) => {
+  const itemId = useRef(item)
   const [ max, setMax ] = useState(0)
+
+  if (item !== itemId.current) {
+    // 如果已经不是之前的表格，需要重新计算最大值
+    setMax(0)
+    itemId.current = item
+  }
   const updateMax = count => {
     if (count > max) {
       setMax(count)
@@ -60,7 +68,8 @@ const useMax = () => {
 
 export default function Chart({ monthTime, curItem }) {
 
-  const [ maxFinish, setMaxFinish ] = useMax(0)
+  // 统计当前表格中的最大值
+  const [ maxFinish, setMaxFinish ] = useMax(0, curItem.id || '')
 
   const dailyLog = dailyStore.dailyLog
 
@@ -100,6 +109,7 @@ export default function Chart({ monthTime, curItem }) {
         setPop(false)
       }
 
+      const isMost = showOpacity === 1 && curItem.id === '@data_over_view'
 
       return (
         <View>
@@ -107,16 +117,30 @@ export default function Chart({ monthTime, curItem }) {
             onPressIn={ onPressIn }
             onPressOut={ onPressOut }
           >
-            <Animated.View style={ [ {
-              borderRadius: 6,
+            <View style={ [ styles.block, {
               height: colWidth,
               width: colWidth,
               backgroundColor: theme.themeColor,
               opacity: showOpacity,
-              marginBottom: gapWidth,
-              zIndex: 60
-            } ] }
-            />
+              marginBottom: gapWidth
+            }, isMost && styles.shadow,
+            isMost && {
+              shadowColor: theme.themeColor
+            }
+            ] }
+            >
+              {
+                isMost && (
+                  <Image source={ star }
+                    style={ {
+                      height: 24,
+                      width: 24
+                    } }
+                  />
+                )
+              }
+
+            </View>
           </TouchableWithoutFeedback>
           {
             showPop && (
@@ -138,14 +162,7 @@ export default function Chart({ monthTime, curItem }) {
                   textAlign: 'center'
                 } }
                 >{ showDate }</Text>
-                <Text style={ {
-                  color: '#FFF',
-                  fontSize: 16,
-                  textAlign: 'center',
-                  marginTop: 10,
-                  marginBottom: 10
-                } }
-                >{ finishTimes }</Text>
+                <Text style={ styles.finishTimes }>{ finishTimes }</Text>
                 <View style={ {
                   position: 'absolute',
                   bottom: -8,
@@ -254,8 +271,23 @@ const styles = StyleSheet.create({
   weekCol: {
     // height: 300
     alignItems: 'center'
+  },
+  shadow: {
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    shadowOffset: { width: 2, height: 2 }
+  },
+  block: {
+    borderRadius: 6,
+    zIndex: 60,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  finishTimes: {
+    color: '#FFF',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 10
   }
-  // blockContainer: {
-  //   borderRadius: 6
-  // }
 })
