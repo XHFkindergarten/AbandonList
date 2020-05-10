@@ -52,12 +52,15 @@ function Finish({ navigation }) {
 
   // eslint-disable-next-line
   const [ _isMount, _setIsMount ] = useState(false)
+
   useEffect(() => {
     _setIsMount(true)
     checkFirstIn('finish').then(res => {
-      if (res) {
+      if (!res) {
         notifyTimeout = setTimeout(() => {
           srcStore.globalNotify('数据页功能引导\n1. 点击2020 月份按钮，可以查看当月已结束状态的卡片\n\n2. 如果创建了每日任务，可以通过滑动顶部彩色区域来查看各项任务的完成情况\n\n3. 右下角彩色按钮是设置')
+          tipAlready.current = true
+          finishStore.toggleSet(false)
         }, 600)
       }
     })
@@ -126,11 +129,17 @@ function Finish({ navigation }) {
   // 显示设置弹框
   const [ showSetting, setShowSetting ] = useState(false)
   const isSet = finishStore.isSet
+
+  const tipAlready = useRef(false)
+
   useEffect(() => {
-    setShowSetting(isSet)
-    if (!isSet && shouldCallColorPicker.current) {
-      setShowColorPicker(true)
-      shouldCallColorPicker.current = false
+    console.log('tip already', tipAlready.current)
+    if (tipAlready.current) {
+      setShowSetting(isSet)
+      if (!isSet && shouldCallColorPicker.current) {
+        setShowColorPicker(true)
+        shouldCallColorPicker.current = false
+      }
     }
   }, [ isSet ])
 

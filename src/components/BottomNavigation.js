@@ -151,7 +151,7 @@ function BottomNavigation() {
 
   const handleSetFinish = () => {
     vibrate(0)
-    finishStore.toggleSet()
+    finishStore.toggleSet(true)
   }
 
   // 点击中心按钮
