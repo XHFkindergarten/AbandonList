@@ -54,7 +54,7 @@ function TodoCard({ info, monthTime }) {
   // }, [ isHold ])
 
 
-  // 点击卡片右侧的恢复按钮
+  // 点击卡片右侧的删除按钮
   const handleExpandAbandon = () => {
     setExpand(false)
     finishStore.removeHisItem(monthKey, info)
@@ -63,20 +63,25 @@ function TodoCard({ info, monthTime }) {
       disappearY.start()
     }, 300)
   }
-  // 点击卡片右侧的删除按钮
-  const handleExpandFinish = () => {
+  // 点击卡片右侧的恢复按钮
+  const handleExpandFinish = async () => {
     setExpand(false)
-    nativeCalendar.reCreateEvent(info).then(() => {
-      // 刷新日历中的数据
-      srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+    try {
+      if (info.url === 'future') {
+        srcStore.recreateFutureListItem(info)
+      } else {
+        await nativeCalendar.reCreateEvent(info)
+        // 刷新日历中的数据
+        srcStore.redirectCenterWeek(srcStore.targetDate || calStore.centerSunday)
+      }
       setTimeout(() => {
         disappearX.start()
         disappearY.start()
       }, 300)
       finishStore.removeHisItem(monthKey, info)
-    }).catch(err => {
+    }catch(err) {
       console.error(err)
-    })
+    }
   }
   const theme = useContext(themeContext)
 

@@ -181,7 +181,7 @@ class Store {
     return output
   }
 
-  // 添加/修改 一个未来任务
+  // 添加一个未来任务
   updateFutureListItem = event => new Promise(async (resolve) => {
     const selectedCalendar = nativeCalendar.groupStorage.find(item => item.id === event.groupId)
     const id = event.id ? event.id : generateRandomId()
@@ -212,6 +212,17 @@ class Store {
     this.updateFutureList({
       ...this._futureList,
       [id]: formatedEvent
+    })
+    // 保存
+    this.saveFutureList()
+    resolve()
+  })
+
+  // 重新添加回一个任务
+  recreateFutureListItem = item => new Promise((resolve) => {
+    this.updateFutureList({
+      ...this._futureList,
+      [item.id]: item
     })
     // 保存
     this.saveFutureList()

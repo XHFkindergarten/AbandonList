@@ -19,6 +19,16 @@ const rememberGroupKey = '@remenber_group_key'
 
 const firstAddKey = '@is_first_add_key'
 
+// 将当前的时分赋值给一个Date
+const withNowDate = date => {
+  const temp = new Date(date)
+  const now = new Date()
+  now.setFullYear(temp.getFullYear())
+  now.setMonth(temp.getMonth())
+  now.setDate(temp.getDate())
+  return now
+}
+
 const { width } = Dimensions.get('window')
 function Add({ route }) {
 
@@ -71,10 +81,9 @@ function Add({ route }) {
 
 
 
-  const defaultStartTime = date ? new Date(date) : new Date()
-  defaultStartTime.setHours(8,0,0,0)
-  const defaultEndTime = date ? new Date(date) : new Date()
-  defaultEndTime.setHours(9,0,0,0)
+  const defaultStartTime = date ? withNowDate(date) : new Date()
+  const defaultEndTime = new Date(defaultStartTime)
+  defaultEndTime.setHours(defaultStartTime.getHours() + 1)
 
   // 是否已挂载
   const [ isMounted, setIsMounted ] = useState(false)
