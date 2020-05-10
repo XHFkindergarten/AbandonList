@@ -253,6 +253,9 @@ class Store {
       resolve()
     })
   }
+
+  // 是否可以点击finish图标
+  tipOk = false
 }
 
 export default new Store()

@@ -15,6 +15,7 @@ import finishStore from 'src/pages/finish/store'
 import { Toast } from 'src/components'
 import tinycolor from 'tinycolor2'
 import { getGlobalTheme } from 'src/utils'
+import FinishStore from 'src/pages/finish/store'
 
 // 创建栈路由
 const Stack = createStackNavigator()
@@ -127,6 +128,12 @@ function App() {
   }
 
   const [ showGlobalModal, setShowModal ] = useState(false)
+
+  useEffect(() => {
+    if (showGlobalModal) {
+      FinishStore.tipOk = true
+    }
+  }, [ showGlobalModal ])
   const [ modalContent, setModalContent ] = useState('')
 
   // 发送全局通知的方法
