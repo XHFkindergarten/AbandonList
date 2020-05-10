@@ -7,6 +7,7 @@ import SmallArrow from './small_arrow.svg'
 import Clock from './clock.svg'
 import Burger from './burger.svg'
 import Add from './add.svg'
+import Cookie from './cookie.svg'
 export default {
   DailyActive,
   Set,
@@ -15,5 +16,6 @@ export default {
   SmallArrow,
   Clock,
   Burger,
-  Add
+  Add,
+  Cookie
 }

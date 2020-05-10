@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFF',
     textAlign: 'center',
-    fontSize: 20
+    fontSize: 16
   },
   subTitle: {
     width: 300,

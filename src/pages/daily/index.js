@@ -8,7 +8,7 @@ import DeleteModal from './deleteModal'
 import DailyItem from './dailyItem'
 import srcStore from 'src/store'
 import themeContext from 'src/themeContext'
-import { getStorage, setStorage, checkFirstIn } from 'src/utils'
+import { checkFirstIn, isNewIPhone } from 'src/utils'
 let notifyTimeout
 function Daily({ navigation }) {
   useFocusEffect(
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   //   flex: 1
   // },
   header: {
-    paddingTop: 60,
+    paddingTop: isNewIPhone ? 60 : 40,
     paddingBottom: 20,
     borderBottomColor: '#444',
     borderBottomWidth: 1 / PixelRatio.get(),

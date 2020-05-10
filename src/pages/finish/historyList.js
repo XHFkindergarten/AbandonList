@@ -4,7 +4,7 @@ import ThemeContext from 'src/themeContext'
 import { observer } from 'mobx-react';
 import store from './store'
 import moment from 'moment';
-import { glasses, handStop } from 'src/assets/image'
+import Svgs from 'src/assets/svg'
 import FinishCard from './finishCard'
 import { Transitioning, Transition } from 'react-native-reanimated'
 const { height } = Dimensions.get('window')
@@ -55,11 +55,8 @@ function HistoryList({ monthTime }) {
         ))) : (
           isCurrentMonth && (
             <View style={ styles.emptyContainer }>
-              <Image source={ glasses }
-                style={ styles.emoji }
-              />
-              <Image source={ handStop }
-                style={ styles.handStop }
+              <Svgs.Cookie height={ 100 }
+                width={ 100 }
               />
               <Text style={ [ styles.emptyText, {
                 color: theme.mainText
@@ -103,9 +100,10 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     width: 300,
-    fontSize: 20,
+    fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-    textAlign: 'center'
+    textAlign: 'center',
+    marginTop: 20
   }
 })

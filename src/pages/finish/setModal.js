@@ -194,9 +194,7 @@ function SetModal({ visible, navigation, onChangeTheme }) {
       visible={ visible }
     >
       <View style={ styles.wrapper }>
-        <Animated.View
-          style={ styles.container }
-        >
+        <View style={ styles.container }>
           <View style={ styles.header } >
             {
               (readyToCreate || isEditReview) ? (
@@ -229,13 +227,12 @@ function SetModal({ visible, navigation, onChangeTheme }) {
           <ScrollView
             onScroll={ handleOnScroll }
             ref={ scrollRef }
-            // onScrollEndDrag={ handleRelease }
             scrollEventThrottle={ 1 }
             showsHorizontalScrollIndicator={ false }
             showsVerticalScrollIndicator={ false }
             style={ { flex: 1 } }
           >
-            <View style={ { height: height } }>
+            <View style={ { height: 1000 } }>
               <Stack.Navigator
                 headerMode="none"
                 initialRouteName="calendarList"
@@ -275,9 +272,8 @@ function SetModal({ visible, navigation, onChangeTheme }) {
                 ></Stack.Screen>
               </Stack.Navigator>
             </View>
-
           </ScrollView>
-        </Animated.View>
+        </View>
       </View>
     </Modal>
   )
@@ -350,7 +346,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFF',
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 16,
     paddingLeft: 20,
     paddingRight: 20
   },

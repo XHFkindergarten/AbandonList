@@ -20,7 +20,7 @@ export default function GlobalModal({ visible, setVisible, content }) {
       </TouchableWithoutFeedback>
       <View
         style={ [ styles.modal, {
-          top: height / 2 - 80
+          top: height / 2 - 120
         } ] }
       >
         <View>

@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFF',
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 16,
     paddingLeft: 20,
     paddingRight: 20
   },
