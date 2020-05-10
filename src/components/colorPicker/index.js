@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     paddingBottom: 60,
-    paddingTop: 60 + isNewIPhone() ? 44 : 20,
+    paddingTop: 60 + isNewIPhone ? 44 : 20,
     paddingHorizontal: 20
   },
   container: {

@@ -21,7 +21,6 @@ const Main = ({ navigation }) => {
         navigation.navigate('Guide')
       }
     })
-
   }, [])
   useFocusEffect(
     useCallback(() => {

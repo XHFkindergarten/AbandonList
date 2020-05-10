@@ -159,7 +159,6 @@ function BottomNavigation() {
     store.nav.navigate('Future')
   }
   // 是否是刘海屏iPhone,底部安全距离处理
-  const newIPhone = isNewIPhone()
 
   const theme = useContext(themeContext)
 
@@ -169,9 +168,9 @@ function BottomNavigation() {
     <View
       style={ [ styles.container, {
         backgroundColor: theme.mainColor,
-        paddingBottom: newIPhone && !(showHandler && keyboardHeight) ? 34 : 0,
+        paddingBottom: isNewIPhone && !(showHandler && keyboardHeight) ? 34 : 0,
         bottom: (showHandler && keyboardHeight) ? keyboardHeight : 0,
-        height: (keyboardHeight || !newIPhone) ? 60 : 94
+        height: (keyboardHeight || !isNewIPhone) ? 60 : 94
       } ] }
     >
       { !showHandler ?

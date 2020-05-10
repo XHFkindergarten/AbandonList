@@ -5,11 +5,15 @@ import Chart from './chart.svg'
 import Cards from './cards.svg'
 import SmallArrow from './small_arrow.svg'
 import Clock from './clock.svg'
+import Burger from './burger.svg'
+import Add from './add.svg'
 export default {
   DailyActive,
   Set,
   Chart,
   Cards,
   SmallArrow,
-  Clock
+  Clock,
+  Burger,
+  Add
 }

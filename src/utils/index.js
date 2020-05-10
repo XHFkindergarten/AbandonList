@@ -15,10 +15,10 @@ const versionSizeList = [
   '{"width":375,"height":812}',
   '{"width":414,"height":896}'
 ]
-export const isNewIPhone = () => {
+export const isNewIPhone = (function() {
   const { width, height } = Dimensions.get('window')
   return versionSizeList.includes(JSON.stringify({ width, height }))
-}
+})()
 
 /**
  * 获取事件时间距离目前的时间
@@ -187,3 +187,39 @@ export function generateRandomId () {
   }
   return id
 }
+
+
+/**
+ * 检查是否是初次进入某个页面
+ * 用于通过配置化的方式支持功能提示等场景
+ * @param {String} page 页面名称
+ */
+checkMap = {
+  main: {
+    key: '@first_in_to_main',
+    value: '@to_in_main_first'
+  },
+  daily: {
+    key: '@first_in_to_daily',
+    value: '@to_in_daily_first'
+  },
+  finish: {
+    key: '@first_in_to_finish',
+    value: '@to_in_finish_first'
+  }
+}
+export const checkFirstIn = (page) => new Promise(async (resolve) => {
+  if (!(page in checkMap)) {
+    resolve(true)
+    return
+  }
+  const key = checkMap[page].key
+  const value = checkMap[page].value
+  const res = await getStorage(key)
+  if (!res || res !== value) {
+    setStorage(key, value)
+    resolve(true)
+  } else {
+    resolve(false)
+  }
+})

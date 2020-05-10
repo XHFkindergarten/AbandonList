@@ -8,7 +8,7 @@ import DeleteModal from './deleteModal'
 import DailyItem from './dailyItem'
 import srcStore from 'src/store'
 import themeContext from 'src/themeContext'
-import { getStorage, setStorage } from 'src/utils'
+import { getStorage, setStorage, checkFirstIn } from 'src/utils'
 let notifyTimeout
 function Daily({ navigation }) {
   useFocusEffect(
@@ -26,12 +26,12 @@ function Daily({ navigation }) {
   useEffect(() => {
     // 以防万一,挂载时也初始化一下数据
     dailyStore.initialDailyStore()
-    getStorage('@ever_daily_tip').then(res => {
-      if (!res) {
+    // 初次进入页面展示提示
+    checkFirstIn('daily').then(res => {
+      if (res) {
         notifyTimeout = setTimeout(() => {
-          srcStore.globalNotify('点击右上方按钮创建你的第一张每日待办卡片吧,每天长按卡片。将其标记为完成^ ^.')
+          srcStore.globalNotify('daily功能指引\n1. 点击右上方按钮创建卡片\n2. 长按卡片标记完成，再次长按取消\n3. 点击下方彩色按钮进入编辑模式\n4. 【新功能】缺卡时将自动提示补卡')
         }, 600)
-        setStorage('@ever_daily_tip', 'whatever')
       }
     })
     return () => {
@@ -156,7 +156,10 @@ function Daily({ navigation }) {
                 transform: [ { scale: AnimatedAddScale } ]
               } ] }
               >
-                <Text style={ styles.btnLabel }>+</Text>
+                <Text style={ [ styles.btnLabel, {
+                  color: theme.baseThemeText
+                } ] }
+                >+</Text>
               </Animated.View>
             </TouchableOpacity>
           )

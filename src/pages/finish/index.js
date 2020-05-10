@@ -15,7 +15,7 @@ import Chart from './chart'
 import themeContext from 'src/themeContext'
 import HistoryList from './historyList'
 import { Transitioning, Transition } from 'react-native-reanimated'
-import { getStorage, setStorage } from 'src/utils'
+import { getStorage, setStorage, checkFirstIn } from 'src/utils'
 import ColorPicker from 'src/components/colorPicker'
 
 const { width, height } = Dimensions.get('window')
@@ -54,13 +54,11 @@ function Finish({ navigation }) {
   const [ _isMount, _setIsMount ] = useState(false)
   useEffect(() => {
     _setIsMount(true)
-    getStorage('@ever_finish_tip_show').then(res => {
+    checkFirstIn('finish').then(res => {
       if (!res) {
         notifyTimeout = setTimeout(() => {
-          srcStore.globalNotify('滑动上方蓝色区域可以查看不同事项每个月的完成情况^ ^.')
+          srcStore.globalNotify('数据页功能引导\n1. 点击2020 月份按钮，可以查看当月已结束状态的卡片\n\n2. 如果创建了每日任务，可以通过滑动顶部彩色区域来查看各项任务的完成情况\n\n3. 右下角彩色按钮是设置')
         }, 600)
-
-        setStorage('@ever_finish_tip_show', 'whatever')
       }
     })
     return () => {
@@ -130,11 +128,13 @@ function Finish({ navigation }) {
   const isSet = finishStore.isSet
   useEffect(() => {
     setShowSetting(isSet)
+    if (!isSet && shouldCallColorPicker.current) {
+      setShowColorPicker(true)
+      shouldCallColorPicker.current = false
+    }
   }, [ isSet ])
 
   const theme = useContext(themeContext)
-
-  const newIPhone = isNewIPhone()
 
   // 是否显示卡片数据
   const [ toggleCards, setToggle ] = useState(false)
@@ -207,10 +207,13 @@ function Finish({ navigation }) {
     setShowColorPicker(false)
   }
 
+  const shouldCallColorPicker = useRef(false)
+
   // 用户点击切换主题色
   const handleChangeTheme = () => {
     finishStore.toggleSet(false)
-    setShowColorPicker(true)
+    shouldCallColorPicker.current = true
+    // setShowColorPicker(true)
   }
 
   // 选中的壁纸
@@ -227,7 +230,7 @@ function Finish({ navigation }) {
         } }
         source={ selectWallpaper }
         style={ {
-          paddingTop: newIPhone ? 44 : 0,
+          paddingTop: isNewIPhone ? 44 : 0,
           width: width,
           height: height
         } }
@@ -346,7 +349,7 @@ function Finish({ navigation }) {
       </ImageBackground>
       <Animated.View style={ {
         position: 'absolute',
-        top: newIPhone ? 44 : 0,
+        top: isNewIPhone ? 44 : 0,
         left: 0,
         right: 0,
         height: titleHeight
@@ -367,7 +370,7 @@ function Finish({ navigation }) {
               >
                 <Animated.Text style={ [ styles.scrollItemName, {
                   opacity: titleOpacity,
-                  color: theme.mainText,
+                  color: theme.baseThemeText,
                   transform: [ { scale: AnimatedScale } ]
                 } ] }
                 >{ elipsis(item.name) }</Animated.Text>

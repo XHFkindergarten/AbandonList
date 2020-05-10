@@ -137,7 +137,7 @@ function CircleItem({ time, withColor }) {
         } }
         >
           <Text style={ [ styles.text, {
-            color: theme.baseThemeText
+            color: isToday ? theme.baseThemeText : theme.mainText
           } ] }
           >{ date }</Text>
         </View>

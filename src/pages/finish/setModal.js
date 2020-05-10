@@ -17,9 +17,8 @@ import srcStore from 'src/store'
 import calStore from 'src/components/calendar/store'
 
 const { height } = Dimensions.get('window')
-const newIphone = isNewIPhone()
 
-const fullModalHeight = height - 30 - (newIphone ? 44 : 0)
+// const fullModalHeight = height - 30 - (newIphone ? 44 : 0)
 
 const Stack = createStackNavigator()
 
@@ -144,8 +143,8 @@ function SetModal({ visible, navigation, onChangeTheme }) {
         <CalendarList_ob navigation={ navigation } />
         <ThemeColor onChangeTheme={ onChangeTheme } />
         <Clock navigation={ navigation } />
-        <StoreReview />
         <Wallpaper />
+        <StoreReview />
       </Fragment>
     )
   }
@@ -181,7 +180,6 @@ function SetModal({ visible, navigation, onChangeTheme }) {
 
   const scrollRef = useRef()
 
-  // const [ moveY ] = useState(new Animated.Value(0))
   const handleOnScroll = event => {
     const dy = event.nativeEvent.contentOffset.y
     if (dy < -60) {
@@ -197,9 +195,7 @@ function SetModal({ visible, navigation, onChangeTheme }) {
     >
       <View style={ styles.wrapper }>
         <Animated.View
-          style={ [ styles.container, {
-            // minHeight: fullModalHeight
-          } ] }
+          style={ styles.container }
         >
           <View style={ styles.header } >
             {
@@ -299,7 +295,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     // flex: 1,
-    height: height - 30 - (newIphone ? 44 : 0),
+    height: height - 30 - (isNewIPhone ? 44 : 0),
     position: 'absolute',
     left: 0,
     right: 0,
