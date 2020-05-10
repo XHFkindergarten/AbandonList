@@ -6,6 +6,7 @@ import store from './store'
 import moment from 'moment';
 import Svgs from 'src/assets/svg'
 import FinishCard from './finishCard'
+import { toJS } from 'mobx'
 import { Transitioning, Transition } from 'react-native-reanimated'
 const { height } = Dimensions.get('window')
 function HistoryList({ monthTime }) {
@@ -21,6 +22,7 @@ function HistoryList({ monthTime }) {
     hisList.push(hisListMap[i])
   }
   hisList.reverse()
+
 
   const ref = useRef()
   useMemo(() => {

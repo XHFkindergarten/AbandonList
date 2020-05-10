@@ -184,7 +184,7 @@ class Store {
   // 添加一个未来任务
   updateFutureListItem = event => new Promise(async (resolve) => {
     const selectedCalendar = nativeCalendar.groupStorage.find(item => item.id === event.groupId)
-    const id = event.id ? event.id : generateRandomId()
+    const id = (event.id && event.id in this._futureList) ? event.id : generateRandomId()
     const formatedEvent = {
       alarms: [],
       allDay: false,

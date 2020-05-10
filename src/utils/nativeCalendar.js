@@ -110,6 +110,10 @@ class NativeCalendar {
     }
     // 如果是未来事件，通过另一种方式存储
     if (inFuture) {
+      // 如果时间本来就存在，还需要删除本机日历中的日程
+      if (id.length > 10) {
+        this.removeEvent(props, true, true)
+      }
       return srcStore.updateFutureListItem(props)
     }
     const idOption = id ? { id } : {}
@@ -201,7 +205,7 @@ class NativeCalendar {
   /**
    * 移除事件，futureEvents决定是否删除同一series的后续事件
    */
-  removeEvent = (event, futureEvents = true) => {
+  removeEvent = (event, futureEvents = true, justDelete = false) => {
     if (!futureEvents) {
       dailyStore.handleCalendarItemFinish()
     }
@@ -213,7 +217,7 @@ class NativeCalendar {
         event.id,
         {
           futureEvents,
-          exceptionDate: convertDateIOS(new Date(event.startDate))
+          exceptionDate: convertDateIOS(new Date(event.startDate || event.start))
         }
       ).catch(err => {
         reject(err)
@@ -254,8 +258,11 @@ class NativeCalendar {
           }
         }
       }
-      // 将该事件保存到历史记录中
-      finishStore.addHistoryItem(event, futureEvents)
+      // 单纯删除的话不用保存
+      if (!justDelete) {
+        // 将该事件保存到历史记录中
+        finishStore.addHistoryItem(event, futureEvents)
+      }
       // 事件完成，从处理队列中删除
       resolve(res)
     })
@@ -400,7 +407,6 @@ class NativeCalendar {
               tempObj[key][item.id] = item
             })
             this.eventStorage = Object.assign({}, tempObj)
-            console.log('event', this.eventStorage)
             // this.eventStorage = Object.assign({}, this.eventStorage, tempObj)
             resolve(res)
           })

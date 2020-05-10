@@ -27,19 +27,8 @@ const wallpaper = [
 // 全局唯一定时器
 // let pressTimeout = null
 function TodoCard({ info, monthTime }) {
-
   const monthKey = moment(new Date(monthTime)).format('YYYY-MM')
-  // const [ ScaleValue ] = useState(new Animated.Value(1))
-  // const ScaleAnimation = Animated.timing(ScaleValue, {
-  //   toValue: 0,
-  //   duration: 2000
-  // })
-  // const ScaleBackAnimation = Animated.timing(ScaleValue, {
-  //   toValue: 1,
-  //   duration: 200
-  // })
   const [ expand, setExpand ] = useState(false)
-  // const [ isHold, setIsHold ] = useState(false)
 
   const [ AnimatedScaleX ] = useState(new Animated.Value(1))
   const disappearX = Animated.spring(AnimatedScaleX, { toValue: 0 })

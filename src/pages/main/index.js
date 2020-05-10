@@ -7,12 +7,13 @@ import { Calendar } from 'src/components'
 import themeContext from 'src/themeContext'
 // import TestModule from './testModule'
 import Notification from 'src/utils/Notification'
-import { isFirstOpen } from 'src/utils'
+import { isFirstOpen, setStorage } from 'src/utils'
 import nativeCalendar from 'src/utils/nativeCalendar'
 
 
 const Main = ({ navigation }) => {
-
+  // setStorage('@h1story_list_key', '')
+  // setStorage('@future_list_key', '')
   useEffect(() => {
     // 允许左右滑动屏幕切换页面
     store.preventOtherHandler = false
