@@ -134,10 +134,12 @@ function App() {
       FinishStore.tipOk = true
     }
   }, [ showGlobalModal ])
+  const [ modalTitle, setModalTitle ] = useState('')
   const [ modalContent, setModalContent ] = useState('')
 
   // 发送全局通知的方法
-  const globalNotify = content => {
+  const globalNotify = ({ content, title }) => {
+    setModalTitle(title)
     setModalContent(content)
     setShowModal(true)
   }
@@ -215,6 +217,7 @@ function App() {
       <GlobalModal
         content={ modalContent }
         setVisible={ setShowModal }
+        title={ modalTitle }
         visible={ showGlobalModal }
       />
       {

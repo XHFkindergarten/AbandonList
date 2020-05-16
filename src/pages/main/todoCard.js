@@ -198,7 +198,10 @@ function TodoCard({ info, navigation }) {
         }
       }, 600)
     }).catch(err => {
-      srcStore.globalNotify(err)
+      srcStore.globalNotify({
+        title: 'Error',
+        content: err
+      })
     })
   }
 

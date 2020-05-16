@@ -58,7 +58,10 @@ function Finish({ navigation }) {
     checkFirstIn('finish').then(res => {
       if (res) {
         notifyTimeout = setTimeout(() => {
-          srcStore.globalNotify('数据页功能引导\n1. 点击2020 月份按钮，可以查看当月已结束状态的卡片\n\n2. 如果创建了每日任务，可以通过滑动顶部彩色区域来查看各项任务的完成情况\n\n3. 右下角彩色按钮是设置')
+          srcStore.globalNotify({
+            title: 'data view',
+            content: '1. 点击2020 月份按钮，可以查看当月已结束状态的卡片\n\n2. 如果创建了每日任务，可以通过滑动顶部彩色区域来查看各项任务的完成情况\n\n3. 右下角彩色按钮是设置'
+          })
         }, 600)
       } else {
         finishStore.tipOk = true

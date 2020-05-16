@@ -45,6 +45,7 @@ function DailyItem ({ info, level, isSet, selectList, handleSelect, handleUnsele
   const handleCheckToday = () => {
     markItem(info, false, true)
     setShowCheck(false)
+    setFinish(true)
   }
 
 

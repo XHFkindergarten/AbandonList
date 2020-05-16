@@ -4,8 +4,11 @@
 
 import React, { useState } from 'react';
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Text, Dimensions } from 'react-native';
+import { BlurView } from '@react-native-community/blur';
+
+
 const { width, height } = Dimensions.get('window')
-export default function GlobalModal({ visible, setVisible, content }) {
+export default function GlobalModal({ visible, setVisible, content, title }) {
   const handleCloseModal = () => {
     setVisible(false)
   }
@@ -18,29 +21,39 @@ export default function GlobalModal({ visible, setVisible, content }) {
       <TouchableWithoutFeedback onPress={ handleCloseModal }>
         <View style={ styles.container } />
       </TouchableWithoutFeedback>
-      <View
-        style={ [ styles.modal, {
-          top: height / 2 - 120
-        } ] }
-      >
-        <View>
-          {
-            typeof content === 'string' ? (
-              <Text style={ styles.content }>
-                { content }
-              </Text>
-            ) : content
-          }
-        </View>
-        <View style={ styles.footer }>
-          <TouchableOpacity
-            onPress={ handleCloseModal }
-            style={ {
-              flex: 1
-            } }
-          >
-            <View style={ styles.button }>
-              <Text style={ styles.btnText }>确定</Text>
+
+      <View style={ styles.modal }>
+        <BlurView
+          blurAmount={ 100 }
+          blurType="dark"
+          reducedTransparencyFallbackColor="light"
+        />
+        <View style={ {
+          paddingTop: 10,
+          paddingBottom: 20,
+          alignItems: 'center',
+          paddingHorizontal: 20,
+          justifyContent: 'space-between',
+          flex: 1
+        } }
+        >
+          <View style={ styles.preContent }>
+            <Text style={ styles.title }>{ title || 'Tips' }</Text>
+            {
+              typeof content === 'string' ? (
+                <Text style={ styles.content }>
+                  { content }
+                </Text>
+              ) : content
+            }
+          </View>
+          <TouchableOpacity onPress={ handleCloseModal }>
+            <View style={ styles.confirmBtn }>
+              <Text style={ {
+                fontSize: 16,
+                color: '#FFF'
+              } }
+              >OK</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -51,7 +64,7 @@ export default function GlobalModal({ visible, setVisible, content }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -60,19 +73,37 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0
   },
+  title: {
+    fontFamily: 'Century Gothic',
+    fontSize: 24,
+    fontWeight: '500',
+    color: '#FFF'
+  },
   content: {
     color: '#888',
     fontSize: 16,
-    textAlign: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    lineHeight: 20
+    textAlign: 'left',
+    lineHeight: 24,
+    marginVertical: 20
+  },
+  confirmBtn: {
+    height: 40,
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#1b1b1b',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  preContent: {
+    alignItems: 'center'
   },
   modal: {
+    minHeight: 300,
+    top: height / 2 - 120,
     width: 280,
     left: width / 2 - 140,
     position: 'absolute',
-    backgroundColor: 'rgba(47,47,47,0.95)',
+    backgroundColor: 'rgba(97, 97, 97, 0.6)',
     borderRadius: 14,
     paddingTop: 30
   },

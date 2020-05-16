@@ -356,10 +356,11 @@ class DailyStore {
       } else {
         res.monthList[monthKey] = {
           finishItems: res.monthList[monthKey].finishItems + item.finishItems,
-          finishDays: res.monthList[monthKey].finishDays + item.finishItems ? 1 : 0
+          finishDays: res.monthList[monthKey].finishDays + (item.finishItems ? 1 : 0)
         }
       }
     }
+    console.log('overview', res)
     return res
   }
 

@@ -197,15 +197,15 @@ export function generateRandomId () {
 checkMap = {
   main: {
     key: '@first_in_to_main',
-    value: '@to_in_main_first'
+    value: '@to_in_main_first1'
   },
   daily: {
     key: '@first_in_to_daily',
-    value: '@to_in_daily_first'
+    value: '@to_in_daily_first1'
   },
   finish: {
     key: '@first_in_to_finish',
-    value: '@to_in_finish_first'
+    value: '@to_in_finish_first1'
   }
 }
 export const checkFirstIn = (page) => new Promise(async (resolve) => {

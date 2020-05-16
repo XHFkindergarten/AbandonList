@@ -11,7 +11,10 @@ function StoreReview() {
     if (AppStoreReview.isAvailable) {
       AppStoreReview.requestReview();
     } else {
-      srcStore.globalNotify('无法连接到App Store')
+      srcStore.globalNotify({
+        title: 'Error',
+        content: '无法连接到App Store'
+      })
     }
   }
   return (

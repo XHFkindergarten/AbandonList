@@ -135,7 +135,9 @@ function Add({ route }) {
     // 判断分组是否可见
     if (!visibleGroupIds.includes(targetId)) {
       groupModalClose()
-      srcStore.globalNotify('当前所选择的分组处于不显示状态,请在【数据总览】->【设置】->【日历分组】中勾选目标分组，或直接新建一个分组')
+      srcStore.globalNotify({
+        content: '当前所选择的分组处于不显示状态,请在【数据总览】->【设置】->【日历分组】中勾选目标分组，或直接新建一个分组'
+      })
     }
   }
   // 初始化分组

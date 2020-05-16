@@ -30,7 +30,10 @@ function Daily({ navigation }) {
     checkFirstIn('daily').then(res => {
       if (res) {
         notifyTimeout = setTimeout(() => {
-          srcStore.globalNotify('daily功能指引\n1. 点击右上方按钮创建卡片\n2. 长按卡片标记完成，再次长按取消\n3. 点击下方彩色按钮进入编辑模式\n4. 【新功能】缺卡时将自动提示补卡')
+          srcStore.globalNotify({
+            title: 'daily',
+            content: '1. 点击右上方按钮创建卡片\n2. 长按卡片标记完成，再次长按取消\n3. 点击下方彩色按钮进入编辑模式\n4. 【新功能】缺卡时将自动提示补卡'
+          })
         }, 600)
       }
     })

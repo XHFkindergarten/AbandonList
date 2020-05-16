@@ -19,7 +19,10 @@ class Notification {
       if (!res.alert || !res.badge || !res.sound) {
         if (needWarn) {
           setTimeout(() => {
-            srcStore.globalNotify('未开启通知权限，无法发送通知。请在[设置] -> [AbandonList] -> [通知]中开启所有权限')
+            srcStore.globalNotify({
+              title: 'Info',
+              content: '未开启通知权限，无法发送通知。请在[设置] -> [AbandonList] -> [通知]中开启所有权限'
+            })
           })
         }
         reject()

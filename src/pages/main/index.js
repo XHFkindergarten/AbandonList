@@ -12,8 +12,6 @@ import nativeCalendar from 'src/utils/nativeCalendar'
 
 
 const Main = ({ navigation }) => {
-  // setStorage('@h1story_list_key', '')
-  // setStorage('@future_list_key', '')
   useEffect(() => {
     // 允许左右滑动屏幕切换页面
     store.preventOtherHandler = false

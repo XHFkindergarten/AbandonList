@@ -1,11 +1,9 @@
-import React, { useState, useMemo, useEffect, Fragment, useContext } from 'react';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View, Dimensions, Animated, StyleSheet, Image } from 'react-native'
 import { BlurView } from '@react-native-community/blur';
-import { info_, ring, refresh, circleWrong, shalou, type } from 'src/assets/image'
+import { info_, refresh, circleWrong, shalou, type } from 'src/assets/image'
 import moment from 'moment/min/moment-with-locales'
-import srcStore from 'src/store'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Notification from 'src/utils/Notification'
 import ThemeContext from 'src/themeContext'
 
 moment.locale('zh-cn');

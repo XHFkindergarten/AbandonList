@@ -24,7 +24,10 @@ const weekdayMap = [
 const ItemHeader = ({ date }) => {
   const pressHandler = () => {
     if (nativeCalendar.visibleGroupIds.length === 0 ) {
-      store.globalNotify('暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组')
+      store.globalNotify({
+        title: 'Warn',
+        content: '暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组'
+      })
     } else {
       vibrate(0)
       store.nav.navigate('Add', {
@@ -64,7 +67,10 @@ const ItemContent = ({ todo = {}, date = new Date(), navigation }) => {
   }
   const addItem = () => {
     if (nativeCalendar.visibleGroupIds.length === 0 ) {
-      store.globalNotify('暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组')
+      store.globalNotify({
+        title: 'Warn',
+        content: '暂无可用的日历分组,请在[数据总览]->[设置]中创建一个日历分组'
+      })
     } else {
       vibrate(0)
       store.nav.navigate('Add', {
